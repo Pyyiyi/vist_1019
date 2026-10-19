@@ -1,0 +1,53 @@
+:root {
+  --color-primary: #1677ff;
+  --color-success: #52c41a;
+  --color-warning: #faad14;
+  --color-error: #ff4d4f;
+  --color-text-primary: #1f2329;
+  --color-text-secondary: #646a73;
+  --color-page-bg: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-border: #e5e6eb;
+  --color-header-bg: #ffffff;
+  --color-sider-bg: #001529;
+  --color-table-header-bg: #fafafa;
+
+  --radius-card: 8px;
+  --radius-h5-card: 12px;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --line-height-base: 1.5715;
+
+  --layout-sider-width: 232px;
+  --layout-header-height: 56px;
+  --layout-content-padding: 24px;
+  --layout-content-min-width: 1024px;
+  --h5-max-width: 480px;
+  --h5-action-height: 48px;
+  --touch-target-min: 44px;
+}
+
+body {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+}
+
+.page-card {
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
