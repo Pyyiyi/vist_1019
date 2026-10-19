@@ -1,0 +1,16 @@
+export const visitPermissions = {
+  appointmentRead: 'visit:appointment:read',
+  appointmentCreate: 'visit:appointment:create',
+  appointmentUpdate: 'visit:appointment:update',
+  appointmentCancel: 'visit:appointment:cancel',
+  reviewRead: 'visit:review:read',
+  reviewDecide: 'visit:review:decide',
+  reviewReschedule: 'visit:review:reschedule',
+  gateTodayRead: 'visit:gate:today:read',
+  gateVerify: 'visit:gate:verify',
+  gateAdmit: 'visit:gate:admit',
+  gateDepart: 'visit:gate:depart',
+  gateWalkIn: 'visit:gate:walkin',
+  incidentReport: 'visit:gate:incident:report',
+  incidentDispose: 'visit:gate:incident:dispose',
+} as const;

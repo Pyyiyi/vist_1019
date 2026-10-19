@@ -21,6 +21,10 @@ export function createAuthGuard() {
   ): Promise<true | RouteLocationRaw> {
     const authStore = useAuthStore();
 
+    if (to.meta.layout === 'h5' || to.path === '/403') {
+      return true;
+    }
+
     if (!initialized) {
       initialized = true;
       try {
@@ -28,10 +32,6 @@ export function createAuthGuard() {
       } catch {
         authStore.clearSession();
       }
-    }
-
-    if (to.meta.layout === 'h5' || to.path === '/403') {
-      return true;
     }
 
     if (to.path === '/login') {
