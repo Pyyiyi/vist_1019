@@ -226,7 +226,7 @@ onUnmounted(() => {
 
 .app-shell {
   width: calc(100% - var(--layout-sider-width));
-  min-width: var(--layout-content-min-width);
+  min-width: 0;
   margin-left: var(--layout-sider-width);
 }
 
@@ -269,7 +269,7 @@ onUnmounted(() => {
 }
 
 .app-content {
-  min-width: var(--layout-content-min-width);
+  min-width: 0;
   padding: var(--layout-content-padding);
   overflow-x: auto;
 }

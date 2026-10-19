@@ -20,12 +20,29 @@ export const PERMISSIONS = [
   'report:stats:read',
   'access:user:manage',
   'access:role:read',
-  'master:visitor-type:manage',
-  'master:blacklist:manage',
-  'master:time-rule:manage',
-  'master:gate:manage',
-  'master:host:manage',
-  'master:reviewer-rule:manage',
+  'master:visitor_type:read',
+  'master:visitor_type:create',
+  'master:visitor_type:update',
+  'master:visitor_type:status',
+  'master:blacklist:read',
+  'master:blacklist:create',
+  'master:blacklist:delete',
+  'master:time_rule:read',
+  'master:time_rule:create',
+  'master:time_rule:delete',
+  'master:gate:read',
+  'master:gate:create',
+  'master:gate:update',
+  'master:gate:status',
+  'master:host:read',
+  'master:host:create',
+  'master:host:update',
+  'master:host:status',
+  'system:param:read',
+  'system:param:update',
+  'system:dictionary:read',
+  'system:dictionary:create',
+  'system:dictionary:status',
   'notify:notification:read',
   'notify:channel:manage',
   'system:param:manage',
@@ -37,7 +54,7 @@ export const PERMISSIONS = [
 export type PermissionCode = (typeof PERMISSIONS)[number];
 export type RoleCode = 'admin' | 'guard' | 'host' | 'visitor';
 
-const PERMISSION_FORMAT = /^[a-z][a-z0-9-]*(?::[a-z][a-z0-9-]*){2,}$/;
+const PERMISSION_FORMAT = /^[a-z][a-z0-9_-]*(?::[a-z][a-z0-9_-]*){2,}$/;
 
 export const ROLE_PERMISSIONS: Readonly<Record<RoleCode, readonly PermissionCode[]>> = {
   admin: PERMISSIONS,

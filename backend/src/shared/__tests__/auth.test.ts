@@ -134,9 +134,9 @@ describe('authentication and permissions', () => {
     boundaryMocks.query.mockReset();
   });
 
-  it('exposes exactly the 33 seeded permissions and the role matrix', () => {
-    expect(PERMISSIONS).toHaveLength(33);
-    expect(new Set(PERMISSIONS).size).toBe(33);
+  it('exposes exactly the 50 seeded permissions and the role matrix', () => {
+    expect(PERMISSIONS).toHaveLength(50);
+    expect(new Set(PERMISSIONS).size).toBe(50);
     expect(hasPermission('guard', 'report:ledger:read')).toBe(true);
     expect(hasPermission('guard', 'system:param:manage')).toBe(false);
     expect(hasPermission('guard', 'system:params:read')).toBe(false);
