@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, h, onMounted, onUnmounted, ref } from 'vue';
 import type { Component, VNode } from 'vue';
 import { message } from 'ant-design-vue';
 import {
@@ -96,14 +96,14 @@ async function handleLogout(): Promise<void> {
 }
 
 onMounted(() => {
-  if (!authStore.isLoggedIn) {
+  if (!authStore.user) {
     return;
   }
   void notificationStore.fetchUnreadCount();
   connectRealtime();
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   disconnectRealtime();
 });
 </script>

@@ -17,19 +17,21 @@ type RequiredKey = (typeof requiredKeys)[number];
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface AppConfig {
-  nodeEnv: 'production';
-  port: number;
-  databaseUrl: string;
-  dbPoolMax: number;
-  sessionSecret: string;
-  cookieSecret: string;
-  cookieSecure: boolean;
-  sessionTtlHours: number;
-  corsOrigin: string;
-  timezone: 'Asia/Shanghai';
-  enableJobs: boolean;
-  logLevel: LogLevel;
+  NODE_ENV: 'production';
+  PORT: number;
+  DATABASE_URL: string;
+  DB_POOL_MAX: number;
+  SESSION_SECRET: string;
+  COOKIE_SECRET: string;
+  COOKIE_SECURE: boolean;
+  SESSION_TTL_HOURS: number;
+  CORS_ORIGIN: string;
+  TZ: 'Asia/Shanghai';
+  ENABLE_JOBS: 'true' | 'false';
+  LOG_LEVEL: LogLevel;
 }
+
+export type Config = AppConfig;
 
 function requireValue(env: NodeJS.ProcessEnv, key: RequiredKey): string {
   const value = env[key]?.trim();
@@ -77,19 +79,24 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     throw new Error('Environment variable LOG_LEVEL must be debug, info, warn, or error');
   }
 
+  const enableJobs = requireValue(env, 'ENABLE_JOBS');
+  if (enableJobs !== 'true' && enableJobs !== 'false') {
+    throw new Error('Environment variable ENABLE_JOBS must be true or false');
+  }
+
   return {
-    nodeEnv: 'production',
-    port: requirePositiveInteger(env, 'PORT'),
-    databaseUrl: requireValue(env, 'DATABASE_URL'),
-    dbPoolMax: requirePositiveInteger(env, 'DB_POOL_MAX'),
-    sessionSecret: requireValue(env, 'SESSION_SECRET'),
-    cookieSecret: requireValue(env, 'COOKIE_SECRET'),
-    cookieSecure: requireBoolean(env, 'COOKIE_SECURE'),
-    sessionTtlHours: requirePositiveInteger(env, 'SESSION_TTL_HOURS'),
-    corsOrigin: requireValue(env, 'CORS_ORIGIN'),
-    timezone: 'Asia/Shanghai',
-    enableJobs: requireBoolean(env, 'ENABLE_JOBS'),
-    logLevel: logLevel as LogLevel,
+    NODE_ENV: 'production',
+    PORT: requirePositiveInteger(env, 'PORT'),
+    DATABASE_URL: requireValue(env, 'DATABASE_URL'),
+    DB_POOL_MAX: requirePositiveInteger(env, 'DB_POOL_MAX'),
+    SESSION_SECRET: requireValue(env, 'SESSION_SECRET'),
+    COOKIE_SECRET: requireValue(env, 'COOKIE_SECRET'),
+    COOKIE_SECURE: requireBoolean(env, 'COOKIE_SECURE'),
+    SESSION_TTL_HOURS: requirePositiveInteger(env, 'SESSION_TTL_HOURS'),
+    CORS_ORIGIN: requireValue(env, 'CORS_ORIGIN'),
+    TZ: 'Asia/Shanghai',
+    ENABLE_JOBS: enableJobs,
+    LOG_LEVEL: logLevel as LogLevel,
   };
 }
 
