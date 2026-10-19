@@ -5,6 +5,7 @@ import { checkBlacklist, expireBlacklistEntries } from './internal/blacklist.ser
 import * as dictionaryRepo from './internal/dictionary.repo.js';
 import { timeRuleDecision } from './internal/domain/rules.js';
 import * as gatesRepo from './internal/gates.repo.js';
+import * as reviewerRulesRepo from './internal/reviewer-rules.repo.js';
 import * as hostsRepo from './internal/hosts.repo.js';
 import type {
   DictionaryItemDto,
@@ -14,6 +15,7 @@ import type {
   VisitorTypeDto,
 } from './internal/master.types.js';
 import { resolveReviewer, upsertReviewerRules } from './internal/reviewer-rules.service.js';
+import { listTimeRules } from './internal/time-rules.service.js';
 import * as visitorTypesRepo from './internal/visitor-types.repo.js';
 
 export type {
@@ -39,6 +41,14 @@ export async function getActiveGates(): Promise<GateDto[]> {
 
 export async function getDictionaryItems(dictType: string): Promise<DictionaryItemDto[]> {
   return dictionaryRepo.listDictionary({ dictType, includeInactive: false });
+}
+
+export async function getTimeRules() {
+  return listTimeRules();
+}
+
+export async function getReviewerRules() {
+  return reviewerRulesRepo.listActiveReviewerRulesFromPool();
 }
 
 export const getConfig = kernelGetConfig;

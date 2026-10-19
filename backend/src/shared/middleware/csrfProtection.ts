@@ -25,6 +25,13 @@ function isUninitializedLogin(req: Request): boolean {
   return !hasSession && (path === '/auth/login' || path === '/login');
 }
 
+function isPublicVisitorSubmission(req: Request): boolean {
+  if (req.method !== 'POST') return false;
+  const path = req.path.replace(/^\/api\/v1/, '').replace(/\/$/, '');
+  const hasSession = Boolean(req.session?.user ?? req.session?.userId);
+  return !hasSession && path === '/visitor/appointments';
+}
+
 function issueToken(req: Request, res: Parameters<RequestHandler>[1]): string {
   const existing = req.cookies?.[CSRF_COOKIE_NAME];
   if (typeof existing === 'string' && existing.length > 0) {
@@ -44,7 +51,7 @@ function issueToken(req: Request, res: Parameters<RequestHandler>[1]): string {
 export const csrfProtection: RequestHandler = (req, res, next) => {
   const token = issueToken(req, res);
 
-  if (SAFE_METHODS.has(req.method) || isUninitializedLogin(req)) {
+  if (SAFE_METHODS.has(req.method) || isUninitializedLogin(req) || isPublicVisitorSubmission(req)) {
     next();
     return;
   }
