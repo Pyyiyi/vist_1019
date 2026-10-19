@@ -1,0 +1,49 @@
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print,
+  .app-sidebar,
+  .app-header,
+  .app-toolbar,
+  .ant-table-selection-column,
+  .ant-table-cell-fix-right,
+  .ant-pagination {
+    display: none !important;
+  }
+
+  .app-content,
+  .app-main,
+  .page-card {
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 11px !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img,
+  svg {
+    break-inside: avoid;
+  }
+}
