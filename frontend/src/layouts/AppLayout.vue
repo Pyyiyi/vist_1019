@@ -5,10 +5,12 @@ import { message } from 'ant-design-vue';
 import {
   AppstoreOutlined,
   BellOutlined,
+  EditOutlined,
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons-vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
+import ChangePasswordDialog from '@/views/access/ChangePasswordDialog.vue';
 import { filterNavigation, navigation } from '@/nav/navigation';
 import type { NavItem } from '@/nav/navigation';
 import { iconMap } from '@/nav/icons';
@@ -26,6 +28,7 @@ type MenuEntry = {
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const logoutDialog = ref<InstanceType<typeof ConfirmDialog> | null>(null);
+const changePasswordDialog = ref<InstanceType<typeof ChangePasswordDialog> | null>(null);
 
 const visibleNavigation = computed(() =>
   authStore.role ? filterNavigation(navigation, authStore.role) : navigation,
@@ -81,6 +84,9 @@ function goToNotifications(): void {
 }
 
 function handleUserMenu({ key }: { key: string }): void {
+  if (key === 'change-password') {
+    changePasswordDialog.value?.openDialog();
+  }
   if (key === 'logout') {
     logoutDialog.value?.openDialog();
   }
@@ -155,6 +161,10 @@ onUnmounted(() => {
             </a-button>
             <template #overlay>
               <a-menu @click="handleUserMenu">
+                <a-menu-item key="change-password">
+                  <EditOutlined />
+                  修改密码
+                </a-menu-item>
                 <a-menu-item key="logout">
                   <LogoutOutlined />
                   退出登录
@@ -169,6 +179,8 @@ onUnmounted(() => {
         <slot />
       </main>
     </section>
+
+    <ChangePasswordDialog ref="changePasswordDialog" />
 
     <ConfirmDialog
       ref="logoutDialog"
