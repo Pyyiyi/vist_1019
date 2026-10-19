@@ -39,6 +39,8 @@ docker compose exec backend npm run seed
 
 迁移在应用启动时自动执行；上述 `migrate` 用于手动复核。种子必须手动执行。
 
+默认端口 `3000/8080/55432` 被并行环境占用时，按第十节覆盖 `HOST_*` 变量后再启动。
+
 ---
 
 ## 二、测试账号
@@ -98,8 +100,8 @@ cd backend
 npm run dev          # tsx watch src/main.ts
 npm run build        # tsc -p tsconfig.json
 npm run typecheck    # tsc --noEmit
-npm run migrate      # tsx src/db/migrate.ts
-npm run seed         # tsx src/db/seed.ts
+npm run migrate      # tsx src/shared/db/migrate.ts
+npm run seed         # tsx src/shared/db/seed.ts
 npx vitest run
 ```
 
@@ -107,7 +109,7 @@ npx vitest run
 
 ```bash
 cd frontend
-npm run dev          # vite，端口 5173
+npm run dev          # vite，端口 8080
 npm run build        # vue-tsc --noEmit && vite build
 npx vitest run
 ```
@@ -178,3 +180,19 @@ npx vitest run src/modules/master/__tests__/blacklist.rules.test.ts
 | `docs/knowledge/module-template.md` | 模块模板 |
 | `docs/knowledge/shared-kernel-api.md` | 共享内核签名 |
 | `docs/knowledge/phase-contracts/` | 各 Phase 契约 |
+
+---
+
+## 十、封版信息（V1.0）
+
+| 项目 | 值 |
+|------|----|
+| 基线 commit | `d02d1f52bc4a43d2b4accbb557709f750bb99ee5`（`origin/main`，VIS-P2-I01 集成闭环卡） |
+| 封版 tag | `v1.0.0-freeze` |
+| 封版日期 | 2026-10-20（Asia/Shanghai） |
+| 封版记录 | `docs/trace/runs/v1/FREEZE` |
+| 契约快照 | `contracts/` 七件套：`openapi.yaml`、`schema.sql`、`events.yaml`、`naming.yaml`、`routes.yaml`、`symbols.yaml`、`cross-context-writes.md` |
+
+封版验证摘要：10 项检查全部通过；后端 122 条、前端 45 条单测通过；89 个端点操作逐条可达；49 个 adminOnly 端点以门卫会话请求均返回 403；迁移与种子连续执行两次无冲突。
+
+若默认端口 `3000/8080/55432` 被占用，在 `.env` 中覆盖 `HOST_BACKEND_PORT`、`HOST_FRONTEND_PORT`、`HOST_DB_PORT` 后再执行 `docker compose up -d --build`；容器内端口保持 `3000/80/5432`。

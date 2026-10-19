@@ -1,0 +1,112 @@
+# V1.0 封版记录
+
+- 封版日期：2026-10-20（Asia/Shanghai）
+- 基线 commit：`d02d1f52bc4a43d2b4accbb557709f750bb99ee5`（`origin/main`，VIS-P2-I01 集成闭环卡）
+- 封版 tag：`v1.0.0-freeze`
+- 封版范围：V1.0 全量 18 张卡（P0 9 张、P1 6 张、P2 3 张）
+- 执行卡：VIS-P2-I02 封版归档卡
+- 运行环境：Docker Compose，PostgreSQL 15，Node 20；隔离卷 `visitor_pgdata_freeze_2f123ef6`，主机端口 `23030/28080/25432`（默认端口被并行工作区占用，按 `HOST_*` 覆盖）
+- 集成前置：VIS-P2-I01 集成闭环卡已完成，`docs/trace/runs/v1/integration-report.md` 三阶段全部通过
+
+## 一、十项检查
+
+### 1. 设计文件齐全
+
+通过：设计文件齐全
+
+- `docs/trace/runs/v1/spac.md`、`README.md`、`conventions.md`、`schema-shared.sql`、`seed-anchors.sql`、`shared-kernel-manifest.yaml`、`roles.md`、`scenes.md` 全部存在。
+- `docs/knowledge/` 下 7 个文件全部存在（含 `phase-contracts/p0-contracts.md`、`p1-contracts.md`、`p2-contracts.md`）。
+
+### 2. 契约七件套
+
+通过：契约七件套
+
+- `contracts/openapi.yaml`：89 个方法操作 / 72 个唯一路径。
+- `contracts/schema.sql`、`contracts/events.yaml`、`contracts/naming.yaml`、`contracts/routes.yaml`、`contracts/symbols.yaml`、`contracts/cross-context-writes.md` 全部存在且非空。
+
+### 3. 卡片全部关闭
+
+通过：卡片全部关闭
+
+- `docs/trace/runs/v1/issues.yaml` 共 18 张卡；P0-I01…I09、P1-I01…I06、P2-I01 共 16 张执行卡全部 Done，并在 `docs/memory/2026-10-19/` 留有逐卡记录。
+- 本卡 P2-I02 为封版归档卡，结论即本文件；P2-I03 状态刷新卡为本卡下游，已在 `issues.yaml` 明确 `blocked_by: ["VIS-P2-I02"]` 与刷新范围，结论明确。
+
+### 4. 端点逐条可达
+
+通过：端点逐条可达
+
+- 对 `contracts/openapi.yaml` 的 89 个方法操作逐条发起认证请求：HTTP 状态分布 `200×47`、`422×34`、`405×4`、`403×3`、`409×1`；`404` 与 `500` 均为 0。
+- 参数更新端点使用夹具键 `freeze.check.key` 验证可达；422/403/405/409 均为路由已命中的业务校验、权限或方法响应。
+
+### 5. 权限点逐条生效
+
+通过：权限点逐条生效
+
+- `contracts/openapi.yaml` 中 `access: admin` 的 49 个 adminOnly 端点，全部以 `guard01` 会话（含 CSRF）请求一次，49/49 返回 403。
+
+### 6. 迁移幂等
+
+通过：迁移幂等
+
+- 在全新数据库 `freeze_check` 上连续执行两次 `npm run migrate`：第一次应用 6 个文件，第二次应用 0 个文件。
+- 应用启动日志同样显示：`数据库迁移完成，已应用 6 个文件`。
+
+### 7. 种子幂等
+
+通过：种子幂等
+
+- 在同一数据库连续执行两次 `npm run seed`：两次均输出 `种子执行完成，共 1 个文件`，无主键冲突、无重复报错。
+
+### 8. 测试绿
+
+通过：测试绿
+
+- 后端 `npm run typecheck`：退出码 0。
+- 后端 `npx vitest run`：24 个测试文件、122 条用例全部通过。
+- 前端 `npm run build`：退出码 0，产物 `frontend/dist/index.html` 存在。
+- 前端 `npx vitest run`：7 个测试文件、45 条用例全部通过。
+- `docs/trace/runs/v1/test-results/summary.md`：107 行、107 个唯一 TC，结论为 `通过×103`、`部分可达×4`，无「未执行」。
+
+### 9. README 可用
+
+通过：README 可用
+
+- 按 README 从空数据卷启动：`docker compose up -d --build` 后 `db`、`backend`、`frontend` 三服务均 healthy。
+- `GET /api/v1/health` 返回 `{"code":0,"message":"操作成功","data":{"status":"ok"}}`；前端入口返回 HTTP 200。
+- 4 个测试账号 `admin`、`guard01`、`T001`、`T002` 均登录成功（`code=0`），角色分别为 `admin`、`guard`、`host`、`host`。
+
+### 10. 无伪占位
+
+通过：无伪占位
+
+- 对受版本控制的业务代码、迁移、种子与契约执行六类伪占位标记扫描：业务代码与数据 0 处命中。
+- 仅 `docs/knowledge/phase-contracts/p2-contracts.md` 的规则说明与 `contracts/naming.yaml` 的合法房间命名 `user:<id>` 出现相关字样，均非业务数据伪占位。
+
+## 二、结果汇总
+
+| # | 检查项 | 结果 |
+|---|--------|------|
+| 1 | 设计文件齐全 | 通过：设计文件齐全 |
+| 2 | 契约七件套 | 通过：契约七件套 |
+| 3 | 卡片全部关闭 | 通过：卡片全部关闭 |
+| 4 | 端点逐条可达 | 通过：端点逐条可达 |
+| 5 | 权限点逐条生效 | 通过：权限点逐条生效 |
+| 6 | 迁移幂等 | 通过：迁移幂等 |
+| 7 | 种子幂等 | 通过：种子幂等 |
+| 8 | 测试绿 | 通过：测试绿 |
+| 9 | README 可用 | 通过：README 可用 |
+| 10 | 无伪占位 | 通过：无伪占位 |
+
+## 三、封版产物
+
+- 本文件：`docs/trace/runs/v1/FREEZE`。
+- 契约集：`contracts/` 七件套。
+- 测试汇总：`docs/trace/runs/v1/test-results/summary.md`（107 条）。
+- 集成报告：`docs/trace/runs/v1/integration-report.md`。
+- Git tag：`v1.0.0-freeze`。
+
+## 四、剩余风险
+
+- 下一轮增量前必须执行 VIS-P2-I03 状态刷新卡：以实际代码反写 `contracts/` 七件套并产出 `state-refresh-report.md`，刷新后的契约集才是下一轮基线。
+- 本封版在隔离端口与隔离数据卷上验证；若部署环境默认端口 `3000/8080/55432` 被占用，需按 README 的 `HOST_*` 变量覆盖。
+- `test-results/summary.md` 中 4 条「部分可达」为已批准剔除孤儿断言后的结论，下一轮若恢复对应断言需重新执行。
