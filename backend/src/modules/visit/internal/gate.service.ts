@@ -224,7 +224,7 @@ export async function walkIn(input: Record<string, unknown>, context: GateContex
   const end = new Date(now.getTime() + 60 * 60_000);
   const validated = await validateAppointmentPayload(
     { ...input, visit_start: now.toISOString(), visit_end: end.toISOString() },
-    { allowPast: true, skipSchedule: true, now },
+    { allowPast: true, allowCrossDay: true, skipSchedule: true, now },
   );
   if (validated.blackHit) {
     await writeAudit({ userId: context.actor.id, userName: context.actor.displayName, objectType: 'appointment', objectId: null, action: '现场登记', result: '拒绝', after: { visitor_name: validated.visitorName, visitor_id_no: validated.visitorIdNo, gate_id: gateId }, note: '黑名单硬拦截', ip: context.ip });

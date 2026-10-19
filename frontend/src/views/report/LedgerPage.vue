@@ -4,6 +4,7 @@ import { message } from 'ant-design-vue';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import apiClient from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import EmptyState from '@/components/EmptyState.vue';
 import ErrorState from '@/components/ErrorState.vue';
 import LoadingState from '@/components/LoadingState.vue';
@@ -70,17 +71,19 @@ const columns = [
   { title: '进校时刻', key: 'checkinAt', width: 145 },
   { title: '离校时刻', key: 'checkoutAt', width: 145 },
   { title: '状态', dataIndex: 'status', key: 'status', width: 135 },
-  { title: '事由', dataIndex: 'reason', key: 'reason', width: 190 },
+  { title: '事由', dataIndex: 'reason', key: 'reason', width: 190, ellipsis: true },
   {
     title: '操作',
     key: 'actions',
     width: 70,
+    fixed: 'right' as const,
     customHeaderCell: () => ({ class: 'operations-column no-print' }),
     customCell: () => ({ class: 'operations-column no-print' }),
   },
 ];
 
 const pagination = computed(() => ({
+  itemRender: accessiblePaginationItem,
   current: page.value,
   pageSize: pageSize.value,
   total: total.value,
@@ -347,6 +350,7 @@ onMounted(() => {
           <template v-else-if="column.key === 'checkinAt'">{{ formatDateTime(record.checkinAt) || '—' }}</template>
           <template v-else-if="column.key === 'checkoutAt'">{{ formatDateTime(record.checkoutAt) || '—' }}</template>
           <template v-else-if="column.key === 'status'"><StatusTag :status="record.status" /></template>
+          <template v-else-if="column.key === 'reason'"><a-tooltip :title="record.reason"><span class="single-line">{{ record.reason || '—' }}</span></a-tooltip></template>
           <template v-else-if="column.key === 'actions'">—</template>
         </template>
       </a-table>
@@ -355,6 +359,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.single-line { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .filter-card {
   padding: var(--space-5);
   margin-bottom: var(--space-5);

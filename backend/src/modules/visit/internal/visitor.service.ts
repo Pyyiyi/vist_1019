@@ -5,7 +5,7 @@ import { MESSAGES } from '../../../shared/constants/messages.js';
 import { query, withTransaction } from '../../../shared/db/pool.js';
 import { conflict, forbidden, notFound, unprocessable } from '../../../shared/http/errors.js';
 import { newUuid } from '../../../shared/utils/ids.js';
-import { listNotificationsForUser } from '../../notify/index.js';
+import { listNotificationsForVisitor } from '../../notify/index.js';
 import { getActiveGates, getActiveHosts, getActiveVisitorTypes, getDictionaryItems } from '../../master/index.js';
 import { createAppointment, configNumber, validateSchedule } from './appointment.service.js';
 import * as repo from './repo.js';
@@ -123,7 +123,7 @@ export async function getVisitorAppointmentDetail(
     repo.findCompanions(id),
     repo.findHistory(id),
     repo.findCredential(id),
-    listNotificationsForUser(id, { page_size: 50 }),
+    listNotificationsForVisitor(id, { page_size: 50 }),
     getActiveHosts(),
     getActiveVisitorTypes(),
     getActiveGates(),

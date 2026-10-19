@@ -4,6 +4,7 @@ import { message } from 'ant-design-vue';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons-vue';
 
 import apiClient, { snakeToCamelKey } from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import ErrorState from '@/components/ErrorState.vue';
@@ -84,7 +85,7 @@ const hostColumns = [
   { title: '操作', key: 'actions', width: 132, fixed: 'right' as const },
 ];
 
-const blacklistPagination = computed(() => ({ current: blacklistPage.value, pageSize: blacklistPageSize.value, total: blacklistTotal.value, showSizeChanger: true, pageSizeOptions: ['20', '50', '100'], showTotal: (total: number) => `共 ${total} 条` }));
+const blacklistPagination = computed(() => ({ itemRender: accessiblePaginationItem, current: blacklistPage.value, pageSize: blacklistPageSize.value, total: blacklistTotal.value, showSizeChanger: true, pageSizeOptions: ['20', '50', '100'], showTotal: (total: number) => `共 ${total} 条` }));
 const statusTitle = computed(() => statusTarget.value?.next === 'inactive' ? '确认停用' : '确认启用');
 const statusContent = computed(() => statusTarget.value?.next === 'inactive' ? '停用后该数据不再出现在新增下拉中，历史记录保留。可再次启用。是否继续？' : '启用后该数据将重新出现在新增下拉中。是否继续？');
 const deleteTitle = computed(() => deleteTarget.value?.kind === 'blacklist' ? '确认删除黑名单条目' : '确认删除时段规则');

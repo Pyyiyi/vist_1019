@@ -41,6 +41,7 @@ vi.mock('../internal/notification.repo.js', () => ({
 import {
   listNotificationChannels,
   listNotificationsForUser,
+  listNotificationsForVisitor,
   markAllReadForUser,
   markReadForUser,
   publishNotification,
@@ -144,6 +145,7 @@ describe('通知服务', () => {
     });
 
     expect(mocks.listNotifications).toHaveBeenCalledWith(undefined, {
+      recipientType: 'user',
       recipientId: 'user-1',
       unreadOnly: true,
       limit: 20,
@@ -156,6 +158,24 @@ describe('通知服务', () => {
       businessId: 'appointment-1',
       readAt: null,
     });
+  });
+
+  it('lists visitor notifications by bound appointment id', async () => {
+    mocks.listNotifications.mockResolvedValue({
+      rows: [notificationRow({ recipient_type: 'visitor', recipient_id: 'appointment-1' })],
+      total: 1,
+    });
+
+    const result = await listNotificationsForVisitor('appointment-1', { page: '1', page_size: '50' });
+
+    expect(mocks.listNotifications).toHaveBeenCalledWith(undefined, {
+      recipientType: 'visitor',
+      recipientId: 'appointment-1',
+      unreadOnly: false,
+      limit: 50,
+      offset: 0,
+    });
+    expect(result.items[0]).toMatchObject({ id: 'notification-1', businessId: 'appointment-1' });
   });
 
   it('rejects marking another user notification as read', async () => {

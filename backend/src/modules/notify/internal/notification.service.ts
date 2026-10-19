@@ -180,14 +180,16 @@ export async function publishSecurityNotification(
   return insertAndEmit(input, true);
 }
 
-export async function listNotificationsForUser(
-  userId: string,
+async function listNotificationsForRecipient(
+  recipientType: 'user' | 'visitor',
+  recipientId: string,
   input: NotificationListInput,
 ): Promise<{ items: NotificationDto[]; total: number; page: number; pageSize: number }> {
   const pagination = parsePagination(input as Record<string, unknown>);
   const unreadOnly = booleanQuery(input.unread_only ?? input.unreadOnly);
   const result = await repo.listNotifications(undefined, {
-    recipientId: userId,
+    recipientType,
+    recipientId,
     unreadOnly,
     limit: pagination.pageSize,
     offset: pagination.offset,
@@ -199,6 +201,20 @@ export async function listNotificationsForUser(
     page: pagination.page,
     pageSize: pagination.pageSize,
   };
+}
+
+export async function listNotificationsForUser(
+  userId: string,
+  input: NotificationListInput,
+) {
+  return listNotificationsForRecipient('user', userId, input);
+}
+
+export async function listNotificationsForVisitor(
+  appointmentId: string,
+  input: NotificationListInput,
+) {
+  return listNotificationsForRecipient('visitor', appointmentId, input);
 }
 
 export async function unreadCountForUser(userId: string): Promise<number> {

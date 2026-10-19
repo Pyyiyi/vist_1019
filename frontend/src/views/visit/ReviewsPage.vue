@@ -4,6 +4,7 @@ import { message } from 'ant-design-vue';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import apiClient from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import ErrorState from '@/components/ErrorState.vue';
@@ -54,7 +55,7 @@ const columns = [
   { title: '事由', dataIndex: 'reason', key: 'reason', width: 220 },
   { title: '操作', key: 'actions', width: 260, fixed: 'right' as const },
 ];
-const pagination = computed(() => ({ current: page.value, pageSize: pageSize.value, total: total.value, showSizeChanger: false, showTotal: (value: number) => `共 ${value} 条` }));
+const pagination = computed(() => ({ itemRender: accessiblePaginationItem, current: page.value, pageSize: pageSize.value, total: total.value, showSizeChanger: false, showTotal: (value: number) => `共 ${value} 条` }));
 
 async function load(): Promise<void> {
   loading.value = true;

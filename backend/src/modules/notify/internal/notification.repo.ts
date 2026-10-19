@@ -35,6 +35,7 @@ export type InsertNotificationInput = {
 };
 
 export type NotificationListOptions = {
+  recipientType?: 'user' | 'visitor';
   recipientId: string;
   unreadOnly: boolean;
   limit: number;
@@ -137,8 +138,8 @@ export async function listNotifications(
   client: DbClient | undefined,
   options: NotificationListOptions,
 ): Promise<{ rows: NotificationRow[]; total: number }> {
-  const conditions = ["recipient_type = 'user'", 'recipient_id = $1'];
-  const params: unknown[] = [options.recipientId];
+  const conditions = ['recipient_type = $1', 'recipient_id = $2'];
+  const params: unknown[] = [options.recipientType ?? 'user', options.recipientId];
 
   if (options.unreadOnly) {
     conditions.push('read_at IS NULL');

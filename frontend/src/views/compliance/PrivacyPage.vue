@@ -4,6 +4,7 @@ import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
 import apiClient from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import ErrorState from '@/components/ErrorState.vue';
@@ -222,7 +223,7 @@ onMounted(() => {
         row-key="id"
         :columns="columns"
         :data-source="cases"
-        :pagination="{ current: casesPage, pageSize: casesPageSize, total: casesTotal, showSizeChanger: true, showTotal: (value: number) => `共 ${value} 条` }"
+        :pagination="{ current: casesPage, pageSize: casesPageSize, total: casesTotal, showSizeChanger: true, itemRender: accessiblePaginationItem, showTotal: (value: number) => `共 ${value} 条` }"
         :scroll="{ x: 860 }"
         @change="onCasesPageChange"
       >

@@ -11,7 +11,6 @@ function backToWorkbench(): void {
 <template>
   <main class="forbidden-page">
     <section class="forbidden-card">
-      <div class="forbidden-code">403</div>
       <h1>无权访问</h1>
       <p>您没有访问该页面的权限</p>
       <a-button type="primary" size="large" @click="backToWorkbench">
@@ -37,15 +36,6 @@ function backToWorkbench(): void {
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
   text-align: center;
-}
-
-.forbidden-code {
-  margin-bottom: 8px;
-  color: var(--color-primary);
-  font-size: 64px;
-  font-weight: 750;
-  letter-spacing: 4px;
-  line-height: 1;
 }
 
 .forbidden-card h1 {

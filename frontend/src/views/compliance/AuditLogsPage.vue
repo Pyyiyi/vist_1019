@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import dayjs from 'dayjs';
 
 import apiClient from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import EmptyState from '@/components/EmptyState.vue';
 import ErrorState from '@/components/ErrorState.vue';
 import LoadingState from '@/components/LoadingState.vue';
@@ -220,7 +221,7 @@ onMounted(load);
         row-key="id"
         :columns="columns"
         :data-source="items"
-        :pagination="{ current: page, pageSize, total, showSizeChanger: true, showTotal: (value: number) => `共 ${value} 条` }"
+        :pagination="{ current: page, pageSize, total, showSizeChanger: true, itemRender: accessiblePaginationItem, showTotal: (value: number) => `共 ${value} 条` }"
         :scroll="{ x: 1060 }"
         @change="onPageChange"
       >

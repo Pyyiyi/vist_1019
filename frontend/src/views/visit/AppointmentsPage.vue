@@ -5,6 +5,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 import { useRoute, useRouter } from 'vue-router';
 
 import apiClient from '@/api/client';
+import { accessiblePaginationItem } from '@/utils/pagination';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import CopyButton from '@/components/CopyButton.vue';
 import EmptyState from '@/components/EmptyState.vue';
@@ -55,7 +56,7 @@ const columns = [
   { title: '操作', key: 'actions', width: 220, fixed: 'right' as const },
 ];
 
-const pagination = computed(() => ({ current: page.value, pageSize: pageSize.value, total: total.value, showSizeChanger: true, pageSizeOptions: ['20', '50', '100'], showTotal: (value: number) => `共 ${value} 条` }));
+const pagination = computed(() => ({ itemRender: accessiblePaginationItem, current: page.value, pageSize: pageSize.value, total: total.value, showSizeChanger: true, pageSizeOptions: ['20', '50', '100'], showTotal: (value: number) => `共 ${value} 条` }));
 
 function queryParams(): Record<string, unknown> {
   return {
