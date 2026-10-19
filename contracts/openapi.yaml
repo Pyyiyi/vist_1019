@@ -1,0 +1,6245 @@
+openapi: 3.0.3
+info:
+  title: 校园访客系统 V1.0 API
+  version: 1.0.0
+  description: 契约冻结于 docs/trace/runs/v1/spac.md §6；89 个方法操作 / 72 个唯一路径。
+  license:
+    name: Proprietary
+    url: https://github.com/Pyyiyi/vist_1019
+servers:
+- url: /api/v1
+tags:
+- name: access
+  description: 认证、用户、角色与工作台
+- name: visit
+  description: 预约、审核、门卫与访客 H5
+- name: master
+  description: 主数据与系统参数
+- name: notify
+  description: 站内通知与渠道
+- name: report
+  description: 台账、在校清单与统计
+- name: compliance
+  description: 审计、隐私与信息副本
+x-contract-endpoint-index:
+  /auth/csrf#GET:
+    method: GET
+    path: /auth/csrf
+    access: 公开
+    authentication: public
+  /auth/login#POST:
+    method: POST
+    path: /auth/login
+    access: 公开
+    authentication: public
+  /auth/logout#POST:
+    method: POST
+    path: /auth/logout
+    access: 已登录
+    authentication: session
+  /auth/me#GET:
+    method: GET
+    path: /auth/me
+    access: 已登录
+    authentication: session
+  /auth/password#PUT:
+    method: PUT
+    path: /auth/password
+    access: 已登录
+    authentication: session
+  /users#GET:
+    method: GET
+    path: /users
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /users#POST:
+    method: POST
+    path: /users
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /users/{id}#PUT:
+    method: PUT
+    path: /users/{id}
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /users/{id}/status#PUT:
+    method: PUT
+    path: /users/{id}/status
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /users/{id}/password#PUT:
+    method: PUT
+    path: /users/{id}/password
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /users/{id}#DELETE:
+    method: DELETE
+    path: /users/{id}
+    access: admin
+    authentication: session
+    permission: access:user:manage
+  /roles#GET:
+    method: GET
+    path: /roles
+    access: admin
+    authentication: session
+    permission: access:role:read
+  /roles/{code}/permissions#GET:
+    method: GET
+    path: /roles/{code}/permissions
+    access: admin
+    authentication: session
+    permission: access:role:read
+  /workbench/summary#GET:
+    method: GET
+    path: /workbench/summary
+    access: 后台角色
+    authentication: session
+    permission: pt:workbench:read
+  /system/entry-qr#GET:
+    method: GET
+    path: /system/entry-qr
+    access: admin
+    authentication: session
+    permission: pt:qr:manage
+  /system/entry-qr.png#GET:
+    method: GET
+    path: /system/entry-qr.png
+    access: admin
+    authentication: session
+    permission: pt:qr:manage
+  /appointments/form-options#GET:
+    method: GET
+    path: /appointments/form-options
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:read
+  /appointments#GET:
+    method: GET
+    path: /appointments
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:read
+  /appointments#POST:
+    method: POST
+    path: /appointments
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:create
+  /appointments/{id}#GET:
+    method: GET
+    path: /appointments/{id}
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:read
+  /appointments/{id}/reschedule#PUT:
+    method: PUT
+    path: /appointments/{id}/reschedule
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:update
+  /appointments/{id}/cancel#PUT:
+    method: PUT
+    path: /appointments/{id}/cancel
+    access: admin/host
+    authentication: session
+    permission: visit:appointment:cancel
+  /reviews#GET:
+    method: GET
+    path: /reviews
+    access: admin/host
+    authentication: session
+    permission: visit:review:read
+  /reviews/{id}#GET:
+    method: GET
+    path: /reviews/{id}
+    access: admin/host
+    authentication: session
+    permission: visit:review:read
+  /reviews/{id}/approve#POST:
+    method: POST
+    path: /reviews/{id}/approve
+    access: admin/host
+    authentication: session
+    permission: visit:review:decide
+  /reviews/{id}/reject#POST:
+    method: POST
+    path: /reviews/{id}/reject
+    access: admin/host
+    authentication: session
+    permission: visit:review:decide
+  /reviews/{id}/reschedule#POST:
+    method: POST
+    path: /reviews/{id}/reschedule
+    access: admin/host
+    authentication: session
+    permission: visit:review:reschedule
+  /reviews/{id}/logs#GET:
+    method: GET
+    path: /reviews/{id}/logs
+    access: admin/host
+    authentication: session
+    permission: visit:review:read
+  /reviews/assignment#GET:
+    method: GET
+    path: /reviews/assignment
+    access: admin
+    authentication: session
+    permission: master:reviewer-rule:manage
+  /reviews/assignment#PUT:
+    method: PUT
+    path: /reviews/assignment
+    access: admin
+    authentication: session
+    permission: master:reviewer-rule:manage
+  /gate/today#GET:
+    method: GET
+    path: /gate/today
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:today:read
+  /gate/form-options#GET:
+    method: GET
+    path: /gate/form-options
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:verify
+  /gate/verify#POST:
+    method: POST
+    path: /gate/verify
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:verify
+  /gate/admit#POST:
+    method: POST
+    path: /gate/admit
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:admit
+  /gate/depart#POST:
+    method: POST
+    path: /gate/depart
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:depart
+  /gate/walk-in#POST:
+    method: POST
+    path: /gate/walk-in
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:walkin
+  /gate/incidents#POST:
+    method: POST
+    path: /gate/incidents
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:incident:report
+  /gate/incidents#GET:
+    method: GET
+    path: /gate/incidents
+    access: admin/guard
+    authentication: session
+    permission: visit:gate:today:read
+  /gate/incidents/{id}/disposition#PUT:
+    method: PUT
+    path: /gate/incidents/{id}/disposition
+    access: admin
+    authentication: session
+    permission: visit:gate:incident:dispose
+  /visitor/form-options#GET:
+    method: GET
+    path: /visitor/form-options
+    access: 公开
+    authentication: public
+  /visitor/appointments#POST:
+    method: POST
+    path: /visitor/appointments
+    access: 公开
+    authentication: public
+  /visitor/appointments#GET:
+    method: GET
+    path: /visitor/appointments
+    access: 令牌
+    authentication: visitor_token
+  /visitor/appointments/{id}#GET:
+    method: GET
+    path: /visitor/appointments/{id}
+    access: 令牌
+    authentication: visitor_token
+  /visitor/appointments/{id}/confirm-reschedule#POST:
+    method: POST
+    path: /visitor/appointments/{id}/confirm-reschedule
+    access: 令牌
+    authentication: visitor_token
+  /visitor/appointments/{id}/reschedule#PUT:
+    method: PUT
+    path: /visitor/appointments/{id}/reschedule
+    access: 令牌
+    authentication: visitor_token
+  /visitor/appointments/{id}/cancel#PUT:
+    method: PUT
+    path: /visitor/appointments/{id}/cancel
+    access: 令牌
+    authentication: visitor_token
+  /master/visitor-types#GET:
+    method: GET
+    path: /master/visitor-types
+    access: admin
+    authentication: session
+    permission: master:visitor-type:manage
+  /master/visitor-types#POST:
+    method: POST
+    path: /master/visitor-types
+    access: admin
+    authentication: session
+    permission: master:visitor-type:manage
+  /master/visitor-types/{id}#PUT:
+    method: PUT
+    path: /master/visitor-types/{id}
+    access: admin
+    authentication: session
+    permission: master:visitor-type:manage
+  /master/visitor-types/{id}/status#PUT:
+    method: PUT
+    path: /master/visitor-types/{id}/status
+    access: admin
+    authentication: session
+    permission: master:visitor-type:manage
+  /master/visitor-types/{id}#DELETE:
+    method: DELETE
+    path: /master/visitor-types/{id}
+    access: admin
+    authentication: session
+    permission: master:visitor-type:manage
+  /master/blacklist#GET:
+    method: GET
+    path: /master/blacklist
+    access: admin
+    authentication: session
+    permission: master:blacklist:manage
+  /master/blacklist#POST:
+    method: POST
+    path: /master/blacklist
+    access: admin
+    authentication: session
+    permission: master:blacklist:manage
+  /master/blacklist/{id}#DELETE:
+    method: DELETE
+    path: /master/blacklist/{id}
+    access: admin
+    authentication: session
+    permission: master:blacklist:manage
+  /master/time-rules#GET:
+    method: GET
+    path: /master/time-rules
+    access: admin
+    authentication: session
+    permission: master:time-rule:manage
+  /master/time-rules#POST:
+    method: POST
+    path: /master/time-rules
+    access: admin
+    authentication: session
+    permission: master:time-rule:manage
+  /master/time-rules/{id}#DELETE:
+    method: DELETE
+    path: /master/time-rules/{id}
+    access: admin
+    authentication: session
+    permission: master:time-rule:manage
+  /master/gates#GET:
+    method: GET
+    path: /master/gates
+    access: admin
+    authentication: session
+    permission: master:gate:manage
+  /master/gates#POST:
+    method: POST
+    path: /master/gates
+    access: admin
+    authentication: session
+    permission: master:gate:manage
+  /master/gates/{id}#PUT:
+    method: PUT
+    path: /master/gates/{id}
+    access: admin
+    authentication: session
+    permission: master:gate:manage
+  /master/gates/{id}/status#PUT:
+    method: PUT
+    path: /master/gates/{id}/status
+    access: admin
+    authentication: session
+    permission: master:gate:manage
+  /master/gates/{id}#DELETE:
+    method: DELETE
+    path: /master/gates/{id}
+    access: admin
+    authentication: session
+    permission: master:gate:manage
+  /master/hosts#GET:
+    method: GET
+    path: /master/hosts
+    access: admin
+    authentication: session
+    permission: master:host:manage
+  /master/hosts#POST:
+    method: POST
+    path: /master/hosts
+    access: admin
+    authentication: session
+    permission: master:host:manage
+  /master/hosts/{id}#PUT:
+    method: PUT
+    path: /master/hosts/{id}
+    access: admin
+    authentication: session
+    permission: master:host:manage
+  /master/hosts/{id}/status#PUT:
+    method: PUT
+    path: /master/hosts/{id}/status
+    access: admin
+    authentication: session
+    permission: master:host:manage
+  /master/hosts/{id}#DELETE:
+    method: DELETE
+    path: /master/hosts/{id}
+    access: admin
+    authentication: session
+    permission: master:host:manage
+  /system/params#GET:
+    method: GET
+    path: /system/params
+    access: admin
+    authentication: session
+    permission: system:param:manage
+  /system/params/{key}#PUT:
+    method: PUT
+    path: /system/params/{key}
+    access: admin
+    authentication: session
+    permission: system:param:manage
+  /system/dictionary#GET:
+    method: GET
+    path: /system/dictionary
+    access: admin
+    authentication: session
+    permission: system:dictionary:manage
+  /system/dictionary#POST:
+    method: POST
+    path: /system/dictionary
+    access: admin
+    authentication: session
+    permission: system:dictionary:manage
+  /system/dictionary/{id}/status#PUT:
+    method: PUT
+    path: /system/dictionary/{id}/status
+    access: admin
+    authentication: session
+    permission: system:dictionary:manage
+  /notifications#GET:
+    method: GET
+    path: /notifications
+    access: 后台角色
+    authentication: session
+    permission: notify:notification:read
+  /notifications/unread-count#GET:
+    method: GET
+    path: /notifications/unread-count
+    access: 后台角色
+    authentication: session
+    permission: notify:notification:read
+  /notifications/{id}/read#PUT:
+    method: PUT
+    path: /notifications/{id}/read
+    access: 后台角色
+    authentication: session
+    permission: notify:notification:read
+  /notifications/read-all#PUT:
+    method: PUT
+    path: /notifications/read-all
+    access: 后台角色
+    authentication: session
+    permission: notify:notification:read
+  /system/notification-channels#GET:
+    method: GET
+    path: /system/notification-channels
+    access: admin
+    authentication: session
+    permission: notify:channel:manage
+  /system/notification-channels#PUT:
+    method: PUT
+    path: /system/notification-channels
+    access: admin
+    authentication: session
+    permission: notify:channel:manage
+  /logs#GET:
+    method: GET
+    path: /logs
+    access: admin/guard
+    authentication: session
+    permission: report:ledger:read
+  /logs/on-campus#GET:
+    method: GET
+    path: /logs/on-campus
+    access: admin/guard
+    authentication: session
+    permission: report:ledger:read
+  /logs/export#GET:
+    method: GET
+    path: /logs/export
+    access: admin
+    authentication: session
+    permission: report:ledger:export
+  /stats/visits#GET:
+    method: GET
+    path: /stats/visits
+    access: admin
+    authentication: session
+    permission: report:stats:read
+  /stats/incidents#GET:
+    method: GET
+    path: /stats/incidents
+    access: admin
+    authentication: session
+    permission: report:stats:read
+  /audit-logs#GET:
+    method: GET
+    path: /audit-logs
+    access: admin
+    authentication: session
+    permission: compliance:audit:read
+  /privacy/retention#GET:
+    method: GET
+    path: /privacy/retention
+    access: admin
+    authentication: session
+    permission: compliance:privacy:manage
+  /privacy/retention#PUT:
+    method: PUT
+    path: /privacy/retention
+    access: admin
+    authentication: session
+    permission: compliance:privacy:manage
+  /privacy/appointments/{id}/erase#POST:
+    method: POST
+    path: /privacy/appointments/{id}/erase
+    access: admin
+    authentication: session
+    permission: compliance:privacy:manage
+  /privacy/cases#GET:
+    method: GET
+    path: /privacy/cases
+    access: admin
+    authentication: session
+    permission: compliance:privacy:manage
+  /visitor/privacy/copy#GET:
+    method: GET
+    path: /visitor/privacy/copy
+    access: 令牌
+    authentication: visitor_token
+paths:
+    /auth/csrf:
+      get:
+        tags:
+        - access
+        summary: 获取 CSRF 令牌
+        description: 获取 CSRF 令牌
+        operationId: get_auth_csrf
+        security: []
+        x-access: 公开
+        x-authentication: public
+        x-allowed-roles: []
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CsrfData'
+                    required:
+                    - data
+            headers:
+              Set-Cookie:
+                description: vs.csrf 双提交 Cookie
+                schema:
+                  type: string
+          '429':
+            $ref: '#/components/responses/TooManyRequests'
+        parameters: []
+    /auth/login:
+      post:
+        tags:
+        - access
+        summary: 账号或工号登录
+        description: 账号或工号登录
+        operationId: post_auth_login
+        security: []
+        x-access: 公开
+        x-authentication: public
+        x-allowed-roles: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LoginData'
+                    required:
+                    - data
+            headers:
+              Set-Cookie:
+                description: vs.sid 会话 Cookie
+                schema:
+                  type: string
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+          '429':
+            $ref: '#/components/responses/TooManyRequests'
+        parameters: []
+    /auth/logout:
+      post:
+        tags:
+        - access
+        summary: 退出登录
+        description: 退出登录
+        operationId: post_auth_logout
+        security:
+        - sessionCookie: []
+        x-access: 已登录
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LoggedOutData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+        parameters: []
+    /auth/me:
+      get:
+        tags:
+        - access
+        summary: 获取当前用户
+        description: 获取当前用户
+        operationId: get_auth_me
+        security:
+        - sessionCookie: []
+        x-access: 已登录
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MeData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+        parameters: []
+    /auth/password:
+      put:
+        tags:
+        - access
+        summary: 修改当前用户密码
+        description: 修改当前用户密码
+        operationId: put_auth_password
+        security:
+        - sessionCookie: []
+        x-access: 已登录
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordChangeRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ChangedData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /users:
+      get:
+        tags:
+        - access
+        summary: 分页查询用户
+        description: 分页查询用户
+        operationId: get_users
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Role'
+        - $ref: '#/components/parameters/Status'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UserPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - access
+        summary: 新增用户
+        description: 新增用户
+        operationId: post_users
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UserMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /users/{id}:
+      put:
+        tags:
+        - access
+        summary: 更新用户资料
+        description: 更新用户资料
+        operationId: put_users_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UserMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+      delete:
+        tags:
+        - access
+        summary: 拒绝硬删除用户
+        description: 拒绝硬删除用户
+        operationId: delete_users_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Envelope'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '405':
+            $ref: '#/components/responses/MethodNotAllowed'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /users/{id}/status:
+      put:
+        tags:
+        - access
+        summary: 启用或停用用户
+        description: 启用或停用用户
+        operationId: put_users_id_status
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatusRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UserStatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /users/{id}/password:
+      put:
+        tags:
+        - access
+        summary: 管理员重置密码
+        description: 管理员重置密码
+        operationId: put_users_id_password
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:user:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPasswordResetRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ResetPasswordData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /roles:
+      get:
+        tags:
+        - access
+        summary: 查询角色列表
+        description: 查询角色列表
+        operationId: get_roles
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:role:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Role'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /roles/{code}/permissions:
+      get:
+        tags:
+        - access
+        summary: 查询角色权限
+        description: 查询角色权限
+        operationId: get_roles_code_permissions
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: access:role:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/RolePermissionsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathCode'
+    /workbench/summary:
+      get:
+        tags:
+        - access
+        summary: 查询工作台摘要
+        description: 查询工作台摘要
+        operationId: get_workbench_summary
+        security:
+        - sessionCookie: []
+        x-access: 后台角色
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        x-required-permission: pt:workbench:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WorkbenchSummaryData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+        parameters: []
+    /system/entry-qr:
+      get:
+        tags:
+        - access
+        summary: 获取入口二维码数据
+        description: 获取入口二维码数据
+        operationId: get_system_entry_qr
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: pt:qr:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/EntryQrData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /system/entry-qr.png:
+      get:
+        tags:
+        - access
+        summary: 下载入口二维码 PNG
+        description: 下载入口二维码 PNG
+        operationId: get_system_entry_qr_png
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: pt:qr:manage
+        responses:
+          '200':
+            description: 文件流
+            content:
+              image/png:
+                schema:
+                  type: string
+                  format: binary
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /appointments/form-options:
+      get:
+        tags:
+        - visit
+        summary: 获取后台预约表单选项
+        description: 获取后台预约表单选项
+        operationId: get_appointments_form_options
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/FormOptionsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /appointments:
+      get:
+        tags:
+        - visit
+        summary: 分页查询预约
+        description: 分页查询预约
+        operationId: get_appointments
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - visit
+        summary: 后台代提预约
+        description: 后台代提预约
+        operationId: post_appointments
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:create
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentCreateResult'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /appointments/{id}:
+      get:
+        tags:
+        - visit
+        summary: 查询预约详情
+        description: 查询预约详情
+        operationId: get_appointments_id
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentDetail'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /appointments/{id}/reschedule:
+      put:
+        tags:
+        - visit
+        summary: 改期预约
+        description: 改期预约
+        operationId: put_appointments_id_reschedule
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:update
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentRescheduleRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Appointment'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /appointments/{id}/cancel:
+      put:
+        tags:
+        - visit
+        summary: 取消预约
+        description: 取消预约
+        operationId: put_appointments_id_cancel
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:appointment:cancel
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews:
+      get:
+        tags:
+        - visit
+        summary: 分页查询待审核预约
+        description: 分页查询待审核预约
+        operationId: get_reviews
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Status'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /reviews/{id}:
+      get:
+        tags:
+        - visit
+        summary: 查询审核详情
+        description: 查询审核详情
+        operationId: get_reviews_id
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentDetail'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews/{id}/approve:
+      post:
+        tags:
+        - visit
+        summary: 同意预约
+        description: 同意预约
+        operationId: post_reviews_id_approve
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:decide
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews/{id}/reject:
+      post:
+        tags:
+        - visit
+        summary: 拒绝预约
+        description: 拒绝预约
+        operationId: post_reviews_id_reject
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:decide
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewRejectRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews/{id}/reschedule:
+      post:
+        tags:
+        - visit
+        summary: 提议改期
+        description: 提议改期
+        operationId: post_reviews_id_reschedule
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:reschedule
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentRescheduleRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews/{id}/logs:
+      get:
+        tags:
+        - visit
+        summary: 查询审核留痕
+        description: 查询审核留痕
+        operationId: get_reviews_id_logs
+        security:
+        - sessionCookie: []
+        x-access: admin/host
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - host
+        x-required-permission: visit:review:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ReviewLogsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /reviews/assignment:
+      get:
+        tags:
+        - visit
+        summary: 查询审核人规则
+        description: 查询审核人规则
+        operationId: get_reviews_assignment
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:reviewer-rule:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ReviewerRuleListData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+      put:
+        tags:
+        - visit
+        summary: 保存审核人规则
+        description: 保存审核人规则
+        operationId: put_reviews_assignment
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:reviewer-rule:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewAssignmentRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ReviewerRuleListData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /gate/today:
+      get:
+        tags:
+        - visit
+        summary: 查询本地当日门卫视图
+        description: 查询本地当日门卫视图
+        operationId: get_gate_today
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:today:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateTodayData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /gate/form-options:
+      get:
+        tags:
+        - visit
+        summary: 获取门卫表单选项
+        description: 获取门卫表单选项
+        operationId: get_gate_form_options
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:verify
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateFormOptionsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /gate/verify:
+      post:
+        tags:
+        - visit
+        summary: 核验访客凭证
+        description: 核验访客凭证
+        operationId: post_gate_verify
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:verify
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateVerifyRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateVerifyData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /gate/admit:
+      post:
+        tags:
+        - visit
+        summary: 核销并放行
+        description: 核销并放行
+        operationId: post_gate_admit
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:admit
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateAdmitRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AdmitData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /gate/depart:
+      post:
+        tags:
+        - visit
+        summary: 登记离校
+        description: 登记离校
+        operationId: post_gate_depart
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:depart
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateAdmitRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DepartData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '409':
+            $ref: '#/components/responses/Conflict'
+        parameters: []
+    /gate/walk-in:
+      post:
+        tags:
+        - visit
+        summary: 无预约现场登记
+        description: 无预约现场登记
+        operationId: post_gate_walk_in
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:walkin
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalkInRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WalkInData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /gate/incidents:
+      post:
+        tags:
+        - visit
+        summary: 上报异常
+        description: 上报异常
+        operationId: post_gate_incidents
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:incident:report
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncidentCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/IncidentMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+      get:
+        tags:
+        - visit
+        summary: 分页查询异常记录
+        description: 分页查询异常记录
+        operationId: get_gate_incidents
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: visit:gate:today:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Type'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/IncidentPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /gate/incidents/{id}/disposition:
+      put:
+        tags:
+        - visit
+        summary: 处置异常
+        description: 处置异常
+        operationId: put_gate_incidents_id_disposition
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: visit:gate:incident:dispose
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncidentDispositionRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/IncidentMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /visitor/form-options:
+      get:
+        tags:
+        - visit
+        summary: 获取 H5 预约表单选项
+        description: 获取 H5 预约表单选项
+        operationId: get_visitor_form_options
+        security: []
+        x-access: 公开
+        x-authentication: public
+        x-allowed-roles: []
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorFormOptionsData'
+                    required:
+                    - data
+          '429':
+            $ref: '#/components/responses/TooManyRequests'
+        parameters: []
+    /visitor/appointments:
+      post:
+        tags:
+        - visit
+        summary: H5 提交预约
+        description: H5 提交预约
+        operationId: post_visitor_appointments
+        security: []
+        x-access: 公开
+        x-authentication: public
+        x-allowed-roles: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitorAppointmentCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentCreateResult'
+                    required:
+                    - data
+            headers:
+              Set-Cookie:
+                description: vs.visitor 访客令牌 Cookie
+                schema:
+                  type: string
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+      get:
+        tags:
+        - visit
+        summary: 查询本人绑定预约
+        description: 查询本人绑定预约
+        operationId: get_visitor_appointments
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorAppointmentListData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /visitor/appointments/{id}:
+      get:
+        tags:
+        - visit
+        summary: 查询本人预约详情、凭证与消息
+        description: 查询本人预约详情、凭证与消息
+        operationId: get_visitor_appointments_id
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorAppointmentDetail'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /visitor/appointments/{id}/confirm-reschedule:
+      post:
+        tags:
+        - visit
+        summary: 确认改期提议
+        description: 确认改期提议
+        operationId: post_visitor_appointments_id_confirm_reschedule
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /visitor/appointments/{id}/reschedule:
+      put:
+        tags:
+        - visit
+        summary: 访客发起改期
+        description: 访客发起改期
+        operationId: put_visitor_appointments_id_reschedule
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentRescheduleRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /visitor/appointments/{id}/cancel:
+      put:
+        tags:
+        - visit
+        summary: 访客取消预约
+        description: 访客取消预约
+        operationId: put_visitor_appointments_id_cancel
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/visitor-types:
+      get:
+        tags:
+        - master
+        summary: 查询访客类型
+        description: 查询访客类型
+        operationId: get_master_visitor_types
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:visitor-type:manage
+        parameters:
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/IncludeInactive'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VisitorType'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - master
+        summary: 新增访客类型
+        description: 新增访客类型
+        operationId: post_master_visitor_types
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:visitor-type:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NameRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorTypeMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /master/visitor-types/{id}:
+      put:
+        tags:
+        - master
+        summary: 修改访客类型名称
+        description: 修改访客类型名称
+        operationId: put_master_visitor_types_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:visitor-type:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NameRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorTypeMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+      delete:
+        tags:
+        - master
+        summary: 拒绝硬删除访客类型
+        description: 拒绝硬删除访客类型
+        operationId: delete_master_visitor_types_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:visitor-type:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Envelope'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '405':
+            $ref: '#/components/responses/MethodNotAllowed'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/visitor-types/{id}/status:
+      put:
+        tags:
+        - master
+        summary: 启停访客类型
+        description: 启停访客类型
+        operationId: put_master_visitor_types_id_status
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:visitor-type:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorTypeMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/blacklist:
+      get:
+        tags:
+        - master
+        summary: 分页查询黑名单
+        description: 分页查询黑名单
+        operationId: get_master_blacklist
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:blacklist:manage
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Status'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BlacklistPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - master
+        summary: 新增黑名单条目
+        description: 新增黑名单条目
+        operationId: post_master_blacklist
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:blacklist:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlacklistCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BlacklistMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /master/blacklist/{id}:
+      delete:
+        tags:
+        - master
+        summary: 软删除黑名单条目
+        description: 软删除黑名单条目
+        operationId: delete_master_blacklist_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:blacklist:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BlacklistDeleteData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/time-rules:
+      get:
+        tags:
+        - master
+        summary: 查询时段规则
+        description: 查询时段规则
+        operationId: get_master_time_rules
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:time-rule:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TimeRule'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+      post:
+        tags:
+        - master
+        summary: 新增时段规则
+        description: 新增时段规则
+        operationId: post_master_time_rules
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:time-rule:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeRuleCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TimeRuleMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /master/time-rules/{id}:
+      delete:
+        tags:
+        - master
+        summary: 删除时段规则
+        description: 删除时段规则
+        operationId: delete_master_time_rules_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:time-rule:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DeleteFlagData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/gates:
+      get:
+        tags:
+        - master
+        summary: 查询校门
+        description: 查询校门
+        operationId: get_master_gates
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:gate:manage
+        parameters:
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/IncludeInactive'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Gate'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - master
+        summary: 新增校门
+        description: 新增校门
+        operationId: post_master_gates
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:gate:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NameRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /master/gates/{id}:
+      put:
+        tags:
+        - master
+        summary: 修改校门名称
+        description: 修改校门名称
+        operationId: put_master_gates_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:gate:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NameRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+      delete:
+        tags:
+        - master
+        summary: 拒绝硬删除校门
+        description: 拒绝硬删除校门
+        operationId: delete_master_gates_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:gate:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Envelope'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '405':
+            $ref: '#/components/responses/MethodNotAllowed'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/gates/{id}/status:
+      put:
+        tags:
+        - master
+        summary: 启停校门
+        description: 启停校门
+        operationId: put_master_gates_id_status
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:gate:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/GateMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/hosts:
+      get:
+        tags:
+        - master
+        summary: 查询教职工名册
+        description: 查询教职工名册
+        operationId: get_master_hosts
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:host:manage
+        parameters:
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/IncludeInactive'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Host'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - master
+        summary: 新增教职工
+        description: 新增教职工
+        operationId: post_master_hosts
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:host:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HostCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/HostMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /master/hosts/{id}:
+      put:
+        tags:
+        - master
+        summary: 更新教职工
+        description: 更新教职工
+        operationId: put_master_hosts_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:host:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HostUpdateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/HostMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+      delete:
+        tags:
+        - master
+        summary: 拒绝硬删除教职工
+        description: 拒绝硬删除教职工
+        operationId: delete_master_hosts_id
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:host:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Envelope'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '405':
+            $ref: '#/components/responses/MethodNotAllowed'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /master/hosts/{id}/status:
+      put:
+        tags:
+        - master
+        summary: 启停教职工
+        description: 启停教职工
+        operationId: put_master_hosts_id_status
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: master:host:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/HostMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /system/params:
+      get:
+        tags:
+        - master
+        summary: 查询系统参数
+        description: 查询系统参数
+        operationId: get_system_params
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: system:param:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Parameter'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /system/params/{key}:
+      put:
+        tags:
+        - master
+        summary: 更新系统参数
+        description: 更新系统参数
+        operationId: put_system_params_key
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: system:param:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParameterUpdateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ParameterMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathKey'
+    /system/dictionary:
+      get:
+        tags:
+        - master
+        summary: 查询数据字典
+        description: 查询数据字典
+        operationId: get_system_dictionary
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: system:dictionary:manage
+        parameters:
+        - $ref: '#/components/parameters/Type'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DictionaryItem'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+      post:
+        tags:
+        - master
+        summary: 新增字典项
+        description: 新增字典项
+        operationId: post_system_dictionary
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: system:dictionary:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictionaryCreateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DictionaryMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '409':
+            $ref: '#/components/responses/Conflict'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /system/dictionary/{id}/status:
+      put:
+        tags:
+        - master
+        summary: 启停字典项
+        description: 启停字典项
+        operationId: put_system_dictionary_id_status
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: system:dictionary:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DictionaryMutationData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /notifications:
+      get:
+        tags:
+        - notify
+        summary: 分页查询站内消息
+        description: 分页查询站内消息
+        operationId: get_notifications
+        security:
+        - sessionCookie: []
+        x-access: 后台角色
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        x-required-permission: notify:notification:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/UnreadOnly'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/NotificationPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+    /notifications/unread-count:
+      get:
+        tags:
+        - notify
+        summary: 查询未读消息数
+        description: 查询未读消息数
+        operationId: get_notifications_unread_count
+        security:
+        - sessionCookie: []
+        x-access: 后台角色
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        x-required-permission: notify:notification:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/UnreadCountData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+        parameters: []
+    /notifications/{id}/read:
+      put:
+        tags:
+        - notify
+        summary: 标记消息已读
+        description: 标记消息已读
+        operationId: put_notifications_id_read
+        security:
+        - sessionCookie: []
+        x-access: 后台角色
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        x-required-permission: notify:notification:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/NotificationReadData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /notifications/read-all:
+      put:
+        tags:
+        - notify
+        summary: 全部标记已读
+        description: 全部标记已读
+        operationId: put_notifications_read_all
+        security:
+        - sessionCookie: []
+        x-access: 后台角色
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        - host
+        x-required-permission: notify:notification:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ReadAllData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+        parameters: []
+    /system/notification-channels:
+      get:
+        tags:
+        - notify
+        summary: 查询通知渠道
+        description: 查询通知渠道
+        operationId: get_system_notification_channels
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: notify:channel:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/NotificationChannel'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+      put:
+        tags:
+        - notify
+        summary: 更新通知渠道
+        description: 更新通知渠道
+        operationId: put_system_notification_channels
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: notify:channel:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationChannelUpdateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/NotificationChannel'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /logs:
+      get:
+        tags:
+        - report
+        summary: 分页查询访客台账
+        description: 分页查询访客台账
+        operationId: get_logs
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: report:ledger:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Name'
+        - $ref: '#/components/parameters/IdNo'
+        - $ref: '#/components/parameters/Phone'
+        - $ref: '#/components/parameters/Host'
+        - $ref: '#/components/parameters/Type'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/LedgerPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /logs/on-campus:
+      get:
+        tags:
+        - report
+        summary: 查询在校清单
+        description: 查询在校清单
+        operationId: get_logs_on_campus
+        security:
+        - sessionCookie: []
+        x-access: admin/guard
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        - guard
+        x-required-permission: report:ledger:read
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OnCampusData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+    /logs/export:
+      get:
+        tags:
+        - report
+        summary: 导出台账文件
+        description: 导出台账文件
+        operationId: get_logs_export
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: report:ledger:export
+        parameters:
+        - $ref: '#/components/parameters/Format'
+        - $ref: '#/components/parameters/Name'
+        - $ref: '#/components/parameters/IdNo'
+        - $ref: '#/components/parameters/Phone'
+        - $ref: '#/components/parameters/Host'
+        - $ref: '#/components/parameters/Type'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 文件流
+            content:
+              application/octet-stream:
+                schema:
+                  type: string
+                  format: binary
+            headers:
+              Content-Disposition:
+                description: 附件文件名
+                schema:
+                  type: string
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+    /stats/visits:
+      get:
+        tags:
+        - report
+        summary: 查询来访量统计
+        description: 查询来访量统计
+        operationId: get_stats_visits
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: report:stats:read
+        parameters:
+        - $ref: '#/components/parameters/Granularity'
+        - $ref: '#/components/parameters/Type'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatsVisitsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+    /stats/incidents:
+      get:
+        tags:
+        - report
+        summary: 查询异常统计
+        description: 查询异常统计
+        operationId: get_stats_incidents
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: report:stats:read
+        parameters:
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/StatsIncidentsData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /audit-logs:
+      get:
+        tags:
+        - compliance
+        summary: 分页查询操作日志
+        description: 分页查询操作日志
+        operationId: get_audit_logs
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: compliance:audit:read
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/Action'
+        - $ref: '#/components/parameters/ObjectType'
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AuditLogPage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /privacy/retention:
+      get:
+        tags:
+        - compliance
+        summary: 查询信息留存配置
+        description: 查询信息留存配置
+        operationId: get_privacy_retention
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: compliance:privacy:manage
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PrivacyRetentionData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+      put:
+        tags:
+        - compliance
+        summary: 更新个人信息留存期限
+        description: 更新个人信息留存期限
+        operationId: put_privacy_retention
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: compliance:privacy:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyRetentionUpdateRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PrivacyRetentionData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters: []
+    /privacy/appointments/{id}/erase:
+      post:
+        tags:
+        - compliance
+        summary: 人工清除预约个人信息
+        description: 人工清除预约个人信息
+        operationId: post_privacy_appointments_id_erase
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: compliance:privacy:manage
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReasonRequest'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/EraseData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+          '404':
+            $ref: '#/components/responses/NotFound'
+          '422':
+            $ref: '#/components/responses/UnprocessableEntity'
+        parameters:
+        - $ref: '#/components/parameters/PathId'
+    /privacy/cases:
+      get:
+        tags:
+        - compliance
+        summary: 分页查询隐私案件
+        description: 分页查询隐私案件
+        operationId: get_privacy_cases
+        security:
+        - sessionCookie: []
+        x-access: admin
+        x-authentication: session
+        x-allowed-roles:
+        - admin
+        x-required-permission: compliance:privacy:manage
+        parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PrivacyCasePage'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+    /visitor/privacy/copy:
+      get:
+        tags:
+        - compliance
+        summary: 获取本人信息副本
+        description: 获取本人信息副本
+        operationId: get_visitor_privacy_copy
+        security:
+        - visitorBearer: []
+        - visitorCookie: []
+        x-access: 令牌
+        x-authentication: visitor_token
+        x-allowed-roles:
+        - visitor
+        responses:
+          '200':
+            description: 成功
+            content:
+              application/json:
+                schema:
+                  allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VisitorPrivacyCopyData'
+                    required:
+                    - data
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '403':
+            $ref: '#/components/responses/Forbidden'
+        parameters: []
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: vs.sid
+      description: 后台会话 Cookie
+    visitorBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+      description: 访客令牌 Bearer
+    visitorCookie:
+      type: apiKey
+      in: cookie
+      name: vs.visitor
+      description: 访客令牌 Cookie
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Keyword:
+      name: keyword
+      in: query
+      schema:
+        type: string
+    Role:
+      name: role
+      in: query
+      schema:
+        type: string
+    Status:
+      name: status
+      in: query
+      schema:
+        type: string
+    DateFrom:
+      name: date_from
+      in: query
+      schema:
+        type: string
+        format: date
+    DateTo:
+      name: date_to
+      in: query
+      schema:
+        type: string
+        format: date
+    UnreadOnly:
+      name: unread_only
+      in: query
+      schema:
+        type: boolean
+    Name:
+      name: name
+      in: query
+      schema:
+        type: string
+    IdNo:
+      name: id_no
+      in: query
+      schema:
+        type: string
+    Phone:
+      name: phone
+      in: query
+      schema:
+        type: string
+    Host:
+      name: host
+      in: query
+      schema:
+        type: string
+    Type:
+      name: type
+      in: query
+      schema:
+        type: string
+    Granularity:
+      name: granularity
+      in: query
+      schema:
+        type: string
+        enum:
+        - day
+        - week
+        - month
+    Format:
+      name: format
+      in: query
+      schema:
+        type: string
+        enum:
+        - csv
+        - xlsx
+    UserId:
+      name: user_id
+      in: query
+      schema:
+        type: string
+    Action:
+      name: action
+      in: query
+      schema:
+        type: string
+    ObjectType:
+      name: object_type
+      in: query
+      schema:
+        type: string
+    ObjectId:
+      name: object_id
+      in: query
+      schema:
+        type: string
+    IncludeInactive:
+      name: include_inactive
+      in: query
+      schema:
+        type: boolean
+    PathId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    PathCode:
+      name: code
+      in: path
+      required: true
+      schema:
+        type: string
+    PathKey:
+      name: key
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 0 表示成功
+        message:
+          type: string
+        data: {}
+      required:
+      - code
+      - message
+      - data
+    ErrorEnvelope:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 非 0 错误码
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+        field:
+          type: string
+      required:
+      - code
+      - message
+      - data
+    CsrfData:
+      type: object
+      properties:
+        csrf_token:
+          type: string
+      required:
+      - csrf_token
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        display_name:
+          type: string
+        role_code:
+          type: string
+          enum:
+          - admin
+          - guard
+          - host
+          - visitor
+        host_id:
+          type: string
+          nullable: true
+        department:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - id
+      - username
+      - display_name
+      - role_code
+    LoginData:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - user
+    MeData:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - user
+    LoggedOutData:
+      type: object
+      properties:
+        logged_out:
+          type: boolean
+          enum:
+          - true
+      required:
+      - logged_out
+    ChangedData:
+      type: object
+      properties:
+        changed:
+          type: boolean
+          enum:
+          - true
+      required:
+      - changed
+    Role:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        is_system:
+          type: boolean
+      required:
+      - code
+      - name
+    Permission:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        resource:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+      required:
+      - code
+      - name
+    RolePermissionsData:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/Role'
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+      required:
+      - role
+      - permissions
+    UserPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    UserMutationData:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - user
+    UserStatusData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - id
+      - status
+    ResetPasswordData:
+      type: object
+      properties:
+        reset:
+          type: boolean
+          enum:
+          - true
+      required:
+      - reset
+    WorkbenchSummaryData:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+          - admin
+          - guard
+          - host
+        todo:
+          type: object
+          properties:
+            pending_review:
+              type: integer
+            pending_verify:
+              type: integer
+            pending_incident:
+              type: integer
+          required:
+          - pending_review
+          - pending_verify
+          - pending_incident
+        kpi:
+          type: object
+          properties:
+            today_appointments:
+              type: integer
+            on_campus:
+              type: integer
+          required:
+          - today_appointments
+          - on_campus
+        unread_count:
+          type: integer
+      required:
+      - role
+      - todo
+      - kpi
+      - unread_count
+    EntryQrData:
+      type: object
+      properties:
+        entry_url:
+          type: string
+          format: uri
+        qr_data_url:
+          type: string
+      required:
+      - entry_url
+      - qr_data_url
+    Option:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+      required:
+      - value
+      - label
+    VisitorType:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        sort_order:
+          type: integer
+      required:
+      - id
+      - code
+      - name
+      - status
+    HostSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        employee_no:
+          type: string
+        department:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - id
+      - name
+      - employee_no
+    Gate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        sort_order:
+          type: integer
+      required:
+      - id
+      - code
+      - name
+      - status
+    FormOptionsData:
+      type: object
+      properties:
+        visitor_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitorType'
+        hosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/HostSummary'
+        gates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gate'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+      required:
+      - visitor_types
+      - hosts
+      - gates
+      - relations
+    VisitorFormOptionsData:
+      type: object
+      properties:
+        visitor_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitorType'
+        hosts:
+          type: array
+          items:
+            $ref: '#/components/schemas/HostSummary'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+      required:
+      - visitor_types
+      - hosts
+      - relations
+    Companion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          nullable: true
+        relation:
+          type: string
+        id_no:
+          type: string
+          nullable: true
+        sort_order:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appointment_id
+      - relation
+    CompanionInput:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        relation:
+          type: string
+        id_no:
+          type: string
+          nullable: true
+      required:
+      - relation
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appoint_no:
+          type: string
+        visitor_type_id:
+          type: string
+          format: uuid
+        visitor_name:
+          type: string
+          nullable: true
+        visitor_phone:
+          type: string
+          nullable: true
+        visitor_id_no:
+          type: string
+          nullable: true
+        host_id:
+          type: string
+          format: uuid
+        reviewer_id:
+          type: string
+          format: uuid
+          nullable: true
+        expected_gate_id:
+          type: string
+          format: uuid
+          nullable: true
+        visit_start:
+          type: string
+          format: date-time
+        visit_end:
+          type: string
+          format: date-time
+        reason:
+          type: string
+        plate_no:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+          - 待审核
+          - 已通过
+          - 已拒绝
+          - 已改期
+          - 已过期
+          - 已到访(在校中)
+          - 已离校
+          - 已取消
+        people_count:
+          type: integer
+        black_hit:
+          type: boolean
+        reschedule_proposed_at:
+          type: string
+          format: date-time
+          nullable: true
+        reject_reason:
+          type: string
+          nullable: true
+        cancel_reason:
+          type: string
+          nullable: true
+        checkin_at:
+          type: string
+          format: date-time
+          nullable: true
+        checkout_at:
+          type: string
+          format: date-time
+          nullable: true
+        reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appoint_no
+      - visitor_type_id
+      - host_id
+      - visit_start
+      - visit_end
+      - reason
+      - status
+      - people_count
+      - black_hit
+      - created_at
+      - updated_at
+    AppointmentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appoint_no:
+          type: string
+        visitor_name:
+          type: string
+          nullable: true
+        status:
+          type: string
+        visit_start:
+          type: string
+          format: date-time
+        visit_end:
+          type: string
+          format: date-time
+        host_id:
+          type: string
+          format: uuid
+        reviewer_id:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - id
+      - appoint_no
+      - status
+      - visit_start
+      - visit_end
+      - host_id
+    AppointmentStatusHistory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        from_status:
+          type: string
+          nullable: true
+        to_status:
+          type: string
+        changed_by:
+          type: string
+          format: uuid
+          nullable: true
+        change_reason:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appointment_id
+      - to_status
+      - change_reason
+      - occurred_at
+    VisitCredential:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        short_code:
+          type: string
+          pattern: ^[0-9]{6}$
+        usage_status:
+          type: string
+          enum:
+          - 未使用
+          - 已使用
+        used_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appointment_id
+      - short_code
+      - usage_status
+      - created_at
+    NotificationMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        template_type:
+          type: string
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - title
+      - content
+      - template_type
+      - created_at
+    AppointmentPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    AppointmentCreateResult:
+      allOf:
+      - $ref: '#/components/schemas/Appointment'
+      - type: object
+        properties:
+          short_code:
+            type: string
+            pattern: ^[0-9]{6}$
+          warning:
+            type: string
+            nullable: true
+          visitor_token:
+            type: string
+            nullable: true
+        required:
+        - short_code
+    AppointmentDetail:
+      allOf:
+      - $ref: '#/components/schemas/Appointment'
+      - type: object
+        properties:
+          history:
+            type: array
+            items:
+              $ref: '#/components/schemas/AppointmentStatusHistory'
+          companions:
+            type: array
+            items:
+              $ref: '#/components/schemas/Companion'
+          credential:
+            allOf:
+            - $ref: '#/components/schemas/VisitCredential'
+            nullable: true
+            type: object
+        required:
+        - history
+        - companions
+    StatusData:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 待审核
+          - 已通过
+          - 已拒绝
+          - 已改期
+          - 已过期
+          - 已到访(在校中)
+          - 已离校
+          - 已取消
+      required:
+      - status
+    ReviewLog:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+        operator:
+          type: string
+        decision:
+          type: string
+        reason:
+          type: string
+      required:
+      - time
+      - operator
+      - decision
+      - reason
+    ReviewLogsData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewLog'
+      required:
+      - items
+    ReviewerRule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        visitor_type_id:
+          type: string
+          format: uuid
+          nullable: true
+        gate_id:
+          type: string
+          format: uuid
+          nullable: true
+        start_time:
+          type: string
+          nullable: true
+        end_time:
+          type: string
+          nullable: true
+        reviewer_kind:
+          type: string
+          enum:
+          - host
+          - admin
+          - designated
+        reviewer_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        declaration_order:
+          type: integer
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - id
+      - reviewer_kind
+      - declaration_order
+      - status
+    ReviewerRuleInput:
+      type: object
+      properties:
+        visitor_type_id:
+          type: string
+          format: uuid
+          nullable: true
+        gate_id:
+          type: string
+          format: uuid
+          nullable: true
+        start_time:
+          type: string
+          nullable: true
+        end_time:
+          type: string
+          nullable: true
+        reviewer_kind:
+          type: string
+          enum:
+          - host
+          - admin
+          - designated
+        reviewer_user_id:
+          type: string
+          format: uuid
+          nullable: true
+        declaration_order:
+          type: integer
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - reviewer_kind
+      - declaration_order
+      - status
+    ReviewerRuleListData:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewerRule'
+      required:
+      - rules
+    GateKpi:
+      type: object
+      properties:
+        today_appointments:
+          type: integer
+        pending_verify:
+          type: integer
+        on_campus:
+          type: integer
+        pending_incident:
+          type: integer
+      required:
+      - today_appointments
+      - pending_verify
+      - on_campus
+      - pending_incident
+    GateTodayData:
+      type: object
+      properties:
+        kpi:
+          $ref: '#/components/schemas/GateKpi'
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+      required:
+      - kpi
+      - appointments
+    GateFormOptionsData:
+      type: object
+      properties:
+        gates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gate'
+        incident_types:
+          type: array
+          items:
+            type: string
+            enum:
+            - 黑名单命中
+            - 信息不符
+            - 强行闯入
+            - 超时未离
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+      required:
+      - gates
+      - incident_types
+      - relations
+    GateVerifyData:
+      type: object
+      properties:
+        allowed:
+          type: boolean
+        reason:
+          type: string
+          nullable: true
+        appointment:
+          allOf:
+          - $ref: '#/components/schemas/Appointment'
+          nullable: true
+          type: object
+      required:
+      - allowed
+    AdmitData:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 已到访(在校中)
+        checkin_at:
+          type: string
+          format: date-time
+      required:
+      - status
+      - checkin_at
+    DepartData:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 已离校
+        checkout_at:
+          type: string
+          format: date-time
+      required:
+      - status
+      - checkout_at
+    WalkInData:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 已到访(在校中)
+        appoint_no:
+          type: string
+        short_code:
+          type: string
+          pattern: ^[0-9]{6}$
+      required:
+      - status
+      - appoint_no
+      - short_code
+    Incident:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+          nullable: true
+        incident_type:
+          type: string
+          enum:
+          - 黑名单命中
+          - 信息不符
+          - 强行闯入
+          - 超时未离
+        status:
+          type: string
+          enum:
+          - 待处理
+          - 已处理
+          - 已忽略
+        description:
+          type: string
+        reported_by:
+          type: string
+          format: uuid
+        handled_by:
+          type: string
+          format: uuid
+          nullable: true
+        disposition_note:
+          type: string
+          nullable: true
+        handled_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - incident_type
+      - status
+      - description
+      - reported_by
+      - created_at
+      - updated_at
+    IncidentPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Incident'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    IncidentMutationData:
+      type: object
+      properties:
+        incident:
+          $ref: '#/components/schemas/Incident'
+      required:
+      - incident
+    VisitorAppointmentListData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+      required:
+      - items
+    VisitorAppointmentDetail:
+      allOf:
+      - $ref: '#/components/schemas/Appointment'
+      - type: object
+        properties:
+          credential:
+            allOf:
+            - $ref: '#/components/schemas/VisitCredential'
+            nullable: true
+            type: object
+          messages:
+            type: array
+            items:
+              $ref: '#/components/schemas/NotificationMessage'
+        required:
+        - messages
+    BlacklistEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        id_no:
+          type: string
+        name:
+          type: string
+        reason:
+          type: string
+        expire_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - 有效
+          - 已过期
+          - 已删除
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - id
+      - id_no
+      - reason
+      - expire_at
+      - status
+      - created_at
+      - updated_at
+    BlacklistPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlacklistEntry'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    BlacklistMutationData:
+      type: object
+      properties:
+        entry:
+          $ref: '#/components/schemas/BlacklistEntry'
+      required:
+      - entry
+    BlacklistDeleteData:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 已删除
+      required:
+      - status
+    TimeRule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        weekday:
+          type: integer
+          minimum: 1
+          maximum: 7
+        start_time:
+          type: string
+        end_time:
+          type: string
+        rule_type:
+          type: string
+          enum:
+          - 可预约
+          - 禁入
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - weekday
+      - start_time
+      - end_time
+      - rule_type
+      - created_at
+    TimeRuleMutationData:
+      type: object
+      properties:
+        rule:
+          $ref: '#/components/schemas/TimeRule'
+      required:
+      - rule
+    DeleteFlagData:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+          enum:
+          - true
+      required:
+      - deleted
+    VisitorTypeMutationData:
+      type: object
+      properties:
+        visitor_type:
+          $ref: '#/components/schemas/VisitorType'
+      required:
+      - visitor_type
+    GateMutationData:
+      type: object
+      properties:
+        gate:
+          $ref: '#/components/schemas/Gate'
+      required:
+      - gate
+    Host:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        employee_no:
+          type: string
+        department:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - employee_no
+      - department
+      - status
+      - created_at
+      - updated_at
+    HostMutationData:
+      type: object
+      properties:
+        host:
+          $ref: '#/components/schemas/Host'
+      required:
+      - host
+    Parameter:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+          enum:
+          - string
+          - number
+          - boolean
+          - json
+        description:
+          type: string
+      required:
+      - key
+      - value
+      - type
+      - description
+    ParameterMutationData:
+      type: object
+      properties:
+        parameter:
+          $ref: '#/components/schemas/Parameter'
+      required:
+      - parameter
+    DictionaryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        dict_type:
+          type: string
+        dict_key:
+          type: string
+        dict_label:
+          type: string
+        sort_order:
+          type: integer
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - dict_type
+      - dict_key
+      - dict_label
+      - status
+      - created_at
+      - updated_at
+    DictionaryMutationData:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/DictionaryItem'
+      required:
+      - item
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient_type:
+          type: string
+          enum:
+          - user
+          - visitor
+        recipient_id:
+          type: string
+          format: uuid
+          nullable: true
+        recipient_name:
+          type: string
+        recipient_phone:
+          type: string
+          nullable: true
+        template_type:
+          type: string
+          enum:
+          - 提交通知
+          - 审核结果
+          - 改期提议
+          - 改期确认结果
+          - 到访提醒
+          - 黑名单命中
+          - 超时未离
+        title:
+          type: string
+        content:
+          type: string
+        business_type:
+          type: string
+        business_id:
+          type: string
+          format: uuid
+          nullable: true
+        is_security:
+          type: boolean
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - recipient_type
+      - template_type
+      - title
+      - content
+      - business_type
+      - is_security
+      - created_at
+    NotificationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    UnreadCountData:
+      type: object
+      properties:
+        unread_count:
+          type: integer
+      required:
+      - unread_count
+    NotificationReadData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        read_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - read_at
+    ReadAllData:
+      type: object
+      properties:
+        updated:
+          type: integer
+      required:
+      - updated
+    NotificationChannel:
+      type: object
+      properties:
+        channel_code:
+          type: string
+          enum:
+          - 站内
+          - 短信
+          - 企微
+        enabled:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - channel_code
+      - enabled
+      - updated_at
+    LedgerItem:
+      type: object
+      properties:
+        appointment_id:
+          type: string
+          format: uuid
+        appoint_no:
+          type: string
+        visitor_name:
+          type: string
+          nullable: true
+        visitor_type:
+          type: string
+        visitor_phone:
+          type: string
+          nullable: true
+        visitor_id_no_masked:
+          type: string
+          nullable: true
+        host_name:
+          type: string
+        visit_start:
+          type: string
+          format: date-time
+        visit_end:
+          type: string
+          format: date-time
+        checkin_at:
+          type: string
+          format: date-time
+          nullable: true
+        checkout_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+        reason:
+          type: string
+      required:
+      - appointment_id
+      - appoint_no
+      - visitor_type
+      - host_name
+      - visit_start
+      - visit_end
+      - status
+      - reason
+    LedgerPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LedgerItem'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    OnCampusData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LedgerItem'
+      required:
+      - items
+    StatsVisitsData:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            type: object
+            properties:
+              period:
+                type: string
+              type:
+                type: string
+              count:
+                type: integer
+            required:
+            - period
+            - type
+            - count
+      required:
+      - buckets
+    StatsIncidentsData:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              count:
+                type: integer
+            required:
+            - type
+            - count
+        timeout_count:
+          type: integer
+      required:
+      - types
+      - timeout_count
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+        user_name:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+        object_type:
+          type: string
+        object_id:
+          type: string
+          format: uuid
+          nullable: true
+        action:
+          type: string
+        result:
+          type: string
+        before_value:
+          type: object
+          nullable: true
+        after_value:
+          type: object
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+        note:
+          type: string
+      required:
+      - id
+      - user_name
+      - occurred_at
+      - object_type
+      - action
+      - result
+      - note
+    AuditLogPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLog'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    PrivacyRetentionData:
+      type: object
+      properties:
+        retention_days:
+          type: integer
+        audit_retention_days:
+          type: integer
+      required:
+      - retention_days
+      - audit_retention_days
+    EraseData:
+      type: object
+      properties:
+        erased:
+          type: boolean
+          enum:
+          - true
+      required:
+      - erased
+    PrivacyCase:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+          nullable: true
+        case_type:
+          type: string
+          enum:
+          - 信息副本
+          - 人工清除
+        requested_by:
+          type: string
+          format: uuid
+          nullable: true
+        status:
+          type: string
+          enum:
+          - 已完成
+          - 失败
+        note:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - case_type
+      - status
+      - note
+      - created_at
+      - completed_at
+    PrivacyCasePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyCase'
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+      - items
+      - total
+      - page
+      - page_size
+    ConsentRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        consent_type:
+          type: string
+          enum:
+          - 安全告知
+          - 个人信息授权告知
+        confirmed_at:
+          type: string
+          format: date-time
+        channel:
+          type: string
+          enum:
+          - H5
+          - 现场登记
+          - 后台代提
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appointment_id
+      - consent_type
+      - confirmed_at
+      - channel
+      - created_at
+    PassageRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        gate_id:
+          type: string
+          format: uuid
+        record_type:
+          type: string
+          enum:
+          - 进校
+          - 离校
+        occurred_at:
+          type: string
+          format: date-time
+        operator_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - appointment_id
+      - gate_id
+      - record_type
+      - occurred_at
+      - operator_id
+      - created_at
+    VisitorPrivacyCopyData:
+      type: object
+      properties:
+        appointment:
+          $ref: '#/components/schemas/AppointmentSummary'
+        companions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Companion'
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentRecord'
+        passages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PassageRecord'
+      required:
+      - appointment
+      - companions
+      - consents
+      - passages
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - username
+      - password
+    PasswordChangeRequest:
+      type: object
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+      required:
+      - old_password
+      - new_password
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        display_name:
+          type: string
+        role_code:
+          type: string
+          enum:
+          - admin
+          - guard
+          - host
+        host_id:
+          type: string
+          format: uuid
+          nullable: true
+        department:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+      required:
+      - username
+      - password
+      - display_name
+      - role_code
+    UserUpdateRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+        department:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+      required:
+      - display_name
+    UserStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - status
+    AdminPasswordResetRequest:
+      type: object
+      properties:
+        password:
+          type: string
+      required:
+      - password
+    CompanionInputList:
+      type: array
+      items:
+        $ref: '#/components/schemas/CompanionInput'
+    AppointmentCreateRequest:
+      type: object
+      properties:
+        visitor_type_id:
+          type: string
+          format: uuid
+        visitor_name:
+          type: string
+        visitor_phone:
+          type: string
+        visitor_id_no:
+          type: string
+        host_id:
+          type: string
+          format: uuid
+        expected_gate_id:
+          type: string
+          format: uuid
+          nullable: true
+        visit_start:
+          type: string
+          format: date-time
+        visit_end:
+          type: string
+          format: date-time
+        reason:
+          type: string
+        plate_no:
+          type: string
+          nullable: true
+        companions:
+          $ref: '#/components/schemas/CompanionInputList'
+      required:
+      - visitor_type_id
+      - visitor_name
+      - visitor_phone
+      - visitor_id_no
+      - host_id
+      - visit_start
+      - visit_end
+      - reason
+    ConsentsInput:
+      type: object
+      properties:
+        safety:
+          type: boolean
+          enum:
+          - true
+        privacy:
+          type: boolean
+          enum:
+          - true
+      required:
+      - safety
+      - privacy
+    WalkInRequest:
+      allOf:
+      - $ref: '#/components/schemas/AppointmentCreateRequest'
+      - type: object
+        properties:
+          gate_id:
+            type: string
+            format: uuid
+          consents:
+            $ref: '#/components/schemas/ConsentsInput'
+        required:
+        - gate_id
+        - consents
+    VisitorAppointmentCreateRequest:
+      allOf:
+      - $ref: '#/components/schemas/AppointmentCreateRequest'
+      - type: object
+        properties:
+          consents:
+            $ref: '#/components/schemas/ConsentsInput'
+        required:
+        - consents
+    AppointmentRescheduleRequest:
+      type: object
+      properties:
+        visit_start:
+          type: string
+          format: date-time
+        visit_end:
+          type: string
+          format: date-time
+      required:
+      - visit_start
+      - visit_end
+    CancelRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          nullable: true
+    ReviewRejectRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+      - reason
+    ReviewAssignmentRequest:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewerRuleInput'
+      required:
+      - rules
+    GateVerifyRequest:
+      type: object
+      properties:
+        key:
+          type: string
+        gate_id:
+          type: string
+          format: uuid
+        conclusion:
+          type: string
+          enum:
+          - 核验通过
+          - 拦截
+          nullable: true
+      required:
+      - key
+      - gate_id
+    GateAdmitRequest:
+      type: object
+      properties:
+        appointment_id:
+          type: string
+          format: uuid
+        gate_id:
+          type: string
+          format: uuid
+      required:
+      - appointment_id
+      - gate_id
+    IncidentCreateRequest:
+      type: object
+      properties:
+        incident_type:
+          type: string
+          enum:
+          - 黑名单命中
+          - 信息不符
+          - 强行闯入
+          - 超时未离
+        appointment_id:
+          type: string
+          format: uuid
+          nullable: true
+        description:
+          type: string
+      required:
+      - incident_type
+      - description
+    IncidentDispositionRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - 已处理
+          - 已忽略
+        note:
+          type: string
+      required:
+      - status
+      - note
+    NotificationChannelUpdateRequest:
+      type: object
+      properties:
+        sms:
+          type: boolean
+        wecom:
+          type: boolean
+      required:
+      - sms
+      - wecom
+    NameRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+      - name
+    StatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+      required:
+      - status
+    BlacklistCreateRequest:
+      type: object
+      properties:
+        id_no:
+          type: string
+        name:
+          type: string
+        reason:
+          type: string
+        expire_at:
+          type: string
+          format: date-time
+      required:
+      - id_no
+      - name
+      - reason
+      - expire_at
+    TimeRuleCreateRequest:
+      type: object
+      properties:
+        weekday:
+          type: integer
+          minimum: 1
+          maximum: 7
+        start_time:
+          type: string
+        end_time:
+          type: string
+        rule_type:
+          type: string
+          enum:
+          - 可预约
+          - 禁入
+      required:
+      - weekday
+      - start_time
+      - end_time
+      - rule_type
+    HostCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        employee_no:
+          type: string
+        department:
+          type: string
+        phone:
+          type: string
+          nullable: true
+      required:
+      - name
+      - employee_no
+      - department
+    HostUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        department:
+          type: string
+        phone:
+          type: string
+          nullable: true
+      required:
+      - name
+      - department
+    ParameterUpdateRequest:
+      type: object
+      properties:
+        value:
+          type: string
+      required:
+      - value
+    DictionaryCreateRequest:
+      type: object
+      properties:
+        dict_type:
+          type: string
+        dict_key:
+          type: string
+        dict_label:
+          type: string
+        sort_order:
+          type: integer
+      required:
+      - dict_type
+      - dict_key
+      - dict_label
+    PrivacyRetentionUpdateRequest:
+      type: object
+      properties:
+        retention_days:
+          type: integer
+      required:
+      - retention_days
+    ReasonRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+      - reason
+  responses:
+    Unauthorized:
+      description: 未认证、停用或锁定
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    Forbidden:
+      description: 越权
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    MethodNotAllowed:
+      description: 软状态资源不允许硬删除
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    Conflict:
+      description: 状态冲突
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    UnprocessableEntity:
+      description: 字段校验失败
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+    TooManyRequests:
+      description: 请求过于频繁
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
