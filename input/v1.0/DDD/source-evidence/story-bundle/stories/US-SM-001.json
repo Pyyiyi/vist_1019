@@ -1,0 +1,16 @@
+{
+  "storyId": "US-SM-001",
+  "title": "操作日志 / 留痕",
+  "acceptanceCriteria": [
+    "审核/放行/失败核验/取消/异常/越权拦截 写日志（谁/什么/何时/结果）。",
+    "`user / time / objectType + objectId / action / result / before / after`；可查询维度＝操作人/时间范围/对象/动作类型。",
+    "关键操作埋点日志**留存 ≥180 天**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "敏感操作写操作日志并可查询",
+  "value": "审计追溯",
+  "priority": "P0",
+  "traceability": "REQ-SM-001（D23/D25）",
+  "page": "原型 #page-sm"
+}

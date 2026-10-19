@@ -1,0 +1,16 @@
+{
+  "storyId": "US-LG-003",
+  "title": "多条件查询 / 检索",
+  "acceptanceCriteria": [
+    "组合条件命中正确子集，与台账**同源**（§3.24）。",
+    "**脱敏后仅 admin 可精确命中检索**——可精确命中但**不回显完整证件号**（显示掩码）。",
+    "台账 **1 万条内响应 < 2s**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "按 姓名/证件号/手机号/时段/被访人/类型/状态 检索",
+  "value": "快速定位记录",
+  "priority": "P1",
+  "traceability": "REQ-LG-003（D14/D23，SM）",
+  "page": "原型 #page-lg"
+}

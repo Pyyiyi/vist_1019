@@ -1,0 +1,608 @@
+# 校园访客系统 V1.0 · 共享内核与 Hub 文件清单（shared-kernel-manifest）
+# 本文件是 import 路径与导出符号的唯一权威。卡片中的 import 必须逐字匹配 path 与 exports[].name。
+# 卡片编号由拆解生成；本文件只登记产出卡名称。
+version: 1
+project_root: .
+round: v1
+generated_at: "2026-10-19"
+
+files:
+  # ---------- HTTP ----------
+  - path: backend/src/shared/http/envelope.ts
+    owner: 共享内核卡
+    exports:
+      - name: success
+        kind: function
+      - name: fail
+        kind: function
+      - name: paginated
+        kind: function
+
+  - path: backend/src/shared/http/errors.ts
+    owner: 共享内核卡
+    exports:
+      - name: AppError
+        kind: class
+      - name: badRequest
+        kind: function
+      - name: unauthorized
+        kind: function
+      - name: forbidden
+        kind: function
+      - name: notFound
+        kind: function
+      - name: conflict
+        kind: function
+      - name: methodNotAllowed
+        kind: function
+      - name: unprocessable
+        kind: function
+
+  - path: backend/src/shared/http/pagination.ts
+    owner: 共享内核卡
+    exports:
+      - name: parsePagination
+        kind: function
+      - name: Pagination
+        kind: type
+
+  - path: backend/src/shared/http/asyncHandler.ts
+    owner: 共享内核卡
+    exports:
+      - name: asyncHandler
+        kind: function
+
+  - path: backend/src/shared/http/responseEnvelope.ts
+    owner: 共享内核卡
+    exports:
+      - name: responseEnvelope
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 7
+          owner: Hub 集成补全卡
+          failure: 所有端点响应缺少 code/message/data 信封
+
+  - path: backend/src/shared/http/errorHandler.ts
+    owner: 共享内核卡
+    exports:
+      - name: errorHandler
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 16
+          owner: Hub 集成补全卡
+          failure: 异常返回 HTML 或堆栈，信封缺失
+
+  - path: backend/src/shared/http/notFoundHandler.ts
+    owner: 共享内核卡
+    exports:
+      - name: notFoundHandler
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 15
+          owner: Hub 集成补全卡
+          failure: 未匹配路由返回 HTML 或挂起
+
+  # ---------- 中间件 ----------
+  - path: backend/src/shared/middleware/requestContext.ts
+    owner: 共享内核卡
+    exports:
+      - name: requestContext
+        kind: middleware
+      - name: RequestContext
+        kind: type
+
+  - path: backend/src/shared/middleware/requireAuth.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: requireAuth
+        kind: middleware
+
+  - path: backend/src/shared/middleware/requirePermission.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: requirePermission
+        kind: function
+      - name: requireAdmin
+        kind: middleware
+
+  - path: backend/src/shared/middleware/visitorTokenAuth.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: visitorTokenAuth
+        kind: middleware
+
+  - path: backend/src/shared/middleware/csrfProtection.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: csrfProtection
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 9
+          owner: Hub 集成补全卡
+          failure: 写请求无 CSRF 校验，或登录后全部 403
+
+  - path: backend/src/shared/middleware/rateLimiter.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: loginRateLimiter
+        kind: middleware
+      - name: apiRateLimiter
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 10
+          owner: Hub 集成补全卡
+          failure: 登录暴力破解与接口刷取不受限
+
+  - path: backend/src/shared/middleware/auditMiddleware.ts
+    owner: 共享内核卡
+    exports:
+      - name: auditMiddleware
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 13
+          owner: Hub 集成补全卡
+          failure: req.audit 缺失，敏感操作无审计
+
+  # ---------- 认证 ----------
+  - path: backend/src/shared/auth/session.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: sessionMiddleware
+        kind: middleware
+        assembly:
+          site: backend/src/app.ts
+          step: 8
+          owner: Hub 集成补全卡
+          failure: req.session 不存在，登录无法保持
+
+  - path: backend/src/shared/auth/password.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: hashPassword
+        kind: function
+      - name: verifyPassword
+        kind: function
+
+  - path: backend/src/shared/auth/permissions.ts
+    owner: 认证与会话中间件卡
+    exports:
+      - name: PERMISSIONS
+        kind: constant
+      - name: hasPermission
+        kind: function
+
+  # ---------- 审计 ----------
+  - path: backend/src/shared/audit/writeAudit.ts
+    owner: 共享内核卡
+    exports:
+      - name: writeAudit
+        kind: function
+      - name: AuditEntry
+        kind: type
+
+  # ---------- 数据库 ----------
+  - path: backend/src/config.ts
+    owner: 项目脚手架与运行时闭环卡
+    exports:
+      - name: loadConfig
+        kind: function
+      - name: config
+        kind: constant
+    assembly:
+      site: backend/src/main.ts
+      step: 1
+      owner: Hub 集成补全卡
+      failure: 启动即退出，日志提示缺失环境变量
+
+  - path: backend/src/shared/db/pool.ts
+    owner: 数据库 DDL 与迁移执行器卡
+    exports:
+      - name: getPool
+        kind: function
+      - name: query
+        kind: function
+      - name: withTransaction
+        kind: function
+
+  - path: backend/src/shared/db/migrate.ts
+    owner: 数据库 DDL 与迁移执行器卡
+    exports:
+      - name: runMigrations
+        kind: function
+
+  - path: backend/src/shared/db/seed.ts
+    owner: 种子锚点与执行器卡
+    exports:
+      - name: runSeeds
+        kind: function
+
+  # ---------- 配置 ----------
+  - path: backend/src/shared/config/configService.ts
+    owner: 共享内核卡
+    exports:
+      - name: getConfig
+        kind: function
+      - name: getConfigNumber
+        kind: function
+      - name: setConfig
+        kind: function
+
+  # ---------- 工具 ----------
+  - path: backend/src/shared/utils/mask.ts
+    owner: 共享内核卡
+    exports:
+      - name: maskIdNo
+        kind: function
+
+  - path: backend/src/shared/utils/ids.ts
+    owner: 共享内核卡
+    exports:
+      - name: newUuid
+        kind: function
+      - name: formatMinute
+        kind: function
+      - name: formatSecond
+        kind: function
+      - name: localDayRange
+        kind: function
+
+  - path: backend/src/shared/utils/appointmentNo.ts
+    owner: 共享内核卡
+    exports:
+      - name: nextAppointmentNo
+        kind: function
+      - name: generateShortCode
+        kind: function
+
+  # ---------- 校验 ----------
+  - path: backend/src/shared/validation/validators.ts
+    owner: 共享内核卡
+    exports:
+      - name: validateBody
+        kind: function
+      - name: validateQuery
+        kind: function
+      - name: isValidIdCard
+        kind: function
+      - name: isValidPhone
+        kind: function
+      - name: isValidOtherId
+        kind: function
+      - name: normalizeIdNo
+        kind: function
+
+  # ---------- 常量 ----------
+  - path: backend/src/shared/constants/status.ts
+    owner: 共享内核卡
+    exports:
+      - name: APPOINTMENT_STATUSES
+        kind: constant
+      - name: TERMINAL_STATUSES
+        kind: constant
+      - name: OPEN_STATUSES
+        kind: constant
+      - name: ATTENDED_STATUSES
+        kind: constant
+      - name: INCIDENT_STATUSES
+        kind: constant
+      - name: INCIDENT_TYPES
+        kind: constant
+
+  - path: backend/src/shared/constants/messages.ts
+    owner: 共享内核卡
+    exports:
+      - name: MESSAGES
+        kind: constant
+
+  # ---------- 日志 ----------
+  - path: backend/src/shared/logger.ts
+    owner: 共享内核卡
+    exports:
+      - name: logger
+        kind: constant
+
+  # ---------- 任务 ----------
+  - path: backend/src/shared/jobs/scheduler.ts
+    owner: 共享内核卡
+    exports:
+      - name: registerJob
+        kind: function
+      - name: startJobs
+        kind: function
+        assembly:
+          site: backend/src/main.ts
+          step: 15
+          owner: Hub 集成补全卡
+          failure: 提醒/过期/清理任务全部不执行
+      - name: stopAllJobs
+        kind: function
+      - name: JobDefinition
+        kind: type
+
+  # ---------- 实时 ----------
+  - path: backend/src/realtime/io.ts
+    owner: 共享内核卡
+    exports:
+      - name: initRealtime
+        kind: function
+        assembly:
+          site: backend/src/main.ts
+          step: 14
+          owner: Hub 集成补全卡
+          failure: 消息红点不实时更新
+      - name: emitNotification
+        kind: function
+
+  # ---------- 前端 ----------
+  - path: frontend/src/api/client.ts
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: apiClient
+
+  - path: frontend/src/stores/auth.ts
+    owner: 前端基础卡
+    exports:
+      - name: useAuthStore
+        kind: function
+      - name: AuthUser
+        kind: type
+
+  - path: frontend/src/stores/notification.ts
+    owner: 前端基础卡
+    exports:
+      - name: useNotificationStore
+        kind: function
+
+  - path: frontend/src/realtime/socket.ts
+    owner: 前端基础卡
+    exports:
+      - name: connectRealtime
+        kind: function
+      - name: disconnectRealtime
+        kind: function
+
+  - path: frontend/src/nav/navigation.ts
+    owner: 前端路由与导航骨架卡
+    exports:
+      - name: navigation
+        kind: constant
+      - name: filterNavigation
+        kind: function
+      - name: NavItem
+        kind: type
+
+  - path: frontend/src/nav/icons.ts
+    owner: 前端基础卡
+    exports:
+      - name: iconMap
+        kind: constant
+
+  - path: frontend/src/components/LoadingState.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: LoadingState
+
+  - path: frontend/src/components/ErrorState.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: ErrorState
+
+  - path: frontend/src/components/PageHeader.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: PageHeader
+
+  - path: frontend/src/components/StatusTag.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: StatusTag
+
+  - path: frontend/src/components/EmptyState.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: EmptyState
+
+  - path: frontend/src/components/ConfirmDialog.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: ConfirmDialog
+
+  - path: frontend/src/components/CopyButton.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: CopyButton
+
+  - path: frontend/src/layouts/AppLayout.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: AppLayout
+
+  - path: frontend/src/layouts/H5Layout.vue
+    owner: 前端基础卡
+    exports:
+      - name: default
+        kind: default
+        local: H5Layout
+
+  - path: frontend/src/styles/reset.css
+    owner: 前端基础卡
+    exports: []
+
+  - path: frontend/src/styles/tokens.css
+    owner: 前端基础卡
+    exports: []
+
+  - path: frontend/src/styles/print.css
+    owner: 前端基础卡
+    exports: []
+
+  # ---------- Hub ----------
+  - path: backend/src/app.ts
+    owner: Hub 集成补全卡
+    hub: true
+    exports:
+      - name: createApp
+        kind: function
+      - name: mountRoutes
+        kind: function
+
+  - path: backend/src/main.ts
+    owner: Hub 集成补全卡
+    hub: true
+    exports: []
+
+  - path: frontend/src/main.ts
+    owner: 前端基础卡
+    hub: true
+    exports: []
+
+  - path: frontend/src/App.vue
+    owner: 前端基础卡
+    hub: true
+    exports: []
+
+  - path: frontend/src/router/index.ts
+    owner: 前端路由与导航骨架卡
+    hub: true
+    exports:
+      - name: default
+        kind: default
+        local: router
+
+  - path: frontend/src/router/shared.routes.ts
+    owner: 前端路由与导航骨架卡
+    hub: true
+    exports:
+      - name: sharedRoutes
+        kind: constant
+
+  - path: frontend/src/components/RouterContainer.vue
+    owner: 前端路由与导航骨架卡
+    hub: true
+    exports:
+      - name: default
+        kind: component
+
+assembly_order:
+  - step: 1
+    item: trust proxy
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: Secure Cookie 在代理后失效，审计 IP 全为 127.0.0.1
+  - step: 2
+    item: helmet
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 安全响应头缺失
+  - step: 3
+    item: cors
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 前端跨域请求被浏览器拦截
+  - step: 4
+    item: compression
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 响应未压缩，导出大文件慢
+  - step: 5
+    item: cookieParser
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: CSRF 与访客令牌 Cookie 读不到
+  - step: 6
+    item: express.json
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 请求体为空
+  - step: 7
+    item: responseEnvelope
+    symbol: responseEnvelope
+    path: backend/src/shared/http/responseEnvelope.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 所有端点响应缺少信封
+  - step: 8
+    item: session
+    symbol: sessionMiddleware
+    path: backend/src/shared/auth/session.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: req.session 不存在，登录无法保持
+  - step: 9
+    item: csrf
+    symbol: csrfProtection
+    path: backend/src/shared/middleware/csrfProtection.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 写请求无 CSRF 校验
+  - step: 10
+    item: rateLimiter
+    symbol: apiRateLimiter
+    path: backend/src/shared/middleware/rateLimiter.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 接口刷取不受限
+  - step: 11
+    item: health
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 健康检查 404，Docker 永远 unhealthy
+  - step: 12
+    item: 自动发现路由
+    symbol: mountRoutes
+    path: backend/src/app.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 全部业务端点 404
+  - step: 13
+    item: auditMiddleware
+    symbol: auditMiddleware
+    path: backend/src/shared/middleware/auditMiddleware.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 请求级审计兜底缺失
+  - step: 14
+    item: WebSocket attach
+    symbol: initRealtime
+    path: backend/src/realtime/io.ts
+    site: backend/src/main.ts
+    owner: Hub 集成补全卡
+    failure: 消息红点不更新
+  - step: 15
+    item: 404
+    symbol: notFoundHandler
+    path: backend/src/shared/http/notFoundHandler.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 未匹配路由返回 HTML
+  - step: 16
+    item: errorHandler
+    symbol: errorHandler
+    path: backend/src/shared/http/errorHandler.ts
+    site: backend/src/app.ts
+    owner: Hub 集成补全卡
+    failure: 异常返回 HTML 或堆栈

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-BD-004",
+  "title": "校门 / 通行点管理",
+  "acceptanceCriteria": [
+    "放行记录归属校门；下拉来源。",
+    "**不支持硬删除**、仅**软状态停用**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "配置多个校门/通行点",
+  "value": "放行记录归属校门并作下拉来源",
+  "priority": "P1",
+  "traceability": "REQ-BD-004（D11）",
+  "page": "原型 #page-bd"
+}

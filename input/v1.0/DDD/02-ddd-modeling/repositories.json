@@ -1,0 +1,62 @@
+[
+  {
+    "name": "UserAccountRepository",
+    "bcId": "BC-ACCESS",
+    "aggregateRoot": "UserAccount",
+    "responsibility": "仅负责UserAccount聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "AuthorizationPolicyRepository",
+    "bcId": "BC-ACCESS",
+    "aggregateRoot": "AuthorizationPolicy",
+    "responsibility": "仅负责AuthorizationPolicy聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "VisitAppointmentRepository",
+    "bcId": "BC-VISIT",
+    "aggregateRoot": "VisitAppointment",
+    "responsibility": "仅负责VisitAppointment聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "IncidentRegistryRepository",
+    "bcId": "BC-VISIT",
+    "aggregateRoot": "IncidentRegistry",
+    "responsibility": "仅负责IncidentRegistry聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "MasterDataCatalogRepository",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "MasterDataCatalog",
+    "responsibility": "仅负责MasterDataCatalog聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "BlacklistRegistryRepository",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "BlacklistRegistry",
+    "responsibility": "仅负责BlacklistRegistry聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "SystemConfigurationRepository",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "SystemConfiguration",
+    "responsibility": "仅负责SystemConfiguration聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "NotificationBoxRepository",
+    "bcId": "BC-NOTIFY",
+    "aggregateRoot": "NotificationBox",
+    "responsibility": "仅负责NotificationBox聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "AuditTrailRepository",
+    "bcId": "BC-COMPLIANCE",
+    "aggregateRoot": "AuditTrail",
+    "responsibility": "仅负责AuditTrail聚合的按标识装载、保存和并发版本控制。"
+  },
+  {
+    "name": "PrivacyCaseRepository",
+    "bcId": "BC-COMPLIANCE",
+    "aggregateRoot": "PrivacyCase",
+    "responsibility": "仅负责PrivacyCase聚合的按标识装载、保存和并发版本控制。"
+  }
+]

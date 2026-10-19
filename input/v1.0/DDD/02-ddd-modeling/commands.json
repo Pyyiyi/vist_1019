@@ -1,0 +1,985 @@
+[
+  {
+    "name": "AuthenticateUser",
+    "bcId": "BC-ACCESS",
+    "targetAggregate": "UserAccount",
+    "actor": "用户",
+    "inputFields": [
+      "account",
+      "credential"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "AuthenticateUserCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "ProvisionAccount",
+    "bcId": "BC-ACCESS",
+    "targetAggregate": "UserAccount",
+    "actor": "管理员",
+    "inputFields": [
+      "identity",
+      "role"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ProvisionAccountCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "DisableAccount",
+    "bcId": "BC-ACCESS",
+    "targetAggregate": "UserAccount",
+    "actor": "管理员",
+    "inputFields": [
+      "accountId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "DisableAccountCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AccountStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "RestoreAccount",
+    "bcId": "BC-ACCESS",
+    "targetAggregate": "UserAccount",
+    "actor": "管理员",
+    "inputFields": [
+      "accountId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RestoreAccountCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AccountStatus",
+        "allowedStates": [
+          "Inactive"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "UpdateAuthorizationPolicy",
+    "bcId": "BC-ACCESS",
+    "targetAggregate": "AuthorizationPolicy",
+    "actor": "管理员",
+    "inputFields": [
+      "role",
+      "resource",
+      "permission"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpdateAuthorizationPolicyCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "SubmitAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "访客/被访人/管理员",
+    "inputFields": [
+      "visitor",
+      "hostId",
+      "visitWindow",
+      "companions",
+      "consents"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "SubmitAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-VS-001",
+      "US-VS-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "RescheduleAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "访客/被访人/管理员",
+    "inputFields": [
+      "appointmentId",
+      "newVisitWindow"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RescheduleAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Approved",
+          "Pending",
+          "Rescheduled"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "CancelAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "访客/被访人/管理员",
+    "inputFields": [
+      "appointmentId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "CancelAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Approved",
+          "Pending",
+          "Rescheduled"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "ApproveAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "被访人/管理员",
+    "inputFields": [
+      "appointmentId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ApproveAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Pending",
+          "Rescheduled"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "RejectAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "被访人/管理员",
+    "inputFields": [
+      "appointmentId",
+      "reason"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RejectAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Pending",
+          "Rescheduled"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "ReviewRescheduleAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "被访人/管理员",
+    "inputFields": [
+      "appointmentId",
+      "newVisitWindow"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ReviewRescheduleAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Pending"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "ExpireAppointment",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "系统",
+    "inputFields": [
+      "appointmentId",
+      "evaluatedAt"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ExpireAppointmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-006"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Approved",
+          "Pending",
+          "Rescheduled"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "AdmitVisitor",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "门卫",
+    "inputFields": [
+      "appointmentId",
+      "gateId",
+      "admittedAt",
+      "guardId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "AdmitVisitorCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-002",
+      "US-GV-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "Approved",
+          "Left"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "RecordDeparture",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "门卫",
+    "inputFields": [
+      "appointmentId",
+      "gateId",
+      "departedAt",
+      "guardId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RecordDepartureCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-AppointmentStatus",
+        "allowedStates": [
+          "InSchool"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "RegisterWalkIn",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "门卫",
+    "inputFields": [
+      "visitor",
+      "hostId",
+      "visitWindow",
+      "gateId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RegisterWalkInCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "RedeemVisitCredential",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "VisitAppointment",
+    "actor": "门卫",
+    "inputFields": [
+      "appointmentId",
+      "shortCode"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RedeemVisitCredentialCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-VisitCredentialUsage",
+        "allowedStates": [
+          "Unused"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "ReportIncident",
+    "bcId": "BC-VISIT",
+    "targetAggregate": "IncidentRegistry",
+    "actor": "门卫/系统",
+    "inputFields": [
+      "type",
+      "occurredAt",
+      "subjectId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ReportIncidentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-006",
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "ConfigureReviewerAssignment",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "SystemConfiguration",
+    "actor": "管理员",
+    "inputFields": [
+      "scope",
+      "reviewerType",
+      "reviewerId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ConfigureReviewerAssignmentCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "UpsertVisitorType",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "typeId",
+      "name"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpsertVisitorTypeCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "DeactivateVisitorType",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "typeId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "DeactivateVisitorTypeCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-VisitorTypeStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "UpsertBlacklistEntry",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "BlacklistRegistry",
+    "actor": "管理员",
+    "inputFields": [
+      "identityNo",
+      "name",
+      "reason",
+      "expiresAt"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpsertBlacklistEntryCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "RemoveBlacklistEntry",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "BlacklistRegistry",
+    "actor": "管理员",
+    "inputFields": [
+      "entryId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RemoveBlacklistEntryCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-BlacklistEntryStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "ExpireBlacklistEntry",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "BlacklistRegistry",
+    "actor": "系统",
+    "inputFields": [
+      "entryId",
+      "expiredAt"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ExpireBlacklistEntryCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-BlacklistEntryStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "UpdateTimeRules",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "bookableWindows",
+      "bufferMinutes",
+      "maxStayMinutes",
+      "blockedWindows"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpdateTimeRulesCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "UpsertGate",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "gateId",
+      "name"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpsertGateCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "DeactivateGate",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "gateId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "DeactivateGateCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-GateStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "UpsertHost",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "hostId",
+      "name",
+      "employeeNo"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpsertHostCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "DeactivateHost",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "hostId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "DeactivateHostCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-HostStatus",
+        "allowedStates": [
+          "Active"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "UpdateSystemParameter",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "SystemConfiguration",
+    "actor": "管理员",
+    "inputFields": [
+      "key",
+      "value"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpdateSystemParameterCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-006",
+      "US-SM-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "UpdateDataDictionary",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "MasterDataCatalog",
+    "actor": "管理员",
+    "inputFields": [
+      "dictionary",
+      "items"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "UpdateDataDictionaryCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-SM-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "ConfigureNotificationChannels",
+    "bcId": "BC-MASTER",
+    "targetAggregate": "SystemConfiguration",
+    "actor": "管理员",
+    "inputFields": [
+      "channels"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ConfigureNotificationChannelsCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-NT-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "PublishNotification",
+    "bcId": "BC-NOTIFY",
+    "targetAggregate": "NotificationBox",
+    "actor": "系统",
+    "inputFields": [
+      "recipientId",
+      "template",
+      "businessObjectId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "PublishNotificationCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-NT-001",
+      "US-NT-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "MarkNotificationRead",
+    "bcId": "BC-NOTIFY",
+    "targetAggregate": "NotificationBox",
+    "actor": "后台用户",
+    "inputFields": [
+      "messageId"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "MarkNotificationReadCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": [
+      {
+        "stateMachineRef": "SM-NotificationReadStatus",
+        "allowedStates": [
+          "Unread"
+        ],
+        "condition": "仅在声明的前置状态执行"
+      }
+    ]
+  },
+  {
+    "name": "RecordAuditEntry",
+    "bcId": "BC-COMPLIANCE",
+    "targetAggregate": "AuditTrail",
+    "actor": "系统",
+    "inputFields": [
+      "user",
+      "time",
+      "object",
+      "action",
+      "result",
+      "before",
+      "after"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "RecordAuditEntryCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-004",
+      "US-SM-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "AnonymizeExpiredPersonalData",
+    "bcId": "BC-COMPLIANCE",
+    "targetAggregate": "PrivacyCase",
+    "actor": "系统",
+    "inputFields": [
+      "asOf"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "AnonymizeExpiredPersonalDataCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "ErasePersonalData",
+    "bcId": "BC-COMPLIANCE",
+    "targetAggregate": "PrivacyCase",
+    "actor": "管理员",
+    "inputFields": [
+      "subjectId",
+      "reason"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "ErasePersonalDataCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  },
+  {
+    "name": "CorrectPersonalData",
+    "bcId": "BC-COMPLIANCE",
+    "targetAggregate": "PrivacyCase",
+    "actor": "管理员/本人",
+    "inputFields": [
+      "subjectId",
+      "corrections"
+    ],
+    "preconditions": [
+      "调用方通过适用的身份、权限与对象范围校验",
+      "命令输入满足相关业务规则"
+    ],
+    "raises": [
+      "CorrectPersonalDataCompleted"
+    ],
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json",
+    "stateGuards": []
+  }
+]

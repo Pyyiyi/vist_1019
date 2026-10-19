@@ -1,0 +1,788 @@
+[
+  {
+    "name": "UserAccount",
+    "bcId": "BC-ACCESS",
+    "aggregateRoot": "UserAccount",
+    "responsibility": "维护后台账号、凭据失败计数、临时锁定和软状态。",
+    "attributes": [
+      "accountId",
+      "identityType",
+      "status",
+      "failedAttempts",
+      "lockedUntil",
+      "roles"
+    ],
+    "entities": [
+      {
+        "name": "Credential",
+        "identityStrategy": "由accountId唯一归属",
+        "attributes": [
+          "passwordHash",
+          "changedAt"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "RoleSet",
+        "attributes": [
+          "roleCodes"
+        ]
+      }
+    ],
+    "references": [],
+    "sourceUserStoryIds": [
+      "US-PT-001",
+      "US-OR-001"
+    ],
+    "invariants": [
+      {
+        "description": "停用或锁定账号不得登录；失败计数与锁定窗口按账号维护。",
+        "triggerCommandRefs": [
+          "AuthenticateUser",
+          "ProvisionAccount",
+          "DisableAccount",
+          "RestoreAccount"
+        ],
+        "violationBehavior": "拒绝认证并返回明确状态，不破坏历史记录。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "StateMachine",
+      "reason": "账号在用/停用存在可恢复生命周期；临时登录锁定作为时间属性，不混入生命周期枚举。",
+      "stateMachineRefs": [
+        "SM-AccountStatus"
+      ],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "AuthorizationPolicy",
+    "bcId": "BC-ACCESS",
+    "aggregateRoot": "AuthorizationPolicy",
+    "responsibility": "维护角色、资源权限与对象级数据范围政策。",
+    "attributes": [
+      "policyId",
+      "version"
+    ],
+    "entities": [
+      {
+        "name": "RolePermission",
+        "identityStrategy": "role+resource",
+        "attributes": [
+          "role",
+          "resource",
+          "actions"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "DataScope",
+        "attributes": [
+          "scopeType",
+          "bindingField"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "accountId",
+          "roles"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-003",
+      "US-OR-002",
+      "US-OR-003"
+    ],
+    "invariants": [
+      {
+        "description": "授权判定必须同时满足角色资源边界和对象绑定范围。",
+        "triggerCommandRefs": [
+          "UpdateAuthorizationPolicy"
+        ],
+        "violationBehavior": "拒绝政策变更或访问并记录越权审计。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "DataOnly",
+      "reason": "权限政策按版本和规则数据更新，无证据要求独立生命周期。",
+      "stateMachineRefs": [],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "VisitAppointment",
+    "bcId": "BC-VISIT",
+    "aggregateRoot": "VisitAppointment",
+    "responsibility": "保证预约、审核、凭证和进出状态的一致性。",
+    "attributes": [
+      "appointmentId",
+      "status",
+      "visitor",
+      "hostId",
+      "visitWindow",
+      "reason",
+      "plateNo",
+      "blacklistHit",
+      "reviewerId",
+      "lastPassageAt"
+    ],
+    "entities": [
+      {
+        "name": "Companion",
+        "identityStrategy": "appointmentId+sequence",
+        "attributes": [
+          "name",
+          "relation",
+          "identityNo"
+        ]
+      },
+      {
+        "name": "VisitCredential",
+        "identityStrategy": "credentialId",
+        "attributes": [
+          "shortCode",
+          "usageStatus",
+          "redeemedAt",
+          "validUntil"
+        ]
+      },
+      {
+        "name": "PassageRecord",
+        "identityStrategy": "passageId",
+        "attributes": [
+          "direction",
+          "gateId",
+          "operatorId",
+          "occurredAt"
+        ]
+      },
+      {
+        "name": "ConsentRecord",
+        "identityStrategy": "appointmentId+consentType",
+        "attributes": [
+          "consentType",
+          "confirmedAt"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "VisitWindow",
+        "attributes": [
+          "start",
+          "end"
+        ]
+      },
+      {
+        "name": "VisitorIdentity",
+        "attributes": [
+          "name",
+          "phone",
+          "identityType",
+          "identityNo"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "hostId",
+          "reviewerId",
+          "operatorId"
+        ]
+      },
+      {
+        "class": "MasterDataCatalog",
+        "domain": "BC-MASTER",
+        "fields": [
+          "visitorTypeId",
+          "gateId"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-AP-004",
+      "US-AP-005",
+      "US-AP-006",
+      "US-AT-001",
+      "US-AT-002",
+      "US-AT-003",
+      "US-AT-004",
+      "US-GV-001",
+      "US-GV-002",
+      "US-GV-003",
+      "US-GV-004",
+      "US-GV-005",
+      "US-GV-007",
+      "US-VS-001",
+      "US-VS-002",
+      "US-VS-003",
+      "US-VS-004"
+    ],
+    "invariants": [
+      {
+        "description": "预约字段、随行、时间、重复、告知和黑名单预检在创建或改期时保持有效。",
+        "triggerCommandRefs": [
+          "SubmitAppointment",
+          "RegisterWalkIn",
+          "RescheduleAppointment",
+          "ReviewRescheduleAppointment"
+        ],
+        "violationBehavior": "拒绝提交或改期；黑名单提交阶段只标记和提示。"
+      },
+      {
+        "description": "审核、取消、过期、进出和核销必须符合状态守卫。",
+        "triggerCommandRefs": [
+          "ApproveAppointment",
+          "RejectAppointment",
+          "CancelAppointment",
+          "ExpireAppointment",
+          "AdmitVisitor",
+          "RecordDeparture",
+          "RedeemVisitCredential"
+        ],
+        "violationBehavior": "拒绝非法或重复动作，保持原状态并返回冲突或拦截结果。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "StateMachine",
+      "reason": "预约八态和凭证已用/未用均有明确命令、守卫和可观察迁移；已离校当天可回到在校中。",
+      "stateMachineRefs": [
+        "SM-AppointmentStatus",
+        "SM-VisitCredentialUsage"
+      ],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "IncidentRegistry",
+    "bcId": "BC-VISIT",
+    "aggregateRoot": "IncidentRegistry",
+    "responsibility": "记录现场、黑名单和超时未离等异常。",
+    "attributes": [
+      "registryId"
+    ],
+    "entities": [
+      {
+        "name": "IncidentReport",
+        "identityStrategy": "incidentId",
+        "attributes": [
+          "type",
+          "occurredAt",
+          "subjectId",
+          "reporterId"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "IncidentEvidence",
+        "attributes": [
+          "description",
+          "objectType",
+          "objectId"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "VisitAppointment",
+        "domain": "BC-VISIT",
+        "fields": [
+          "appointmentId"
+        ]
+      },
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "reporterId"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-006",
+      "US-AN-002",
+      "US-BD-002",
+      "US-NT-002"
+    ],
+    "invariants": [
+      {
+        "description": "异常记录必须包含类型、时间和对象，并在成功记录后触发通知。",
+        "triggerCommandRefs": [
+          "ReportIncident"
+        ],
+        "violationBehavior": "字段不全时拒绝记录，不发送成功通知。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "DataOnly",
+      "reason": "V1.0只要求异常记录产生与查询，未定义异常处置生命周期。",
+      "stateMachineRefs": [],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "MasterDataCatalog",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "MasterDataCatalog",
+    "responsibility": "维护预约和放行消费的主数据与时间规则。",
+    "attributes": [
+      "catalogId",
+      "version"
+    ],
+    "entities": [
+      {
+        "name": "VisitorType",
+        "identityStrategy": "typeId",
+        "attributes": [
+          "name",
+          "status"
+        ]
+      },
+      {
+        "name": "Gate",
+        "identityStrategy": "gateId",
+        "attributes": [
+          "name",
+          "status"
+        ]
+      },
+      {
+        "name": "HostDirectoryEntry",
+        "identityStrategy": "hostId",
+        "attributes": [
+          "name",
+          "employeeNo",
+          "status"
+        ]
+      },
+      {
+        "name": "TimeRule",
+        "identityStrategy": "ruleId",
+        "attributes": [
+          "weekdays",
+          "start",
+          "end",
+          "bufferMinutes",
+          "maxStayMinutes",
+          "blocked"
+        ]
+      },
+      {
+        "name": "DictionaryEntry",
+        "identityStrategy": "dictionary+code",
+        "attributes": [
+          "label",
+          "enabled"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "TimeOfDayRange",
+        "attributes": [
+          "start",
+          "end"
+        ]
+      }
+    ],
+    "references": [],
+    "sourceUserStoryIds": [
+      "US-BD-001",
+      "US-BD-003",
+      "US-BD-004",
+      "US-BD-005",
+      "US-SM-004"
+    ],
+    "invariants": [
+      {
+        "description": "主数据停用只影响后续候选和校验，历史引用必须继续可解释。",
+        "triggerCommandRefs": [
+          "UpsertVisitorType",
+          "DeactivateVisitorType",
+          "UpsertGate",
+          "DeactivateGate",
+          "UpsertHost",
+          "DeactivateHost",
+          "UpdateDataDictionary"
+        ],
+        "violationBehavior": "拒绝硬删除；保持历史引用。"
+      },
+      {
+        "description": "禁入时段优先于可预约时段，默认值和开关语义可被业务校验消费。",
+        "triggerCommandRefs": [
+          "UpdateTimeRules"
+        ],
+        "violationBehavior": "拒绝自相矛盾或非法时间配置。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "StateMachine",
+      "reason": "访客类型、校门和教职工均有明确在用/停用二态；时间规则和字典仅数据化。",
+      "stateMachineRefs": [
+        "SM-VisitorTypeStatus",
+        "SM-GateStatus",
+        "SM-HostStatus"
+      ],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "BlacklistRegistry",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "BlacklistRegistry",
+    "responsibility": "维护全校唯一黑名单及有效性。",
+    "attributes": [
+      "registryId"
+    ],
+    "entities": [
+      {
+        "name": "BlacklistEntry",
+        "identityStrategy": "entryId",
+        "attributes": [
+          "identityNo",
+          "name",
+          "reason",
+          "expiresAt",
+          "status"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "BlacklistIdentity",
+        "attributes": [
+          "identityNo",
+          "name"
+        ]
+      }
+    ],
+    "references": [],
+    "sourceUserStoryIds": [
+      "US-AP-002",
+      "US-AP-003",
+      "US-BD-002"
+    ],
+    "invariants": [
+      {
+        "description": "同一有效身份只保留一条全校黑名单项，删除和到期都必须留痕。",
+        "triggerCommandRefs": [
+          "UpsertBlacklistEntry",
+          "RemoveBlacklistEntry",
+          "ExpireBlacklistEntry"
+        ],
+        "violationBehavior": "拒绝重复有效项；状态变化失败时保留原有效性。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "StateMachine",
+      "reason": "条目具有有效、到期和手工删除的明确生命周期。",
+      "stateMachineRefs": [
+        "SM-BlacklistEntryStatus"
+      ],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "SystemConfiguration",
+    "bcId": "BC-MASTER",
+    "aggregateRoot": "SystemConfiguration",
+    "responsibility": "维护入口URL、审核人、通知渠道和其他即时生效参数。",
+    "attributes": [
+      "configurationId",
+      "version"
+    ],
+    "entities": [
+      {
+        "name": "SystemParameter",
+        "identityStrategy": "key",
+        "attributes": [
+          "key",
+          "value",
+          "updatedAt"
+        ]
+      },
+      {
+        "name": "ReviewerAssignmentRule",
+        "identityStrategy": "scope",
+        "attributes": [
+          "scope",
+          "reviewerType",
+          "reviewerId",
+          "effectiveFrom"
+        ]
+      },
+      {
+        "name": "NotificationChannelSetting",
+        "identityStrategy": "channel",
+        "attributes": [
+          "channel",
+          "enabled"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "ConfigurationValue",
+        "attributes": [
+          "type",
+          "value"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "reviewerId"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-006",
+      "US-AT-003",
+      "US-NT-003",
+      "US-SM-003"
+    ],
+    "invariants": [
+      {
+        "description": "配置变更即时生效；审核人配置仅前向影响新预约。",
+        "triggerCommandRefs": [
+          "UpdateSystemParameter",
+          "ConfigureReviewerAssignment",
+          "ConfigureNotificationChannels"
+        ],
+        "violationBehavior": "无效配置拒绝发布，既有业务记录不被追溯改写。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "DataOnly",
+      "reason": "配置按版本生效，未定义聚合生命周期。",
+      "stateMachineRefs": [],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "NotificationBox",
+    "bcId": "BC-NOTIFY",
+    "aggregateRoot": "NotificationBox",
+    "responsibility": "维护接收方通知及已读状态。",
+    "attributes": [
+      "recipientId"
+    ],
+    "entities": [
+      {
+        "name": "NotificationMessage",
+        "identityStrategy": "messageId",
+        "attributes": [
+          "template",
+          "businessObjectId",
+          "createdAt",
+          "readStatus",
+          "readAt"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "DeliveryChannel",
+        "attributes": [
+          "channel",
+          "enabled"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "recipientId"
+        ]
+      },
+      {
+        "class": "VisitAppointment",
+        "domain": "BC-VISIT",
+        "fields": [
+          "businessObjectId"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-005",
+      "US-NT-001",
+      "US-NT-002"
+    ],
+    "invariants": [
+      {
+        "description": "消息产生后对接收方可见；已读状态持久且只能由未读变为已读。",
+        "triggerCommandRefs": [
+          "PublishNotification",
+          "MarkNotificationRead"
+        ],
+        "violationBehavior": "投递或已读变更失败时保留可重试事实。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "StateMachine",
+      "reason": "通知消息具有未读到已读的二态生命周期。",
+      "stateMachineRefs": [
+        "SM-NotificationReadStatus"
+      ],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "AuditTrail",
+    "bcId": "BC-COMPLIANCE",
+    "aggregateRoot": "AuditTrail",
+    "responsibility": "追加不可缺字段的敏感操作审计记录。",
+    "attributes": [
+      "trailId",
+      "retentionDays"
+    ],
+    "entities": [
+      {
+        "name": "AuditEntry",
+        "identityStrategy": "auditId",
+        "attributes": [
+          "user",
+          "time",
+          "objectType",
+          "objectId",
+          "action",
+          "result",
+          "before",
+          "after"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "AuditObject",
+        "attributes": [
+          "objectType",
+          "objectId"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "user"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-004",
+      "US-OR-002",
+      "US-OR-003",
+      "US-SM-001"
+    ],
+    "invariants": [
+      {
+        "description": "审计条目只追加且具备最小字段，关键日志保留不少于180天。",
+        "triggerCommandRefs": [
+          "RecordAuditEntry"
+        ],
+        "violationBehavior": "缺字段时拒绝写入并暴露审计失败。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "DataOnly",
+      "reason": "审计记录为不可变追加事实，无业务生命周期迁移。",
+      "stateMachineRefs": [],
+      "openQuestions": []
+    }
+  },
+  {
+    "name": "PrivacyCase",
+    "bcId": "BC-COMPLIANCE",
+    "aggregateRoot": "PrivacyCase",
+    "responsibility": "协调留存到期脱敏、物理清除、更正和主体数据提供。",
+    "attributes": [
+      "caseId",
+      "subjectId",
+      "requestType",
+      "status",
+      "createdAt"
+    ],
+    "entities": [
+      {
+        "name": "PrivacyAction",
+        "identityStrategy": "actionId",
+        "attributes": [
+          "type",
+          "executedAt",
+          "operatorId",
+          "result"
+        ]
+      }
+    ],
+    "valueObjects": [
+      {
+        "name": "MaskingPolicy",
+        "attributes": [
+          "retentionDays",
+          "identityMask"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "class": "VisitAppointment",
+        "domain": "BC-VISIT",
+        "fields": [
+          "subjectId",
+          "appointmentIds"
+        ]
+      },
+      {
+        "class": "UserAccount",
+        "domain": "BC-ACCESS",
+        "fields": [
+          "operatorId"
+        ]
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-VS-003",
+      "US-LG-003",
+      "US-LG-004",
+      "US-SM-002"
+    ],
+    "invariants": [
+      {
+        "description": "到期脱敏不得删除统计事实；人工清除必须物理删除且另留操作痕迹。",
+        "triggerCommandRefs": [
+          "AnonymizeExpiredPersonalData",
+          "ErasePersonalData",
+          "CorrectPersonalData"
+        ],
+        "violationBehavior": "范围不明或授权不足时拒绝隐私动作。"
+      }
+    ],
+    "stateModeling": {
+      "decision": "DataOnly",
+      "reason": "V1.0只确认隐私动作结果，未给出请求案件的完整状态流转。",
+      "stateMachineRefs": [],
+      "openQuestions": []
+    }
+  }
+]

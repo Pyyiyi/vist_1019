@@ -1,0 +1,288 @@
+[
+  {
+    "id": "BR-AUTH-LOGIN",
+    "description": "登录按账号累计失败；5次失败锁定10分钟并自动解锁，停用账号返回401。",
+    "scope": "Guard",
+    "constrains": "UserAccount",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-OR-001",
+      "US-PT-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-AUTH-SERVER",
+    "description": "角色、资源与对象级数据范围必须由服务端强制；越权返回403并留痕。",
+    "scope": "Guard",
+    "constrains": "AuthorizationPolicy",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AT-001",
+      "US-OR-002",
+      "US-OR-003",
+      "US-PT-003",
+      "US-VS-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-APPOINTMENT-FIELDS",
+    "description": "预约必填、手机号、证件号、随行人数与字段格式必须符合基线。",
+    "scope": "Validation",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-GV-003",
+      "US-VS-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-APPOINTMENT-TIME",
+    "description": "到访时段起小于止、同日、15分钟至配置上限，并满足可预约与禁入优先。",
+    "scope": "Specification",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-003",
+      "US-AP-004",
+      "US-BD-003",
+      "US-GV-003",
+      "US-VS-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-APPOINTMENT-DUPLICATE",
+    "description": "同访客未终结预约按闭区间相交判重；端点相接也冲突。",
+    "scope": "Invariant",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AP-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-APPOINTMENT-BLACKLIST",
+    "description": "提交命中黑名单只提示并标记，核验命中必须拦截且无临时放行。",
+    "scope": "Specification",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AP-002",
+      "US-AP-003",
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-APPOINTMENT-TRANSITION",
+    "description": "预约只能按已确认的八态迁移；非法或重复处理返回409。",
+    "scope": "Invariant",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AP-004",
+      "US-AP-005",
+      "US-AP-006",
+      "US-AT-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-REVIEW",
+    "description": "审核拒绝原因必填2至100字；审核改期必须给新时段并重做预约校验。",
+    "scope": "Validation",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AT-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-GATE-VERIFICATION",
+    "description": "V1.0仅人工核验；身份、凭证、时段一致才可放行，黑名单硬拦。",
+    "scope": "Specification",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-GV-001",
+      "US-GV-002",
+      "US-GV-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-CREDENTIAL",
+    "description": "短码为6位数字且全局唯一；首次核销成功，重复核销拒绝。",
+    "scope": "Invariant",
+    "constrains": "VisitCredential",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-GV-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-ENTRY-EXIT",
+    "description": "同一预约当天可多次进出；每次进出留痕且状态取最后一次记录。",
+    "scope": "Invariant",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-GV-002",
+      "US-GV-003",
+      "US-GV-005",
+      "US-LG-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-MASTER-SOFT-STATE",
+    "description": "账号、访客类型、校门、教职工采用软停用，退出候选但保留历史。",
+    "scope": "Invariant",
+    "constrains": "MasterDataCatalog",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-BD-001",
+      "US-BD-004",
+      "US-BD-005",
+      "US-OR-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-BLACKLIST",
+    "description": "黑名单全校唯一；可手工删除或到期失效，命中产生异常、通知和审计。",
+    "scope": "Invariant",
+    "constrains": "BlacklistRegistry",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-NOTIFICATION",
+    "description": "站内通知启用必达；短信与企微按渠道配置决定是否外发。",
+    "scope": "Specification",
+    "constrains": "NotificationBox",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-NT-001",
+      "US-NT-002",
+      "US-NT-003",
+      "US-PT-005"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-AUDIT",
+    "description": "敏感操作日志包含最小审计字段并至少保留180天。",
+    "scope": "Invariant",
+    "constrains": "AuditTrail",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AT-004",
+      "US-OR-002",
+      "US-OR-003",
+      "US-SM-001"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-PRIVACY",
+    "description": "个人信息默认保留90天可配，到期仅展示层脱敏；人工清除物理删除并留痕。",
+    "scope": "Invariant",
+    "constrains": "PrivacyCase",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-REPORT-SCOPE",
+    "description": "管理员可见全校，门卫仅当日现场，访客和被访人仅本人绑定对象。",
+    "scope": "Guard",
+    "constrains": "LedgerReadModel",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AN-001",
+      "US-AT-001",
+      "US-GV-007",
+      "US-LG-001",
+      "US-LG-003",
+      "US-PT-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-REPORT-MASKING",
+    "description": "检索、导出与打印共用脱敏口径，证件号掩码为前4后4。",
+    "scope": "Specification",
+    "constrains": "LedgerReadModel",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-LG-003",
+      "US-LG-004",
+      "US-LG-005",
+      "US-SM-002"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-SYSTEM-CONFIG",
+    "description": "参数修改即时生效，并由声明的业务取数点消费。",
+    "scope": "Invariant",
+    "constrains": "SystemConfiguration",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-AT-003",
+      "US-PT-006",
+      "US-SM-003",
+      "US-SM-004"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "id": "BR-CONSENT",
+    "description": "访客每次提交都必须重新确认两项告知，并按预约记录时间戳。",
+    "scope": "Guard",
+    "constrains": "VisitAppointment",
+    "expression": "按已确认用户故事与PRD口径执行",
+    "violationMessage": "不满足业务规则",
+    "sourceUserStoryIds": [
+      "US-SM-002",
+      "US-VS-001",
+      "US-VS-003"
+    ],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  }
+]

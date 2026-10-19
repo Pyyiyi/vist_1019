@@ -1,0 +1,15 @@
+{
+  "storyId": "US-NT-001",
+  "title": "流转通知",
+  "acceptanceCriteria": [
+    "提交 → 通知被访人；审核结果 → 通知访客；站内消息**事件产生即推送**、接收方可见。",
+    "模板见 §0.5·C；**到访提醒触发＝预约时段起前 30 分钟**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "被访人 / 访客",
+  "capability": "收到预约提交、审核结果、到访提醒的站内通知",
+  "value": "及时响应",
+  "priority": "P1",
+  "traceability": "REQ-NT-001（D18）",
+  "page": "原型 #page-nt"
+}

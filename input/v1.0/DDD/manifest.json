@@ -1,0 +1,13 @@
+{
+  "package": "visitor-system-ddd",
+  "version": "1.0",
+  "baseVersion": null,
+  "schemaVersion": "ddd-annotation-v2.0",
+  "deliveryMode": "full-snapshot",
+  "model": "02-ddd-modeling/",
+  "sourceStoryBundle": "source-evidence/story-bundle/",
+  "confirmation": "confirmation/data-stage2.json",
+  "reports": "reports/",
+  "immutableBaseline": true,
+  "generatedAt": "2026-10-12"
+}

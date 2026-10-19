@@ -1,0 +1,156 @@
+{
+  "title": "访客系统 · 功能模块地图（分层 1 + N + M）",
+  "subtitle": "School Visitor Management System - Function Module Map",
+  "width": 1800,
+  "height": 1150,
+  "auto_width": true,
+  "card_min_width": 200,
+  "layers": [
+    {
+      "name": "统一入口（1）",
+      "modules": [
+        {
+          "name": "PT 统一门户 / 工作台",
+          "icon": "user",
+          "items": [
+            "统一登录与身份识别",
+            "角色工作台路由",
+            "我的待办聚合",
+            "通知与消息入口"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "业务模块（N）· 核心闭环",
+      "modules": [
+        {
+          "name": "AP 访客预约",
+          "icon": "link",
+          "items": [
+            "提交来访预约",
+            "预约信息校验",
+            "预约修改 / 取消",
+            "预约状态跟踪"
+          ]
+        },
+        {
+          "name": "AT 被访人审核",
+          "icon": "shield",
+          "items": [
+            "待审核列表（仅本人）",
+            "审核处理：同意/拒绝/改期",
+            "批量与快捷处理"
+          ]
+        },
+        {
+          "name": "GV 门卫核验放行",
+          "icon": "lock",
+          "items": [
+            "现场核验",
+            "放行 / 登记",
+            "访客凭证核销",
+            "进校 / 离校登记",
+            "异常上报"
+          ]
+        },
+        {
+          "name": "VS 访客门户·我的预约与凭证",
+          "icon": "mobile",
+          "items": [
+            "我的预约（仅本人）",
+            "访客凭证展示",
+            "安全告知确认"
+          ]
+        },
+        {
+          "name": "LG 访客台账与查询",
+          "icon": "database",
+          "items": [
+            "访客台账（核心留痕）",
+            "多条件查询 / 检索",
+            "导出 / 打印"
+          ]
+        },
+        {
+          "name": "AN 统计分析",
+          "icon": "chart",
+          "items": [
+            "来访量统计",
+            "异常统计",
+            "看板概览"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "基础模块（M）· 支撑底座",
+      "modules": [
+        {
+          "name": "OR 组织与用户·角色权限",
+          "icon": "gear",
+          "items": [
+            "用户 / 账号管理",
+            "角色与权限",
+            "数据范围控制（对象级隔离）"
+          ]
+        },
+        {
+          "name": "BD 主数据",
+          "icon": "server",
+          "items": [
+            "访客类型管理",
+            "黑名单管理",
+            "时段规则管理",
+            "校门 / 通行点管理",
+            "被访人 / 教职工名册"
+          ]
+        },
+        {
+          "name": "NT 通知消息",
+          "icon": "mail",
+          "items": [
+            "流转通知",
+            "异常提醒",
+            "通知渠道（站内/短信/企微）"
+          ]
+        },
+        {
+          "name": "SM 系统管理",
+          "icon": "cloud",
+          "items": [
+            "操作日志 / 留痕",
+            "参数配置",
+            "数据字典"
+          ]
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {"from": "PT 统一门户 / 工作台", "to": "AP 访客预约", "style": "solid", "label": "发起预约"},
+    {"from": "AP 访客预约", "to": "AT 被访人审核", "style": "solid", "label": "提交审核"},
+    {"from": "AT 被访人审核", "to": "GV 门卫核验放行", "style": "solid", "label": "核验放行"},
+    {"from": "VS 访客门户·我的预约与凭证", "to": "GV 门卫核验放行", "style": "dashed", "label": "出示凭证"},
+    {"from": "GV 门卫核验放行", "to": "LG 访客台账与查询", "style": "solid", "label": "留痕入库"},
+    {"from": "LG 访客台账与查询", "to": "AN 统计分析", "style": "dashed", "label": "汇总统计"}
+  ],
+  "sidebar": {
+    "title": "横切能力",
+    "icon": "shield",
+    "items": [
+      {
+        "name": "安全留痕",
+        "items": ["操作日志", "异常上报", "台账留痕"]
+      },
+      {
+        "name": "权限边界",
+        "items": ["对象级隔离", "服务端强制", "代登录只读"]
+      }
+    ]
+  },
+  "legend": [
+    {"type": "solid", "label": "核心闭环流", "color": "#5B9BD5"},
+    {"type": "dashed", "label": "辅助 / 查询流", "color": "#A0B4C8"}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-PT-004",
+  "title": "我的待办聚合",
+  "acceptanceCriteria": [
+    "各待办项显示数量徽标，数字随数据实时变化。",
+    "点击某项进入对应处理页（待审核→AT、待核验→GV、异常→GV）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "后台用户",
+  "capability": "在工作台看到待审核（host/admin）、待核验、异常待处理的聚合与数量徽标",
+  "value": "快速进入处理",
+  "priority": "P1",
+  "traceability": "REQ-PT-003",
+  "page": "原型 #page-pt"
+}

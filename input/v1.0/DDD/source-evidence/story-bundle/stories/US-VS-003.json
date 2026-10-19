@@ -1,0 +1,15 @@
+{
+  "storyId": "US-VS-003",
+  "title": "安全告知 / 授权告知确认",
+  "acceptanceCriteria": [
+    "**未勾选不可提交**。",
+    "**每次提交均需确认（不记忆）**；留痕**按预约**粒度、**含时间戳**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "提交前阅读并勾选《安全告知》《个人信息授权告知》",
+  "value": "知情并授权",
+  "priority": "P0",
+  "traceability": "REQ-VS-003（D2/D19，SM）",
+  "page": "原型 #page-vs"
+}

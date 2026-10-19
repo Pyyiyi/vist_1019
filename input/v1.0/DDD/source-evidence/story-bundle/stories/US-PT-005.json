@@ -1,0 +1,15 @@
+{
+  "storyId": "US-PT-005",
+  "title": "通知与消息入口",
+  "acceptanceCriteria": [
+    "有新增消息时显示**红点**；已读状态**持久**保存。",
+    "点击消息进入对应业务对象。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "后台用户",
+  "capability": "有站内消息入口并可标记已读",
+  "value": "及时获知与我相关的事件",
+  "priority": "P1",
+  "traceability": "REQ-PT-004（NT）",
+  "page": "原型 #page-pt"
+}

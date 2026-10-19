@@ -1,0 +1,12 @@
+.git
+.boss
+.codex
+.claude
+.npm-cache
+input
+output
+backend
+docs
+**/node_modules
+**/dist
+**/.env

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>访客系统 · 简易交互原型（阶段一）</title>
+<style>
+  :root{
+    --bg:#f0f3f8; --panel:#ffffff; --ink:#23303f; --muted:#6b7a8d;
+    --line:#dfe6ef; --brand:#2e5c8a; --brand2:#4a90d9; --accent:#fcd34d;
+    --ok:#2e9e63; --warn:#d98a00; --danger:#c0392b; --soft:#eef4fb;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+       background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;}
+  .app{max-width:1180px;margin:0 auto;padding:0 16px 60px;}
+
+  /* 顶栏：角色切换器 */
+  header.topbar{position:sticky;top:0;z-index:30;background:var(--brand);color:#fff;
+    margin:0 -16px 18px;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    box-shadow:0 2px 10px rgba(46,92,138,.25);}
+  .topbar h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.5px;}
+  .topbar .sub{font-size:12px;opacity:.85;border-left:1px solid rgba(255,255,255,.35);padding-left:12px;}
+  .role-switch{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;}
+  .role-switch select{padding:6px 10px;border-radius:8px;border:none;font-size:13px;color:var(--brand);
+    font-weight:600;cursor:pointer;outline:none;}
+
+  .layout{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:start;}
+  @media(max-width:820px){.layout{grid-template-columns:1fr;}}
+
+  /* 侧边导航 */
+  nav.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;
+    position:sticky;top:78px;}
+  nav.side .cap{font-size:12px;color:var(--muted);padding:6px 10px 8px;font-weight:700;letter-spacing:.5px;}
+  nav.side a{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;color:var(--ink);
+    text-decoration:none;font-size:13.5px;margin-bottom:2px;cursor:pointer;transition:.15s;}
+  nav.side a:hover{background:var(--soft);}
+  nav.side a.active{background:var(--brand);color:#fff;font-weight:600;}
+  nav.side a .code{font-size:11px;color:var(--muted);margin-left:auto;font-weight:700;}
+  nav.side a.active .code{color:var(--accent);}
+  nav.side a.hidden{display:none;}
+
+  /* 内容区 */
+  main.content{min-height:520px;}
+  .page{display:none;animation:fade .25s ease;}
+  .page.show{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+  .card h2{margin:0 0 4px;font-size:17px;}
+  .card h3{margin:18px 0 8px;font-size:14.5px;color:var(--brand);}
+  .card .hint{color:var(--muted);font-size:12.5px;margin:0 0 14px;}
+  .badge{display:inline-block;min-width:20px;text-align:center;background:var(--danger);color:#fff;
+    border-radius:10px;font-size:11px;padding:0 6px;margin-left:6px;font-weight:700;}
+
+  .grid{display:grid;gap:12px;}
+  .grid.c2{grid-template-columns:repeat(2,1fr);}
+  .grid.c3{grid-template-columns:repeat(3,1fr);}
+  .grid.c4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:820px){.grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr;}}
+
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .n{font-size:26px;font-weight:800;color:var(--brand);}
+  .kpi .l{font-size:12.5px;color:var(--muted);margin-top:2px;}
+
+  .entry{cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;
+    transition:.15s;}
+  .entry:hover{border-color:var(--brand2);box-shadow:0 6px 16px rgba(74,144,217,.16);transform:translateY(-1px);}
+  .entry .t{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px;}
+  .entry .d{color:var(--muted);font-size:12.5px;margin-top:6px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);}
+  th{background:var(--soft);color:var(--brand);font-weight:700;font-size:12.5px;white-space:nowrap;}
+  tr:hover td{background:#fafcff;}
+
+  .tag{display:inline-block;padding:1px 9px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .tag.wait{background:#fff3d6;color:#9a6b00;}
+  .tag.pass{background:#e0f3e8;color:#1e7a48;}
+  .tag.rej{background:#fbe3e0;color:#a8342a;}
+  .tag.ing{background:#e2eefc;color:#2e5c8a;}
+  .tag.done{background:#eceef2;color:#55606f;}
+
+  button{font-family:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#fff;
+    color:var(--ink);padding:7px 14px;font-size:13px;transition:.15s;}
+  button:hover{border-color:var(--brand2);color:var(--brand);}
+  button.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600;}
+  button.primary:hover{background:#24486b;color:#fff;}
+  button.mini{padding:3px 10px;font-size:12px;}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;}
+  .field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--line);
+    border-radius:9px;font-family:inherit;font-size:13px;outline:none;}
+  .field input:focus,.field select:focus{border-color:var(--brand2);}
+
+  .note{background:#fffaf0;border:1px solid #f4e2b8;border-radius:10px;padding:10px 14px;
+    font-size:12.5px;color:#8a6d20;margin-top:12px;}
+  .note.blue{background:var(--soft);border-color:#c7dcf3;color:#2e5c8a;}
+  .mock{font-size:12px;color:var(--muted);font-weight:400;}
+
+  .verify-panel{background:#fbfdfe;border:1px dashed var(--brand2);border-radius:12px;padding:12px 14px;margin-top:14px;}
+  .verify-panel .vp-title{font-size:12.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  .verify-panel ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--muted);}
+  .verify-panel li{margin-bottom:3px;}
+
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:22px 0 0;}
+
+  .cred{background:#fff;border:2px dashed var(--brand2);border-radius:12px;padding:18px;text-align:center;}
+  .cred .qr{width:120px;height:120px;margin:10px auto;background:
+    repeating-conic-gradient(#23303f 0 25%, #fff 0 50%) 0 0/16px 16px;border-radius:8px;}
+  .cred .no{font-size:22px;font-weight:800;letter-spacing:4px;color:var(--brand);}
+
+  /* 访客端（移动端 H5）——手机壳外框 */
+  .content.visitor-mode{max-width:392px;margin:34px auto 0;border:12px solid #23303f;border-radius:34px;
+    padding:16px 12px 20px;background:#f7fafd;box-shadow:0 16px 44px rgba(35,48,63,.30);position:relative;}
+  .content.visitor-mode::before{content:"📱 访客端 · 手机 H5";position:absolute;top:-30px;left:0;right:0;
+    text-align:center;font-size:12.5px;color:var(--brand);font-weight:700;letter-spacing:.5px;}
+  .content.visitor-mode .card{box-shadow:none;padding:14px 15px;}
+  .content.visitor-mode .grid.c3,.content.visitor-mode .grid.c2{grid-template-columns:1fr;}
+  .phone-step{font-size:12px;color:var(--brand);font-weight:700;margin:16px 0 8px;border-top:1px dashed var(--line);padding-top:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <h1>访客系统 · 简易交互原型</h1>
+    <span class="sub">阶段一 · 需求规划 ｜ 仅勾画主要页面骨架与跳转，非最终视觉</span>
+    <div class="role-switch">
+      <label for="roleSel">当前登录角色：</label>
+      <select id="roleSel" onchange="switchRole()">
+        <option value="admin">管理员</option>
+        <option value="guard">门卫 / 保安</option>
+        <option value="host">被访教职工</option>
+        <option value="visitor">访客本人</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="side" id="sideNav">
+      <div class="cap">工作台导航</div>
+      <!-- 统一入口 -->
+      <a data-page="pt" data-roles="admin,guard,host" class="active" onclick="go('pt',this)">统一门户 / 工作台<span class="code">PT</span></a>
+      <!-- 业务模块 -->
+      <a data-page="ap" data-roles="admin,host" onclick="go('ap',this)">访客预约<span class="code">AP</span></a>
+      <a data-page="at" data-roles="admin,host" onclick="go('at',this)">被访人审核<span class="code">AT</span></a>
+      <a data-page="gv" data-roles="admin,guard" onclick="go('gv',this)">门卫核验放行<span class="code">GV</span></a>
+      <a data-page="vs" data-roles="visitor" onclick="go('vs',this)">我的申请与凭证<span class="code">VS</span></a>
+      <a data-page="lg" data-roles="admin,guard" onclick="go('lg',this)">访客台账与查询<span class="code">LG</span></a>
+      <a data-page="an" data-roles="admin" onclick="go('an',this)">统计分析<span class="code">AN</span></a>
+      <!-- 基础模块 -->
+      <div class="cap" style="margin-top:8px;">基础设置</div>
+      <a data-page="or" data-roles="admin" onclick="go('or',this)">组织与用户·角色权限<span class="code">OR</span></a>
+      <a data-page="bd" data-roles="admin" onclick="go('bd',this)">主数据（类型/黑名单/时段/校门）<span class="code">BD</span></a>
+      <a data-page="sm" data-roles="admin" onclick="go('sm',this)">系统管理<span class="code">SM</span></a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ============ PT 统一门户 / 工作台 ============ -->
+      <section class="page show" id="page-pt">
+        <div class="card">
+          <h2>工作台 <span class="mock" id="ptRole"></span></h2>
+          <p class="hint">登录后按角色进入不同工作台；统一身份识别 + 待办聚合。</p>
+
+          <div class="grid c4" id="ptKpi"></div>
+
+          <h3>我的待办 / 入口</h3>
+          <div class="grid c3" id="ptEntries"></div>
+
+          <div class="note">本页为「统一入口（1）」：管理员 / 门卫 / 被访教职工登录后先到这里，再按角色路由到对应工作台。**访客本人不使用后台（无 web 端）**，直接进手机端访客端。</div>
+        </div>
+      </section>
+
+      <!-- ============ AP 访客预约 ============ -->
+      <section class="page" id="page-ap">
+        <div class="card">
+          <h2>访客预约 <span class="mock">AP</span></h2>
+          <p class="hint">访客本人或被访人代提；填到访时段、事由、被访人、随行人数、车牌；提交后进入审核。</p>
+
+          <h3>填写预约（骨架示意）</h3>
+          <div class="grid c2">
+            <div>
+              <div class="field"><label>访客姓名</label><input placeholder="如：张小明" /></div>
+              <div class="field"><label>联系电话</label><input placeholder="如：138****0000" /></div>
+              <div class="field"><label>访客类型</label>
+                <select><option>家长</option><option>外来人员</option><option>公务来访</option></select></div>
+              <div class="field"><label>随行人员（逐人明细）</label><input value="0 人（逐人登记见下）" readonly /></div>
+            </div>
+            <div>
+              <div class="field"><label>被访人（教职工）</label>
+                <select><option>李老师（一年级 · 语文）</option><option>王老师（三年级 · 数学）</option></select></div>
+              <div class="field"><label>到访时段</label><input value="2026-10-12 09:00 ~ 10:30" /></div>
+              <div class="field"><label>来访事由</label><input placeholder="如：家长会 / 送材料 / 维修" /></div>
+              <div class="field"><label>车牌号（选填）</label><input placeholder="如：京A·12345" /></div>
+            </div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="mockSubmit('预约已提交，状态：待审核')">提交预约</button>
+            <button onclick="mockSubmit('已保存为草稿')">暂存</button>
+          </div>
+
+          <h3>我的预约状态跟踪</h3>
+          <table>
+            <thead><tr><th>访客</th><th>被访人</th><th>到访时段</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>张小明</td><td>李老师</td><td>10-12 09:00~10:30</td><td><span class="tag wait">待审核</span></td><td>改期 / 取消</td></tr>
+              <tr><td>赵工（维修）</td><td>总务处</td><td>10-13 14:00~15:00</td><td><span class="tag pass">已通过</span></td><td>查看凭证</td></tr>
+              <tr><td>陈先生</td><td>王老师</td><td>10-09 10:00~11:00</td><td><span class="tag rej">已拒绝</span></td><td>重新预约</td></tr>
+            </tbody>
+          </table>
+
+          <div class="note blue">状态全集见「01-名词统一文档 §4.2」：待审核 / 已通过 / 已拒绝 / 已改期 / 已过期 / 已到访·在校中 / 已离校 / 已取消。</div>
+
+          <h3>随行人员逐人明细（G4）</h3>
+          <table>
+            <thead><tr><th>姓名</th><th>与主访客关系</th><th>证件号</th></tr></thead>
+            <tbody>
+              <tr><td>李小雨</td><td>子女（学生）</td><td>1101********1234</td></tr>
+              <tr><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+          <div class="btnrow"><button class="mini" onclick="mockSubmit('已添加随行人员一行')">＋ 添加随行人员</button></div>
+          <div class="note">随行人员按**逐人明细登记**（姓名 / 关系 / 证件号），**到访人数以明细条数为准**（不再仅记人数）。</div>
+
+          <h3>被访人邀约发起（G6）</h3>
+          <div class="grid c2">
+            <div>
+              <div class="field"><label>邀约对象</label><input placeholder="如：张小明 / 138****0000" /></div>
+              <div class="field"><label>预计到访时段</label><input value="2026-10-13 14:00 ~ 15:00" /></div>
+              <div class="btnrow">
+                <button class="primary" onclick="mockSubmit('已生成邀请码 A7K9Q2，已发送给访客')">生成邀请码并发送</button>
+                <button onclick="mockSubmit('已复制邀约链接')">复制邀约链接</button>
+              </div>
+            </div>
+            <div>
+              <div class="cred" style="border-style:solid;">
+                <div class="no">A7K9Q2</div>
+                <div class="mock">邀请码 · 有效期至 10-13 15:00</div>
+              </div>
+              <div class="note blue" style="margin-top:10px;">被访教职工**主动发起**邀约 → 生成**邀请码 / 链接**发给访客 → 访客凭码快速提交或免填到访。与「访客自助申请」互补（一为访客发起、一为被访人发起）。</div>
+            </div>
+          </div>
+
+          <h3>常客快登（G8）</h3>
+          <div class="field"><label>输入姓名 / 证件号检索常客</label>
+            <div class="btnrow" style="margin-top:6px;">
+              <input placeholder="如：赵工 / 1101****5678" style="flex:1;min-width:180px;" />
+              <button class="mini primary" onclick="mockSubmit('已一键复用上次到访信息（仍须过黑名单与证件核验）')">一键复用上次信息</button>
+            </div>
+          </div>
+          <div class="note">**常客快登**：系统保存曾批准、无黑名单记录的访客信息，再次到访可**一键复用**快速登记；仍**须过黑名单预检与证件核验**方可放行。</div>
+
+          <h3>申请入口二维码（后台生成）</h3>
+          <div class="grid c2">
+            <div class="cred" style="border-style:solid;">
+              <div class="qr"></div>
+              <div class="mock">张贴于校门 / 公示处</div>
+              <div class="btnrow" style="justify-content:center;">
+                <button class="mini primary" onclick="mockSubmit('已下载二维码图片')">下载</button>
+                <button class="mini" onclick="mockSubmit('已发送到打印')">打印</button>
+              </div>
+            </div>
+            <div>
+              <div class="note blue" style="margin-top:0;">
+                访客用手机**扫码** → 直接打开移动端访客端「我要申请」→ 填写并提交预约（**无需安装 App**）。
+              </div>
+              <div class="note">后台（管理员 / 门卫）可查看、下载、打印该二维码。扫码入口 = 访客进入访客端的两种方式之一（另一为门口门卫协助 / 现场登记）。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AT 被访人审核 ============ -->
+      <section class="page" id="page-at">
+        <div class="card">
+          <h2>被访人审核 <span class="mock">AT</span></h2>
+          <p class="hint">被访教职工仅见**本人**相关预约（对象级隔离）；可同意 / 拒绝 / 改期。管理员可兜底处理。</p>
+
+          <div class="grid c3">
+            <div class="kpi"><div class="n">3</div><div class="l">待我审核</div></div>
+            <div class="kpi"><div class="n">12</div><div class="l">本周已处理</div></div>
+            <div class="kpi"><div class="n">1</div><div class="l">待改期确认</div></div>
+          </div>
+
+          <h3>待审核列表（仅本人）</h3>
+          <table>
+            <thead><tr><th>访客</th><th>类型</th><th>到访时段</th><th>事由</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>张小明</td><td>家长</td><td>10-12 09:00~10:30</td><td>家长会</td>
+                  <td>
+                    <button class="mini primary" onclick="mockSubmit('已同意')">同意</button>
+                    <button class="mini" onclick="mockSubmit('已拒绝')">拒绝</button>
+                    <button class="mini" onclick="mockSubmit('已发起改期')">改期</button>
+                  </td></tr>
+              <tr><td>刘女士</td><td>家长</td><td>10-12 15:00~16:00</td><td>送书本</td>
+                  <td>
+                    <button class="mini primary" onclick="mockSubmit('已同意')">同意</button>
+                    <button class="mini" onclick="mockSubmit('已拒绝')">拒绝</button>
+                    <button class="mini" onclick="mockSubmit('已发起改期')">改期</button>
+                  </td></tr>
+            </tbody>
+          </table>
+          <div class="note">审核人默认为**被访教职工**（可配置为管理员，见模块地图 Q3）。此处演示管理员兜底视角。</div>
+
+          <h3>移动端审批（G7）</h3>
+          <div class="note blue">被访教职工可在**手机 H5** 上查看待办并同意 / 拒绝 / 改期（**消息推送直达**），无需回到电脑前处理——与桌面端同权、同一份待办聚合（见 PT「我的待办」）。</div>
+          <div class="btnrow"><button onclick="mockSubmit('已在手机端（H5）打开待审批')">在手机端打开待审批</button></div>
+        </div>
+      </section>
+
+      <!-- ============ GV 门卫核验放行 ============ -->
+      <section class="page" id="page-gv">
+        <div class="card">
+          <h2>门卫核验放行 <span class="mock">GV</span></h2>
+          <p class="hint">现场核对身份 + 预约 / 凭证一致性、是否在有效时段；无预约走现场登记；进校 / 离校记时刻。</p>
+
+          <h3>现场核验</h3>
+          <div class="grid c2">
+            <div class="field"><label>访客凭证（预约编号 / 二维码 / 短码）</label><input placeholder="扫码或输入短码，如 8F3K2" /></div>
+            <div class="field"><label>校门 / 通行点</label><select><option>正门</option><option>西门</option></select></div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="mockSubmit('核验通过，已放行（记录放行时刻）')">核验并放行</button>
+            <button onclick="mockSubmit('已进入现场登记（无预约来访）')">无预约 · 现场登记</button>
+            <button onclick="mockSubmit('已上报异常：黑名单命中')">异常上报</button>
+          </div>
+
+          <h3>证件识别（G2） / 现场人像采集（G3）</h3>
+          <div class="grid c2">
+            <div>
+              <div class="field"><label>证件识别</label>
+                <div class="btnrow" style="margin-top:6px;">
+                  <button class="mini primary" onclick="mockSubmit('已读卡 / OCR 识别：李明 · 1101********1234（自动与预约比对）')">读卡 / 拍照 OCR 识别</button>
+                  <button class="mini" onclick="mockSubmit('转入手工录入（识别失败回退）')">手工录入</button>
+                </div>
+              </div>
+              <div class="note blue" style="margin-top:6px;">自动提取姓名、证件号并与预约比对；识别失败可**回退手工录入**（结果人工可改、留痕）。</div>
+            </div>
+            <div>
+              <div class="field"><label>现场人像采集</label>
+                <div class="btnrow" style="margin-top:6px;">
+                  <button class="mini primary" onclick="mockSubmit('已现场拍照，绑定本次来访记录')">现场拍照留存</button>
+                </div>
+              </div>
+              <div class="note blue" style="margin-top:6px;">核验时对访客**现场拍照留存**、绑定本次来访记录（用于事后追溯，非人脸比对）。</div>
+            </div>
+          </div>
+
+          <h3>车牌识别 · 道闸联动（G10） / 访客证 · 临时通行卡（G9）</h3>
+          <div class="grid c2">
+            <div>
+              <div class="field"><label>访客车牌（识别 / 登记比对）</label>
+                <div class="btnrow" style="margin-top:6px;">
+                  <button class="mini" onclick="mockSubmit('车牌识别：京A·12345 与登记一致')">识别车牌并比对</button>
+                  <button class="mini" onclick="mockSubmit('已联动道闸放行')">道闸放行</button>
+                </div>
+              </div>
+              <div class="note">有车牌识别设备可联动道闸自动 / 手动放行；**无设备则门卫手工核对车牌**（校门设备开关可配，见 BD）。</div>
+            </div>
+            <div>
+              <div class="field"><label>访客证 / 临时通行卡</label>
+                <div class="btnrow" style="margin-top:6px;">
+                  <button class="mini primary" onclick="mockSubmit('已打印访客证（贴纸）')">打印访客证</button>
+                  <button class="mini" onclick="mockSubmit('已发放临时通行卡')">发放临时通行卡</button>
+                </div>
+              </div>
+              <div class="note">核验通过后打印**访客证（贴纸）**或发放**临时通行卡**，供访客在校期间随身识别；**离校回收 / 作废**。</div>
+            </div>
+          </div>
+
+          <h3>今日进校 / 在校中 / 离校</h3>
+          <table>
+            <thead><tr><th>访客</th><th>找谁</th><th>进校时刻</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>赵工（维修）</td><td>总务处</td><td>10-12 08:55</td><td><span class="tag ing">在校中</span></td><td><button class="mini" onclick="mockSubmit('已记录离校时刻')">离校</button></td></tr>
+              <tr><td>张小明</td><td>李老师</td><td>—</td><td><span class="tag pass">已通过（未到）</span></td><td>等待核验</td></tr>
+              <tr><td>孙师傅</td><td>食堂</td><td>10-12 07:30</td><td><span class="tag warn" style="background:#fbe3e0;color:#a8342a;">超时未离校</span></td><td><button class="mini" onclick="mockSubmit('已向访客 / 门卫发出催离提醒')">催离</button> <button class="mini" onclick="mockSubmit('已上报超时未离校')">上报</button></td></tr>
+            </tbody>
+          </table>
+          <div class="btnrow">
+            <button onclick="mockSubmit('已多选 2 条批量核销离校')">批量核销离校（G5）</button>
+          </div>
+          <div class="note">**批量核销（G5）**：离校高峰 / 散场时可多选批量核销离校，避免逐条操作。**超时催离（G5）**：超过预定在校时长 / 闭校时刻仍未离校 → 向访客 + 门卫发**催离提醒**并置入待关注清单（阈值可配，见 BD）。</div>
+          <div class="note">核验不通过 / 黑名单命中 / 信息不符 → 一律**异常上报并留痕**（保安全核心）。</div>
+        </div>
+      </section>
+
+      <!-- ============ VS 访客端（移动端 H5） ============ -->
+      <section class="page" id="page-vs">
+        <div class="card">
+          <h2>访客端 <span class="mock">VS · 手机 H5</span></h2>
+          <p class="hint">访客本人使用**移动端访客端（手机 H5）**，**无 web / 后台端**；V1.0 仅两项：**① 我要申请**、**② 我的申请（查看）**。仅本人可见本人数据。</p>
+
+          <div class="phone-step">① 我要申请（提交来访预约）</div>
+          <div class="field"><label>访客姓名</label><input placeholder="如：张小明" /></div>
+          <div class="field"><label>联系电话</label><input placeholder="如：138****0000" /></div>
+          <div class="field"><label>被访人（教职工）</label>
+            <select><option>李老师（一年级 · 语文）</option><option>王老师（三年级 · 数学）</option></select></div>
+          <div class="field"><label>到访时段</label><input value="2026-10-12 09:00 ~ 10:30" /></div>
+          <div class="field"><label>来访事由</label><input placeholder="如：家长会 / 送材料" /></div>
+          <div class="field"><label>随行人数</label><input type="number" value="0" min="0" /></div>
+          <div class="btnrow"><button class="primary" onclick="mockSubmit('预约已提交，状态：待审核')">提交申请</button></div>
+
+          <div class="phone-step">② 我的申请（查看状态与凭证）</div>
+          <table>
+            <thead><tr><th>被访人</th><th>到访时段</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td>李老师</td><td>10-12 09:00~10:30</td><td><span class="tag wait">待审核</span></td></tr>
+              <tr><td>王老师</td><td>10-09 10:00~11:00</td><td><span class="tag rej">已拒绝</span></td></tr>
+            </tbody>
+          </table>
+
+          <h3>可用通行凭证</h3>
+          <div class="cred">
+            <div class="no">8F3K2</div>
+            <div class="qr"></div>
+            <div class="mock">预约编号 V-20261012-0031 ｜ 到访 10-12 09:00~10:30</div>
+            <div class="btnrow" style="justify-content:center;">
+              <button class="mini primary" onclick="mockSubmit('凭证已出示（在门卫处扫码核销）')">出示凭证</button>
+            </div>
+          </div>
+
+          <div class="note blue" style="margin-top:14px;">进访客端方式：① 扫「申请入口二维码」自助进入；② 到门口由门卫协助 / 现场登记。安全告知确认在门卫核验时一并完成。</div>
+        </div>
+      </section>
+
+      <!-- ============ LG 访客台账与查询 ============ -->
+      <section class="page" id="page-lg">
+        <div class="card">
+          <h2>访客台账与查询 <span class="mock">LG</span></h2>
+          <p class="hint">全部来访记录的汇总（谁、何时、找谁、何时走）——保安全的核心留痕载体。管理员全校、门卫当日、访客仅本人记录。</p>
+
+          <div class="grid c4">
+            <div class="field"><label>访客姓名</label><input placeholder="姓名 / 证件号" /></div>
+            <div class="field"><label>被访人</label><input placeholder="教职工姓名" /></div>
+            <div class="field"><label>日期范围</label><input value="2026-10-01 ~ 2026-10-12" /></div>
+            <div class="field"><label>状态</label><select><option>全部</option><option>在校中</option><option>已离校</option><option>异常</option></select></div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="mockSubmit('已按条件检索台账')">查询</button>
+            <button onclick="mockSubmit('已按留存期限脱敏导出台账')">导出台账</button>
+          </div>
+          <div class="note">**导出口径（G11）**：支持**按留存期限脱敏导出**——超过留存期限的记录导出时自动隐去证件号 / 人像等敏感信息（口径同源，见 SM「个人信息保护」）。</div>
+
+          <h3>在校（实时）清单 · G1（应急疏散核心视图）</h3>
+          <table>
+            <thead><tr><th>访客</th><th>找谁</th><th>进校时刻</th><th>已在校时长</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td>赵工（维修）</td><td>总务处</td><td>10-12 08:55</td><td>1 时 12 分</td><td><span class="tag ing">在校中</span></td></tr>
+              <tr><td>孙师傅</td><td>食堂</td><td>10-12 07:30</td><td>2 时 37 分</td><td><span class="tag rej">异常·超时</span></td></tr>
+            </tbody>
+          </table>
+          <div class="note">**在校（实时）清单（G1）**：当前**仍在校园内**的访客实时名单（谁 / 何时进 / 找谁 / 已在校多久）——**应急疏散与突发事件的安全核心视图**；与下方「来访台账」（历史留痕）区分。</div>
+
+          <h3>来访台账（历史留痕）</h3>
+          <table>
+            <thead><tr><th>访客</th><th>类型</th><th>找谁</th><th>到访时间</th><th>离校时间</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td>赵工</td><td>外来人员</td><td>总务处</td><td>10-12 08:55</td><td>—</td><td><span class="tag ing">在校中</span></td></tr>
+              <tr><td>张小明</td><td>家长</td><td>李老师</td><td>—</td><td>—</td><td><span class="tag wait">待审核</span></td></tr>
+              <tr><td>周女士</td><td>家长</td><td>王老师</td><td>10-11 15:20</td><td>10-11 16:05</td><td><span class="tag done">已离校</span></td></tr>
+              <tr><td>孙师傅</td><td>外来人员</td><td>食堂</td><td>10-12 07:30</td><td>—</td><td><span class="tag rej">异常·超时</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ AN 统计分析 ============ -->
+      <section class="page" id="page-an">
+        <div class="card">
+          <h2>统计分析 <span class="mock">AN</span></h2>
+          <p class="hint">来访量统计、异常统计、看板概览（校领导 / 管理员安全概览）。</p>
+
+          <div class="grid c4">
+            <div class="kpi"><div class="n">128</div><div class="l">本月来访（人次）</div></div>
+            <div class="kpi"><div class="n">36</div><div class="l">家长来访</div></div>
+            <div class="kpi"><div class="n">12</div><div class="l">异常事件</div></div>
+            <div class="kpi"><div class="n">96%</div><div class="l">按时离校率</div></div>
+          </div>
+
+          <h3>来访量趋势（按日 / 周 / 月）</h3>
+          <div class="note blue" style="text-align:center;padding:32px 14px;">
+            📈 柱状 / 折线图占位（真实报表由统计分析模块承载）
+          </div>
+
+          <h3>异常类型分布</h3>
+          <table>
+            <thead><tr><th>异常类型</th><th>次数</th><th>占比</th></tr></thead>
+            <tbody>
+              <tr><td>超时未离校</td><td>6</td><td>50%</td></tr>
+              <tr><td>黑名单命中</td><td>2</td><td>17%</td></tr>
+              <tr><td>信息不符</td><td>3</td><td>25%</td></tr>
+              <tr><td>其它</td><td>1</td><td>8%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ OR 组织与用户·角色权限 ============ -->
+      <section class="page" id="page-or">
+        <div class="card">
+          <h2>组织与用户 · 角色权限 <span class="mock">OR</span></h2>
+          <p class="hint">用户 / 账号管理、角色 × 权限、数据范围控制（对象级隔离，服务端强制）。</p>
+          <h3>用户与角色</h3>
+          <table>
+            <thead><tr><th>账号</th><th>姓名</th><th>角色</th><th>数据范围</th><th>状态</th></tr></thead>
+            <tbody>
+              <tr><td>admin</td><td>系统管理员</td><td>管理员</td><td>全校</td><td><span class="tag pass">在用</span></td></tr>
+              <tr><td>G001</td><td>门卫·老张</td><td>门卫 / 保安</td><td>校门当日 / 现场</td><td><span class="tag pass">在用</span></td></tr>
+              <tr><td>T012</td><td>李老师</td><td>被访教职工</td><td>仅本人</td><td><span class="tag pass">在用</span></td></tr>
+            </tbody>
+          </table>
+          <div class="note">边界以**用户绑定的实体 id 为准在服务端强制**（§3.22）——登录 ≠ 有权限。</div>
+        </div>
+      </section>
+
+      <!-- ============ BD 主数据 ============ -->
+      <section class="page" id="page-bd">
+        <div class="card">
+          <h2>主数据 <span class="mock">BD</span></h2>
+          <p class="hint">访客类型、黑名单、时段规则、校门 / 通行点、被访人 / 教职工名册。</p>
+          <div class="grid c2">
+            <div>
+              <h3>访客类型</h3>
+              <table><thead><tr><th>类型</th><th>状态</th></tr></thead>
+                <tbody>
+                  <tr><td>家长</td><td><span class="tag pass">在用</span></td></tr>
+                  <tr><td>外来人员</td><td><span class="tag pass">在用</span></td></tr>
+                  <tr><td>公务来访</td><td><span class="tag pass">在用</span></td></tr>
+                </tbody></table>
+            </div>
+            <div>
+              <h3>黑名单</h3>
+              <table><thead><tr><th>姓名 / 证件</th><th>原因</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr><td>王**（……1234）</td><td>多次扰乱校门秩序</td><td>命中拦截</td></tr>
+                </tbody></table>
+            </div>
+            <div>
+              <h3>可预约时段规则</h3>
+              <table><thead><tr><th>时段</th><th>说明</th></tr></thead>
+                <tbody>
+                  <tr><td>08:00~17:00</td><td>可预约</td></tr>
+                  <tr><td>12:00~13:30</td><td>午休禁入</td></tr>
+                  <tr><td>在校时长上限 / 催离阈值（G5）</td><td>如 120 分钟，超时触发催离</td></tr>
+                </tbody></table>
+            </div>
+            <div>
+              <h3>校门 / 通行点</h3>
+              <table><thead><tr><th>名称</th><th>车牌识别/道闸开关（G10）</th><th>状态</th></tr></thead>
+                <tbody>
+                  <tr><td>正门</td><td>开启</td><td><span class="tag pass">启用</span></td></tr>
+                  <tr><td>西门</td><td>关闭（手工核对）</td><td><span class="tag pass">启用</span></td></tr>
+                </tbody></table>
+            </div>
+          </div>
+          <h3>常客库管理（G8）</h3>
+          <table>
+            <thead><tr><th>姓名</th><th>证件号</th><th>最近到访</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td>赵工</td><td>1101********5678</td><td>10-12 08:55</td><td>清除常客身份</td></tr>
+              <tr><td>周女士</td><td>1101********4321</td><td>10-11 15:20</td><td>清除常客身份</td></tr>
+            </tbody>
+          </table>
+          <div class="note">**常客库管理（G8）**：曾批准、无黑名单记录的访客档案库，支撑「常客快登」；支持按需**清除常客身份**（清除后回到常规预约流程）。</div>
+          <div class="note">跨周期增减（如访客类型停用）一律用**软状态**表达（在用 / 停用），保留历史、可恢复（§3.21）。</div>
+        </div>
+      </section>
+
+      <!-- ============ SM 系统管理 ============ -->
+      <section class="page" id="page-sm">
+        <div class="card">
+          <h2>系统管理 <span class="mock">SM</span></h2>
+          <p class="hint">操作日志 / 留痕、参数配置、数据字典。</p>
+          <h3>操作日志（敏感操作留痕）</h3>
+          <table>
+            <thead><tr><th>时间</th><th>操作人</th><th>操作</th><th>对象</th><th>结果</th></tr></thead>
+            <tbody>
+              <tr><td>2026-10-12 08:55:12</td><td>G001</td><td>放行</td><td>赵工（维修）</td><td>成功</td></tr>
+              <tr><td>2026-10-12 08:41:03</td><td>T012</td><td>审核同意</td><td>张小明预约</td><td>成功</td></tr>
+              <tr><td>2026-10-11 16:02:44</td><td>G001</td><td>失败核验</td><td>短码 9XK21</td><td>拒绝·黑名单</td></tr>
+            </tbody>
+          </table>
+          <div class="note">审核 / 放行 / 失败核验 / 代登录等敏感操作均写操作日志（§3.22）。</div>
+
+          <h3>个人信息保护（G11）</h3>
+          <div class="grid c3">
+            <div class="field"><label>授权告知</label><input value="采集前展示告知并确认" readonly /></div>
+            <div class="field"><label>最小必要收集</label><input value="仅收集到访所需最少字段" readonly /></div>
+            <div class="field"><label>留存期限（可配）</label><input value="默认 90 天" readonly /></div>
+          </div>
+          <div class="btnrow">
+            <button onclick="mockSubmit('已到期自动脱敏：保留统计、隐去证件号 / 人像')">到期自动脱敏</button>
+            <button onclick="mockSubmit('已人工清除指定访客个人信息')">人工清除</button>
+          </div>
+          <div class="note">**个人信息保护（G11）**：访客姓名 / 证件号 / 车牌 / 人像等个人信息的**授权告知 + 最小必要收集 + 留存期限到期脱敏 / 清除**（期限可配，见模块地图 Q7）；访客可索取 / 更正本人信息（对应对象级隔离 §3.22）。</div>
+        </div>
+      </section>
+
+      <!-- 需求验证清单侧栏（§3.11 精神的阶段一简化版） -->
+      <div class="verify-panel">
+        <div class="vp-title">📋 阶段一模块走查清单（确认需求边界用）</div>
+        <ul>
+          <li>PT 统一门户：登录后按角色进入不同工作台 ✅（**访客本人无 web 端**，不经过后台，直达手机端 VS）</li>
+          <li>AP 访客预约：填表 → 提交 → 状态跟踪；后台生成「申请入口二维码」（张贴供访客扫码）</li>
+          <li>AT 被访人审核：仅见本人相关预约，同意 / 拒绝 / 改期</li>
+          <li>GV 门卫核验放行：核验放行 / 无预约现场登记 / 异常上报 / 进校·离校</li>
+          <li>VS 访客端（手机 H5）：仅「我要申请」+「我的申请（查看）」两项</li>
+          <li>LG 访客台账：全部记录留痕 + 多条件查询 + 导出</li>
+          <li>AN 统计分析：来访量 / 异常统计 / 看板</li>
+          <li>OR / BD / SM 基础底座：用户权限、主数据、操作日志</li>
+          <li>通用系统对标增补（G1–G11）：在校实时清单（G1）/ 证件识别（G2）/ 现场人像采集（G3）/ 随行逐人明细（G4）/ 超时催离·批量核销（G5）/ 邀约邀请码（G6）/ 移动端审批（G7）/ 常客快登（G8）/ 访客证·临时通行卡（G9）/ 车牌识别·道闸（G10）/ 个人信息保护（G11）</li>
+        </ul>
+        <div class="hint" style="margin-top:8px;">切换右上角角色，可见导航随角色变化——请核对「各角色该看到哪些页面」是否符合预期。</div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="footer">
+    访客系统 · 阶段一简易交互原型 ｜ 用于确认需求边界，非最终视觉稿 ｜ 生成时刻 2026-10-12 09:40:00
+  </div>
+</div>
+
+<script>
+  const ROLE_NAME = { admin:'管理员', guard:'门卫 / 保安', host:'被访教职工', visitor:'访客本人' };
+
+  const PT = {
+    admin:   { kpi:[['3','待审核（兜底）'],['2','异常待处理'],['128','本月来访'],['11','主数据项']],
+               entries:[['访客预约','代提 / 维护预约','ap'],['被访人审核','兜底处理全部审核','at'],['门卫核验放行','监控全校核验放行','gv'],['访客台账','全校来访记录查询','lg'],['统计分析','来访量 / 异常统计','an'],['组织与用户','账号 / 角色 / 权限','or']] },
+    guard:   { kpi:[['2','今日待核验'],['1','在校中'],['1','超时未离校'],['5','今日进校']],
+               entries:[['门卫核验放行','现场核验 / 登记 / 离校','gv'],['访客台账','查看当日 / 现场记录','lg']] },
+    host:    { kpi:[['3','待我审核'],['0','待确认改期'],['12','本周已处理'],['2','今日来访']],
+               entries:[['被访人审核','仅本人相关预约','at'],['访客预约','为来访人代提预约','ap']] }
+    // 访客本人：无 web / 后台工作台，直接进手机端访客端（VS），故此处不设 visitor 工作台数据
+  };
+
+  function renderPT(){
+    const role = document.getElementById('roleSel').value;
+    const data = PT[role];
+    if (!data) return; // 访客本人无后台工作台（无 web 端）
+    document.getElementById('ptRole').textContent = '（' + ROLE_NAME[role] + '视角）';
+    const kpi = document.getElementById('ptKpi');
+    kpi.innerHTML = data.kpi.map(k =>
+      '<div class="kpi"><div class="n">'+k[0]+'</div><div class="l">'+k[1]+'</div></div>').join('');
+    const entries = document.getElementById('ptEntries');
+    entries.innerHTML = data.entries.map(e =>
+      '<div class="entry" onclick="go(\''+e[2]+'\')"><div class="t">'+e[0]+' →</div><div class="d">'+e[1]+'</div></div>').join('');
+  }
+
+  function switchRole(){
+    const role = document.getElementById('roleSel').value;
+    // 侧边导航按角色显隐
+    document.querySelectorAll('#sideNav a[data-roles]').forEach(a => {
+      const roles = a.getAttribute('data-roles').split(',');
+      a.classList.toggle('hidden', !roles.includes(role));
+    });
+    // 访客本人视角 → 内容区渲染为手机壳（移动端 H5）
+    document.querySelector('.content').classList.toggle('visitor-mode', role === 'visitor');
+    // 访客本人无 web / 后台工作台（不经过 PT）→ 直接落到手机端访客端 VS
+    if (role === 'visitor') { go('vs'); return; }
+    renderPT();
+    // 当前页若对新角色不可见，回工作台
+    const active = document.querySelector('#sideNav a.active');
+    if (active && active.classList.contains('hidden')) go('pt');
+  }
+
+  function go(page, el){
+    // 若该页对当前角色不可见，忽略
+    const role = document.getElementById('roleSel').value;
+    const link = document.querySelector('#sideNav a[data-page="'+page+'"]');
+    if (link && link.classList.contains('hidden')) { page = 'pt'; link.active; }
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+    const target = document.getElementById('page-'+page);
+    if (target) target.classList.add('show');
+
+    document.querySelectorAll('#sideNav a').forEach(a => a.classList.remove('active'));
+    const nl = document.querySelector('#sideNav a[data-page="'+page+'"]');
+    if (nl) nl.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function mockSubmit(msg){ alert('【原型演示】' + msg + '\n\n（简易原型仅示意交互，不做真实业务处理）'); }
+
+  // 初始化
+  switchRole();
+</script>
+</body>
+</html>

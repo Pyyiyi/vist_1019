@@ -1,0 +1,14 @@
+{
+  "storyId": "US-AN-002",
+  "title": "异常统计",
+  "acceptanceCriteria": [
+    "含 异常类型分布 + 超时未离统计；与异常记录**同源**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "查看异常类型分布与超时未离统计",
+  "value": "治理安全异常",
+  "priority": "P1",
+  "traceability": "REQ-AN-002",
+  "page": "原型 #page-an"
+}

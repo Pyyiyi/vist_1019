@@ -1,0 +1,14 @@
+{
+  "storyId": "US-LG-005",
+  "title": "打印台账",
+  "acceptanceCriteria": [
+    "打印内容沿用导出口径（列固定 + 脱敏一致）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "打印当前台账视图",
+  "value": "纸质留档",
+  "priority": "P2",
+  "traceability": "REQ-LG-004（D20）",
+  "page": "原型 #page-lg"
+}

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-VS-001",
+  "title": "我要申请",
+  "acceptanceCriteria": [
+    "复用 AP 采集项与校验（US-AP-001/002/003）。",
+    "提交成功 → **待审核**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "扫码/被协助进入后填写并提交本人预约",
+  "value": "无需下载 App 即可完成登记",
+  "priority": "P0",
+  "traceability": "REQ-VS-001（AP）",
+  "page": "原型 #page-vs"
+}

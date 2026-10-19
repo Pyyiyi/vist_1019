@@ -1,0 +1,14 @@
+{
+  "storyId": "US-GV-002",
+  "title": "有预约放行",
+  "acceptanceCriteria": [
+    "核验通过后放行，记录**放行时刻**与**放行人**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "对已预约且核验通过的访客放行",
+  "value": "完成进校",
+  "priority": "P0",
+  "traceability": "REQ-GV-002",
+  "page": "原型 #page-gv"
+}

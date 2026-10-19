@@ -1,0 +1,16 @@
+{
+  "storyId": "US-AP-004",
+  "title": "预约改期",
+  "acceptanceCriteria": [
+    "仅 访客本人 / 被访人 / 管理员 可操作。",
+    "**已到访、已离校不可改**；改期成功**留痕**。",
+    "新时段须**重过** REQ-AP-003 全部校验。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客本人 / 被访人 / 管理员",
+  "capability": "在到访前把预约改期",
+  "value": "调整到访时间",
+  "priority": "P1",
+  "traceability": "REQ-AP-004",
+  "page": "原型 #page-ap"
+}

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-GV-004",
+  "title": "访客凭证核销",
+  "acceptanceCriteria": [
+    "**6 位数字、全局唯一、随预约生成、有效至预约终结**。",
+    "**首次**核销成功并置为已用；**重复**核销**拒绝放行**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "核销访客凭证（预约编号 + 二维码/短码）",
+  "value": "防止重复使用",
+  "priority": "P0",
+  "traceability": "REQ-GV-003（D13）",
+  "page": "原型 #page-gv"
+}

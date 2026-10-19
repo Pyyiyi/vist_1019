@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AP-005",
+  "title": "预约取消",
+  "acceptanceCriteria": [
+    "到访前可取消，成功置「已取消」并**留痕**。",
+    "**已到访**状态下发起取消，返回 **409**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客本人 / 被访人 / 管理员",
+  "capability": "在到访前取消预约",
+  "value": "终止不再进行的来访",
+  "priority": "P1",
+  "traceability": "REQ-AP-004",
+  "page": "原型 #page-ap"
+}

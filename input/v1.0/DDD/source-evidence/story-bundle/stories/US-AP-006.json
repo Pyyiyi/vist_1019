@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AP-006",
+  "title": "预约状态跟踪",
+  "acceptanceCriteria": [
+    "展示 8 态枚举（待审核/已通过/已拒绝/已改期/已过期/已到访(在校中)/已离校/已取消）与各次流转时间。",
+    "状态实时随流转更新，与**台账同源**（复用状态机唯一定义源）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客 / 被访人",
+  "capability": "查看预约当前状态（8 态枚举）及各次流转时间",
+  "value": "掌握进度",
+  "priority": "P1",
+  "traceability": "REQ-AP-005（LG 同源 §3.24）",
+  "page": "原型 #page-vs / #page-ap"
+}

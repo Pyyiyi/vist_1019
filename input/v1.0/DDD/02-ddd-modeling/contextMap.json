@@ -1,0 +1,44 @@
+[
+  {
+    "upstream": "BC-ACCESS",
+    "downstream": "BC-VISIT",
+    "pattern": "OHS",
+    "dataFlow": "身份、角色和对象范围声明供预约与审核鉴权。",
+    "contractOwner": "BC-ACCESS"
+  },
+  {
+    "upstream": "BC-MASTER",
+    "downstream": "BC-VISIT",
+    "pattern": "CustomerSupplier",
+    "dataFlow": "主数据、黑名单、时段和审核人配置供预约与核验消费。",
+    "contractOwner": "BC-MASTER"
+  },
+  {
+    "upstream": "BC-VISIT",
+    "downstream": "BC-NOTIFY",
+    "pattern": "EventDriven",
+    "dataFlow": "预约提交、审核结果和异常事实驱动通知。",
+    "contractOwner": "BC-VISIT"
+  },
+  {
+    "upstream": "BC-VISIT",
+    "downstream": "BC-REPORT",
+    "pattern": "Conformist",
+    "dataFlow": "台账和统计遵从来访状态与进出事实的唯一口径。",
+    "contractOwner": "BC-VISIT"
+  },
+  {
+    "upstream": "BC-VISIT",
+    "downstream": "BC-COMPLIANCE",
+    "pattern": "EventDriven",
+    "dataFlow": "敏感业务动作和个人信息事实进入审计与隐私流程。",
+    "contractOwner": "BC-VISIT"
+  },
+  {
+    "upstream": "BC-COMPLIANCE",
+    "downstream": "BC-REPORT",
+    "pattern": "OHS",
+    "dataFlow": "脱敏政策约束检索、导出与打印显示。",
+    "contractOwner": "BC-COMPLIANCE"
+  }
+]

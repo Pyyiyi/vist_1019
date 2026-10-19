@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.npm-cache/
+coverage/
+*.log
+*.tsbuildinfo
+
+.boss/
+.codex/
+.claude/
+.symphony_init_marker

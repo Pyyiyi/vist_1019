@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "hierarchy_gaps": 0,
+    "process_gaps": 0,
+    "open_questions": 0,
+    "suggestions": 0
+  },
+  "hierarchy_gaps": [],
+  "process_gaps": [],
+  "open_questions": [],
+  "suggestions": [],
+  "policy": {
+    "rebuild_classes": false,
+    "auto_delete_isolated": false,
+    "scope": [
+      "补层级归属清单",
+      "补过程依赖清单",
+      "孤立标 Open Question 待人判"
+    ]
+  }
+}

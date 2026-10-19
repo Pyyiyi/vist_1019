@@ -1,0 +1,15 @@
+{
+  "storyId": "US-GV-003",
+  "title": "无预约现场登记放行",
+  "acceptanceCriteria": [
+    "登记项复用 AP 采集项与校验（同 US-AP-001/002/003）。",
+    "现场登记**生成来访记录**并放行，记录 放行时刻/放行人。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "对无预约访客做现场登记（复用 AP 采集项）后放行",
+  "value": "处理临时来访",
+  "priority": "P0",
+  "traceability": "REQ-GV-002（AP 采集项）",
+  "page": "原型 #page-gv"
+}

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-OR-001",
+  "title": "用户 / 账号管理",
+  "acceptanceCriteria": [
+    "可开通/停用账号；**不支持硬删除**、仅**软状态停用**。",
+    "停用后登录 **401**、**历史留痕保留**、可**恢复**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "维护 admin/guard/host 账号并开通/停用",
+  "value": "管理访问主体",
+  "priority": "P0",
+  "traceability": "REQ-OR-001（D11，§3.21）",
+  "page": "原型 #page-or"
+}

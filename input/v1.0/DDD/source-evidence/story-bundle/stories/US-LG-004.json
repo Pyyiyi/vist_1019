@@ -1,0 +1,16 @@
+{
+  "storyId": "US-LG-004",
+  "title": "导出台账（含脱敏）",
+  "acceptanceCriteria": [
+    "预约编号/姓名/访客类型/手机号/证件号(脱敏)/被访人/到访时段/进校时刻/离校时刻/状态/事由。",
+    "超留存期限记录脱敏导出；**掩码＝前 4 后 4**；**导出与检索共用同一脱敏口径**。",
+    "`访客台账_YYYYMMDD_HHmmss.{csv,xlsx}`；CSV 用 **BOM UTF-8**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "导出当前台账（CSV/Excel）",
+  "value": "归档与离线分析",
+  "priority": "P1",
+  "traceability": "REQ-LG-004（D14/D20/D21，SM）",
+  "page": "原型 #page-lg"
+}

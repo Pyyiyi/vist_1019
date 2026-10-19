@@ -1,0 +1,15 @@
+{
+  "storyId": "US-GV-001",
+  "title": "现场核验",
+  "acceptanceCriteria": [
+    "不包含自动识别（G2/G3 归 V1.1）；门卫人工比对。",
+    "一致且在有效时段 → 可放行；不一致/过期/黑名单 → **拦截并提示**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "现场核对 身份信息 + 预约/凭证一致性 + 是否在有效时段",
+  "value": "决定是否放行",
+  "priority": "P0",
+  "traceability": "REQ-GV-001（D3/D24）",
+  "page": "原型 #page-gv"
+}

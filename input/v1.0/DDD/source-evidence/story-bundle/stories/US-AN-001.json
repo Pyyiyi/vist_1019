@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AN-001",
+  "title": "来访量统计",
+  "acceptanceCriteria": [
+    "维度＝日/周/月 × 访客类型。",
+    "口径与台账**同源**（复用状态机唯一定义源）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "按 日/周/月 × 访客类型 统计来访量",
+  "value": "掌握来访趋势",
+  "priority": "P1",
+  "traceability": "REQ-AN-001（§3.24）",
+  "page": "原型 #page-an"
+}

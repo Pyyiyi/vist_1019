@@ -1,0 +1,555 @@
+[
+  {
+    "id": "SM-AppointmentStatus",
+    "ownerAggregate": "VisitAppointment",
+    "targetClass": "VisitAppointment",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Pending",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "待审核"
+      },
+      {
+        "name": "Approved",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "已通过"
+      },
+      {
+        "name": "Rejected",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "已拒绝"
+      },
+      {
+        "name": "Rescheduled",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "已改期"
+      },
+      {
+        "name": "Expired",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "已过期"
+      },
+      {
+        "name": "InSchool",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "已到访(在校中)"
+      },
+      {
+        "name": "Left",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "已离校"
+      },
+      {
+        "name": "Cancelled",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "已取消"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Pending",
+        "to": "Approved",
+        "trigger": "ApproveAppointment",
+        "condition": "待审核预约审核同意",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Rescheduled",
+        "to": "Approved",
+        "trigger": "ApproveAppointment",
+        "condition": "改期预约审核同意",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Pending",
+        "to": "Rejected",
+        "trigger": "RejectAppointment",
+        "condition": "拒绝原因符合规则",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Rescheduled",
+        "to": "Rejected",
+        "trigger": "RejectAppointment",
+        "condition": "改期预约被拒绝",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Pending",
+        "to": "Rescheduled",
+        "trigger": "ReviewRescheduleAppointment",
+        "condition": "审核人给出新时段且校验通过",
+        "variablesChanged": [
+          "status",
+          "visitWindow"
+        ]
+      },
+      {
+        "from": "Pending",
+        "to": "Rescheduled",
+        "trigger": "RescheduleAppointment",
+        "condition": "到访前由有权主体改期",
+        "variablesChanged": [
+          "status",
+          "visitWindow"
+        ]
+      },
+      {
+        "from": "Approved",
+        "to": "Rescheduled",
+        "trigger": "RescheduleAppointment",
+        "condition": "已通过但尚未到访且新时段校验通过",
+        "variablesChanged": [
+          "status",
+          "visitWindow"
+        ]
+      },
+      {
+        "from": "Rescheduled",
+        "to": "Rescheduled",
+        "trigger": "RescheduleAppointment",
+        "condition": "再次改期且新时段校验通过",
+        "variablesChanged": [
+          "visitWindow"
+        ]
+      },
+      {
+        "from": "Pending",
+        "to": "Expired",
+        "trigger": "ExpireAppointment",
+        "condition": "超出时段仍未核验",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Approved",
+        "to": "Expired",
+        "trigger": "ExpireAppointment",
+        "condition": "超出时段仍未核验",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Rescheduled",
+        "to": "Expired",
+        "trigger": "ExpireAppointment",
+        "condition": "改期后超时未核验或未确认",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Approved",
+        "to": "InSchool",
+        "trigger": "AdmitVisitor",
+        "condition": "核验通过并登记进校",
+        "variablesChanged": [
+          "status",
+          "lastPassageAt"
+        ]
+      },
+      {
+        "from": "Left",
+        "to": "InSchool",
+        "trigger": "AdmitVisitor",
+        "condition": "同一自然日再次核验进校",
+        "variablesChanged": [
+          "status",
+          "lastPassageAt"
+        ]
+      },
+      {
+        "from": "InSchool",
+        "to": "Left",
+        "trigger": "RecordDeparture",
+        "condition": "门卫登记离校",
+        "variablesChanged": [
+          "status",
+          "lastPassageAt"
+        ]
+      },
+      {
+        "from": "Pending",
+        "to": "Cancelled",
+        "trigger": "CancelAppointment",
+        "condition": "到访前有权主体取消",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Approved",
+        "to": "Cancelled",
+        "trigger": "CancelAppointment",
+        "condition": "已通过但尚未到访时取消",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Rescheduled",
+        "to": "Cancelled",
+        "trigger": "CancelAppointment",
+        "condition": "改期后尚未到访时取消",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "SubmitAppointment",
+        "state": "Pending",
+        "condition": "线上或后台代提通过校验后创建"
+      },
+      {
+        "trigger": "RegisterWalkIn",
+        "state": "InSchool",
+        "condition": "无预约现场登记并放行后创建"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-004",
+      "US-AP-005",
+      "US-AP-006",
+      "US-AT-002",
+      "US-GV-002",
+      "US-GV-003",
+      "US-GV-005"
+    ]
+  },
+  {
+    "id": "SM-VisitCredentialUsage",
+    "ownerAggregate": "VisitAppointment",
+    "targetClass": "VisitCredential",
+    "stateField": "usageStatus",
+    "states": [
+      {
+        "name": "Unused",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "unused"
+      },
+      {
+        "name": "Used",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "used"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Unused",
+        "to": "Used",
+        "trigger": "RedeemVisitCredential",
+        "condition": "首次有效凭证核销",
+        "variablesChanged": [
+          "usageStatus",
+          "redeemedAt"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "SubmitAppointment",
+        "state": "Unused",
+        "condition": "预约提交时生成凭证"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-004"
+    ]
+  },
+  {
+    "id": "SM-AccountStatus",
+    "ownerAggregate": "UserAccount",
+    "targetClass": "UserAccount",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Active",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "active"
+      },
+      {
+        "name": "Inactive",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "inactive"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Active",
+        "to": "Inactive",
+        "trigger": "DisableAccount",
+        "condition": "管理员停用",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Inactive",
+        "to": "Active",
+        "trigger": "RestoreAccount",
+        "condition": "管理员恢复",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "ProvisionAccount",
+        "state": "Active",
+        "condition": "账号开通时默认在用"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ]
+  },
+  {
+    "id": "SM-VisitorTypeStatus",
+    "ownerAggregate": "MasterDataCatalog",
+    "targetClass": "VisitorType",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Active",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "active"
+      },
+      {
+        "name": "Inactive",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "inactive"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Active",
+        "to": "Inactive",
+        "trigger": "DeactivateVisitorType",
+        "condition": "管理员软停用",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "UpsertVisitorType",
+        "state": "Active",
+        "condition": "新增访客类型默认在用"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-001"
+    ]
+  },
+  {
+    "id": "SM-GateStatus",
+    "ownerAggregate": "MasterDataCatalog",
+    "targetClass": "Gate",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Active",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "active"
+      },
+      {
+        "name": "Inactive",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "inactive"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Active",
+        "to": "Inactive",
+        "trigger": "DeactivateGate",
+        "condition": "管理员软停用",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "UpsertGate",
+        "state": "Active",
+        "condition": "新增校门默认在用"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-004"
+    ]
+  },
+  {
+    "id": "SM-HostStatus",
+    "ownerAggregate": "MasterDataCatalog",
+    "targetClass": "HostDirectoryEntry",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Active",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "active"
+      },
+      {
+        "name": "Inactive",
+        "isInitial": false,
+        "isTerminal": false,
+        "value": "inactive"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Active",
+        "to": "Inactive",
+        "trigger": "DeactivateHost",
+        "condition": "管理员软停用",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "UpsertHost",
+        "state": "Active",
+        "condition": "新增教职工默认在用"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-005"
+    ]
+  },
+  {
+    "id": "SM-BlacklistEntryStatus",
+    "ownerAggregate": "BlacklistRegistry",
+    "targetClass": "BlacklistEntry",
+    "stateField": "status",
+    "states": [
+      {
+        "name": "Active",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "active"
+      },
+      {
+        "name": "Expired",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "expired"
+      },
+      {
+        "name": "Deleted",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "deleted"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Active",
+        "to": "Expired",
+        "trigger": "ExpireBlacklistEntry",
+        "condition": "到达有效期",
+        "variablesChanged": [
+          "status"
+        ]
+      },
+      {
+        "from": "Active",
+        "to": "Deleted",
+        "trigger": "RemoveBlacklistEntry",
+        "condition": "管理员手工删除",
+        "variablesChanged": [
+          "status"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "UpsertBlacklistEntry",
+        "state": "Active",
+        "condition": "管理员新增有效条目"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ]
+  },
+  {
+    "id": "SM-NotificationReadStatus",
+    "ownerAggregate": "NotificationBox",
+    "targetClass": "NotificationMessage",
+    "stateField": "readStatus",
+    "states": [
+      {
+        "name": "Unread",
+        "isInitial": true,
+        "isTerminal": false,
+        "value": "unread"
+      },
+      {
+        "name": "Read",
+        "isInitial": false,
+        "isTerminal": true,
+        "value": "read"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Unread",
+        "to": "Read",
+        "trigger": "MarkNotificationRead",
+        "condition": "接收方标记已读",
+        "variablesChanged": [
+          "readStatus",
+          "readAt"
+        ]
+      }
+    ],
+    "initializations": [
+      {
+        "trigger": "PublishNotification",
+        "state": "Unread",
+        "condition": "新消息进入收件箱"
+      }
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-005",
+      "US-NT-001",
+      "US-NT-002"
+    ]
+  }
+]

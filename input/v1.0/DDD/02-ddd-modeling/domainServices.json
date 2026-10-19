@@ -1,0 +1,100 @@
+[
+  {
+    "name": "AuthorizationDomainService",
+    "bcId": "BC-ACCESS",
+    "responsibility": "联合角色资源政策、对象绑定和调用上下文作授权判定。",
+    "usesAggregates": [
+      "AuthorizationPolicy",
+      "UserAccount"
+    ],
+    "ruleIds": [
+      "BR-AUTH-SERVER",
+      "BR-REPORT-SCOPE"
+    ],
+    "sourceUserStoryIds": [
+      "US-PT-003",
+      "US-AT-001",
+      "US-OR-002",
+      "US-OR-003",
+      "US-VS-002"
+    ]
+  },
+  {
+    "name": "AppointmentPolicyService",
+    "bcId": "BC-VISIT",
+    "responsibility": "计算时段可用性、闭区间防重复、随行限制与黑名单阶段性处置。",
+    "usesAggregates": [
+      "VisitAppointment",
+      "MasterDataCatalog",
+      "BlacklistRegistry"
+    ],
+    "ruleIds": [
+      "BR-APPOINTMENT-FIELDS",
+      "BR-APPOINTMENT-TIME",
+      "BR-APPOINTMENT-DUPLICATE",
+      "BR-APPOINTMENT-BLACKLIST"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-AP-004",
+      "US-GV-003"
+    ]
+  },
+  {
+    "name": "GateVerificationService",
+    "bcId": "BC-VISIT",
+    "responsibility": "综合身份、凭证、时段和黑名单判定是否允许放行。",
+    "usesAggregates": [
+      "VisitAppointment",
+      "BlacklistRegistry"
+    ],
+    "ruleIds": [
+      "BR-GATE-VERIFICATION",
+      "BR-CREDENTIAL",
+      "BR-ENTRY-EXIT"
+    ],
+    "sourceUserStoryIds": [
+      "US-GV-001",
+      "US-GV-002",
+      "US-GV-004",
+      "US-GV-005"
+    ]
+  },
+  {
+    "name": "NotificationRoutingService",
+    "bcId": "BC-NOTIFY",
+    "responsibility": "按事件、接收方与渠道配置决定通知模板和投递通道。",
+    "usesAggregates": [
+      "NotificationBox",
+      "SystemConfiguration"
+    ],
+    "ruleIds": [
+      "BR-NOTIFICATION"
+    ],
+    "sourceUserStoryIds": [
+      "US-NT-001",
+      "US-NT-002",
+      "US-NT-003"
+    ]
+  },
+  {
+    "name": "PrivacyPolicyService",
+    "bcId": "BC-COMPLIANCE",
+    "responsibility": "计算留存到期、展示脱敏和主体请求的授权范围。",
+    "usesAggregates": [
+      "PrivacyCase",
+      "VisitAppointment"
+    ],
+    "ruleIds": [
+      "BR-PRIVACY",
+      "BR-REPORT-MASKING"
+    ],
+    "sourceUserStoryIds": [
+      "US-LG-003",
+      "US-LG-004",
+      "US-SM-002"
+    ]
+  }
+]

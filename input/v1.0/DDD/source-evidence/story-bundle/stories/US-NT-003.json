@@ -1,0 +1,14 @@
+{
+  "storyId": "US-NT-003",
+  "title": "通知渠道（可配）",
+  "acceptanceCriteria": [
+    "站内**启用**必达；短信/企微**关闭**态下**不发**（关闭→无外发，开启→按渠道发）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "配置通知渠道（V1.0 站内启用、短信/企微预留关闭）",
+  "value": "控制触达方式",
+  "priority": "P2",
+  "traceability": "REQ-NT-003（§3.25）",
+  "page": "原型 #page-nt"
+}

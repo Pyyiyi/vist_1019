@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "adapted-canonical-user-story-v1",
+  "adaptation": {
+    "source": "访客系统 V1.0 用户故事",
+    "note": "仓库未提供上游StoryBundle；本包逐字保留AC正文并显式适配为DDD自包含证据。"
+  },
+  "stories": [
+    {
+      "storyId": "US-PT-001",
+      "file": "stories/US-PT-001.json"
+    },
+    {
+      "storyId": "US-PT-002",
+      "file": "stories/US-PT-002.json"
+    },
+    {
+      "storyId": "US-PT-003",
+      "file": "stories/US-PT-003.json"
+    },
+    {
+      "storyId": "US-PT-004",
+      "file": "stories/US-PT-004.json"
+    },
+    {
+      "storyId": "US-PT-005",
+      "file": "stories/US-PT-005.json"
+    },
+    {
+      "storyId": "US-PT-006",
+      "file": "stories/US-PT-006.json"
+    },
+    {
+      "storyId": "US-AP-001",
+      "file": "stories/US-AP-001.json"
+    },
+    {
+      "storyId": "US-AP-002",
+      "file": "stories/US-AP-002.json"
+    },
+    {
+      "storyId": "US-AP-003",
+      "file": "stories/US-AP-003.json"
+    },
+    {
+      "storyId": "US-AP-004",
+      "file": "stories/US-AP-004.json"
+    },
+    {
+      "storyId": "US-AP-005",
+      "file": "stories/US-AP-005.json"
+    },
+    {
+      "storyId": "US-AP-006",
+      "file": "stories/US-AP-006.json"
+    },
+    {
+      "storyId": "US-AT-001",
+      "file": "stories/US-AT-001.json"
+    },
+    {
+      "storyId": "US-AT-002",
+      "file": "stories/US-AT-002.json"
+    },
+    {
+      "storyId": "US-AT-003",
+      "file": "stories/US-AT-003.json"
+    },
+    {
+      "storyId": "US-AT-004",
+      "file": "stories/US-AT-004.json"
+    },
+    {
+      "storyId": "US-GV-001",
+      "file": "stories/US-GV-001.json"
+    },
+    {
+      "storyId": "US-GV-002",
+      "file": "stories/US-GV-002.json"
+    },
+    {
+      "storyId": "US-GV-003",
+      "file": "stories/US-GV-003.json"
+    },
+    {
+      "storyId": "US-GV-004",
+      "file": "stories/US-GV-004.json"
+    },
+    {
+      "storyId": "US-GV-005",
+      "file": "stories/US-GV-005.json"
+    },
+    {
+      "storyId": "US-GV-006",
+      "file": "stories/US-GV-006.json"
+    },
+    {
+      "storyId": "US-GV-007",
+      "file": "stories/US-GV-007.json"
+    },
+    {
+      "storyId": "US-VS-001",
+      "file": "stories/US-VS-001.json"
+    },
+    {
+      "storyId": "US-VS-002",
+      "file": "stories/US-VS-002.json"
+    },
+    {
+      "storyId": "US-VS-003",
+      "file": "stories/US-VS-003.json"
+    },
+    {
+      "storyId": "US-VS-004",
+      "file": "stories/US-VS-004.json"
+    },
+    {
+      "storyId": "US-LG-001",
+      "file": "stories/US-LG-001.json"
+    },
+    {
+      "storyId": "US-LG-002",
+      "file": "stories/US-LG-002.json"
+    },
+    {
+      "storyId": "US-LG-003",
+      "file": "stories/US-LG-003.json"
+    },
+    {
+      "storyId": "US-LG-004",
+      "file": "stories/US-LG-004.json"
+    },
+    {
+      "storyId": "US-LG-005",
+      "file": "stories/US-LG-005.json"
+    },
+    {
+      "storyId": "US-AN-001",
+      "file": "stories/US-AN-001.json"
+    },
+    {
+      "storyId": "US-AN-002",
+      "file": "stories/US-AN-002.json"
+    },
+    {
+      "storyId": "US-OR-001",
+      "file": "stories/US-OR-001.json"
+    },
+    {
+      "storyId": "US-OR-002",
+      "file": "stories/US-OR-002.json"
+    },
+    {
+      "storyId": "US-OR-003",
+      "file": "stories/US-OR-003.json"
+    },
+    {
+      "storyId": "US-BD-001",
+      "file": "stories/US-BD-001.json"
+    },
+    {
+      "storyId": "US-BD-002",
+      "file": "stories/US-BD-002.json"
+    },
+    {
+      "storyId": "US-BD-003",
+      "file": "stories/US-BD-003.json"
+    },
+    {
+      "storyId": "US-BD-004",
+      "file": "stories/US-BD-004.json"
+    },
+    {
+      "storyId": "US-BD-005",
+      "file": "stories/US-BD-005.json"
+    },
+    {
+      "storyId": "US-NT-001",
+      "file": "stories/US-NT-001.json"
+    },
+    {
+      "storyId": "US-NT-002",
+      "file": "stories/US-NT-002.json"
+    },
+    {
+      "storyId": "US-NT-003",
+      "file": "stories/US-NT-003.json"
+    },
+    {
+      "storyId": "US-SM-001",
+      "file": "stories/US-SM-001.json"
+    },
+    {
+      "storyId": "US-SM-002",
+      "file": "stories/US-SM-002.json"
+    },
+    {
+      "storyId": "US-SM-003",
+      "file": "stories/US-SM-003.json"
+    },
+    {
+      "storyId": "US-SM-004",
+      "file": "stories/US-SM-004.json"
+    }
+  ]
+}

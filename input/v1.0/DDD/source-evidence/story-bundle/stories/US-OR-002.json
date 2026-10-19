@@ -1,0 +1,16 @@
+{
+  "storyId": "US-OR-002",
+  "title": "角色与权限（服务端强制）",
+  "acceptanceCriteria": [
+    "越权访问返回 **403**；**对象级读写接口都落强制点**。",
+    "越权写**审计留痕**。",
+    "前端 adminOnly 仅**体验层**，逐条列明且与基线一致。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "角色 × 资源边界由服务端强制",
+  "value": "权限不可被前端绕过",
+  "priority": "P0",
+  "traceability": "REQ-OR-002（§3.22）",
+  "page": "原型 #page-or"
+}
