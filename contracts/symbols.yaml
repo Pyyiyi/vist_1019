@@ -1,0 +1,726 @@
+version: 1
+source: shared-kernel-manifest.yaml
+comparison_owner: VIS-P2-I03
+inventory:
+  files: 57
+  exports: 95
+  facades: 6
+  planned_facade_exports: 27
+symbols:
+- path: backend/src/shared/http/envelope.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: success
+    kind: function
+    status: declared
+  - name: fail
+    kind: function
+    status: declared
+  - name: paginated
+    kind: function
+    status: declared
+- path: backend/src/shared/http/errors.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: AppError
+    kind: class
+    status: declared
+  - name: badRequest
+    kind: function
+    status: declared
+  - name: unauthorized
+    kind: function
+    status: declared
+  - name: forbidden
+    kind: function
+    status: declared
+  - name: notFound
+    kind: function
+    status: declared
+  - name: conflict
+    kind: function
+    status: declared
+  - name: methodNotAllowed
+    kind: function
+    status: declared
+  - name: unprocessable
+    kind: function
+    status: declared
+- path: backend/src/shared/http/pagination.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: parsePagination
+    kind: function
+    status: declared
+  - name: Pagination
+    kind: type
+    status: declared
+- path: backend/src/shared/http/asyncHandler.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: asyncHandler
+    kind: function
+    status: declared
+- path: backend/src/shared/http/responseEnvelope.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: responseEnvelope
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 7
+      owner: Hub 集成补全卡
+      failure: 所有端点响应缺少 code/message/data 信封
+- path: backend/src/shared/http/errorHandler.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: errorHandler
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 16
+      owner: Hub 集成补全卡
+      failure: 异常返回 HTML 或堆栈，信封缺失
+- path: backend/src/shared/http/notFoundHandler.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: notFoundHandler
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 15
+      owner: Hub 集成补全卡
+      failure: 未匹配路由返回 HTML 或挂起
+- path: backend/src/shared/middleware/requestContext.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: requestContext
+    kind: middleware
+    status: declared
+  - name: RequestContext
+    kind: type
+    status: declared
+- path: backend/src/shared/middleware/requireAuth.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: requireAuth
+    kind: middleware
+    status: declared
+- path: backend/src/shared/middleware/requirePermission.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: requirePermission
+    kind: function
+    status: declared
+  - name: requireAdmin
+    kind: middleware
+    status: declared
+- path: backend/src/shared/middleware/visitorTokenAuth.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: visitorTokenAuth
+    kind: middleware
+    status: declared
+- path: backend/src/shared/middleware/csrfProtection.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: csrfProtection
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 9
+      owner: Hub 集成补全卡
+      failure: 写请求无 CSRF 校验，或登录后全部 403
+- path: backend/src/shared/middleware/rateLimiter.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: loginRateLimiter
+    kind: middleware
+    status: declared
+  - name: apiRateLimiter
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 10
+      owner: Hub 集成补全卡
+      failure: 登录暴力破解与接口刷取不受限
+- path: backend/src/shared/middleware/auditMiddleware.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: auditMiddleware
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 13
+      owner: Hub 集成补全卡
+      failure: req.audit 缺失，敏感操作无审计
+- path: backend/src/shared/auth/session.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: sessionMiddleware
+    kind: middleware
+    status: declared
+    assembly:
+      site: backend/src/app.ts
+      step: 8
+      owner: Hub 集成补全卡
+      failure: req.session 不存在，登录无法保持
+- path: backend/src/shared/auth/password.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: hashPassword
+    kind: function
+    status: declared
+  - name: verifyPassword
+    kind: function
+    status: declared
+- path: backend/src/shared/auth/permissions.ts
+  owner: 认证与会话中间件卡
+  status: declared
+  exports:
+  - name: PERMISSIONS
+    kind: constant
+    status: declared
+  - name: hasPermission
+    kind: function
+    status: declared
+- path: backend/src/shared/audit/writeAudit.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: writeAudit
+    kind: function
+    status: declared
+  - name: AuditEntry
+    kind: type
+    status: declared
+- path: backend/src/config.ts
+  owner: 项目脚手架与运行时闭环卡
+  status: declared
+  exports:
+  - name: loadConfig
+    kind: function
+    status: declared
+  - name: config
+    kind: constant
+    status: declared
+- path: backend/src/shared/db/pool.ts
+  owner: 数据库 DDL 与迁移执行器卡
+  status: declared
+  exports:
+  - name: getPool
+    kind: function
+    status: declared
+  - name: query
+    kind: function
+    status: declared
+  - name: withTransaction
+    kind: function
+    status: declared
+- path: backend/src/shared/db/migrate.ts
+  owner: 数据库 DDL 与迁移执行器卡
+  status: declared
+  exports:
+  - name: runMigrations
+    kind: function
+    status: declared
+- path: backend/src/shared/db/seed.ts
+  owner: 种子锚点与执行器卡
+  status: declared
+  exports:
+  - name: runSeeds
+    kind: function
+    status: declared
+- path: backend/src/shared/config/configService.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: getConfig
+    kind: function
+    status: declared
+  - name: getConfigNumber
+    kind: function
+    status: declared
+  - name: setConfig
+    kind: function
+    status: declared
+- path: backend/src/shared/utils/mask.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: maskIdNo
+    kind: function
+    status: declared
+- path: backend/src/shared/utils/ids.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: newUuid
+    kind: function
+    status: declared
+  - name: formatMinute
+    kind: function
+    status: declared
+  - name: formatSecond
+    kind: function
+    status: declared
+  - name: localDayRange
+    kind: function
+    status: declared
+- path: backend/src/shared/utils/appointmentNo.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: nextAppointmentNo
+    kind: function
+    status: declared
+  - name: generateShortCode
+    kind: function
+    status: declared
+- path: backend/src/shared/validation/validators.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: validateBody
+    kind: function
+    status: declared
+  - name: validateQuery
+    kind: function
+    status: declared
+  - name: isValidIdCard
+    kind: function
+    status: declared
+  - name: isValidPhone
+    kind: function
+    status: declared
+  - name: isValidOtherId
+    kind: function
+    status: declared
+  - name: normalizeIdNo
+    kind: function
+    status: declared
+- path: backend/src/shared/constants/status.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: APPOINTMENT_STATUSES
+    kind: constant
+    status: declared
+  - name: TERMINAL_STATUSES
+    kind: constant
+    status: declared
+  - name: OPEN_STATUSES
+    kind: constant
+    status: declared
+  - name: ATTENDED_STATUSES
+    kind: constant
+    status: declared
+  - name: INCIDENT_STATUSES
+    kind: constant
+    status: declared
+  - name: INCIDENT_TYPES
+    kind: constant
+    status: declared
+- path: backend/src/shared/constants/messages.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: MESSAGES
+    kind: constant
+    status: declared
+- path: backend/src/shared/logger.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: logger
+    kind: constant
+    status: declared
+- path: backend/src/shared/jobs/scheduler.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: registerJob
+    kind: function
+    status: declared
+  - name: startJobs
+    kind: function
+    status: declared
+    assembly:
+      site: backend/src/main.ts
+      step: 15
+      owner: Hub 集成补全卡
+      failure: 提醒/过期/清理任务全部不执行
+  - name: stopAllJobs
+    kind: function
+    status: declared
+  - name: JobDefinition
+    kind: type
+    status: declared
+- path: backend/src/realtime/io.ts
+  owner: 共享内核卡
+  status: declared
+  exports:
+  - name: initRealtime
+    kind: function
+    status: declared
+    assembly:
+      site: backend/src/main.ts
+      step: 14
+      owner: Hub 集成补全卡
+      failure: 消息红点不实时更新
+  - name: emitNotification
+    kind: function
+    status: declared
+- path: frontend/src/api/client.ts
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: apiClient
+- path: frontend/src/stores/auth.ts
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: useAuthStore
+    kind: function
+    status: declared
+  - name: AuthUser
+    kind: type
+    status: declared
+- path: frontend/src/stores/notification.ts
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: useNotificationStore
+    kind: function
+    status: declared
+- path: frontend/src/realtime/socket.ts
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: connectRealtime
+    kind: function
+    status: declared
+  - name: disconnectRealtime
+    kind: function
+    status: declared
+- path: frontend/src/nav/navigation.ts
+  owner: 前端路由与导航骨架卡
+  status: declared
+  exports:
+  - name: navigation
+    kind: constant
+    status: declared
+  - name: filterNavigation
+    kind: function
+    status: declared
+  - name: NavItem
+    kind: type
+    status: declared
+- path: frontend/src/nav/icons.ts
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: iconMap
+    kind: constant
+    status: declared
+- path: frontend/src/components/LoadingState.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: LoadingState
+- path: frontend/src/components/ErrorState.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: ErrorState
+- path: frontend/src/components/PageHeader.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: PageHeader
+- path: frontend/src/components/StatusTag.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: StatusTag
+- path: frontend/src/components/EmptyState.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: EmptyState
+- path: frontend/src/components/ConfirmDialog.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: ConfirmDialog
+- path: frontend/src/components/CopyButton.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: CopyButton
+- path: frontend/src/layouts/AppLayout.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: AppLayout
+- path: frontend/src/layouts/H5Layout.vue
+  owner: 前端基础卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: H5Layout
+- path: frontend/src/styles/reset.css
+  owner: 前端基础卡
+  status: declared
+  exports: []
+- path: frontend/src/styles/tokens.css
+  owner: 前端基础卡
+  status: declared
+  exports: []
+- path: frontend/src/styles/print.css
+  owner: 前端基础卡
+  status: declared
+  exports: []
+- path: backend/src/app.ts
+  owner: Hub 集成补全卡
+  status: declared
+  exports:
+  - name: createApp
+    kind: function
+    status: declared
+  - name: mountRoutes
+    kind: function
+    status: declared
+  hub: true
+- path: backend/src/main.ts
+  owner: Hub 集成补全卡
+  status: declared
+  exports: []
+  hub: true
+- path: frontend/src/main.ts
+  owner: 前端基础卡
+  status: declared
+  exports: []
+  hub: true
+- path: frontend/src/App.vue
+  owner: 前端基础卡
+  status: declared
+  exports: []
+  hub: true
+- path: frontend/src/router/index.ts
+  owner: 前端路由与导航骨架卡
+  status: declared
+  exports:
+  - name: default
+    kind: default
+    status: declared
+    local: router
+  hub: true
+- path: frontend/src/router/shared.routes.ts
+  owner: 前端路由与导航骨架卡
+  status: declared
+  exports:
+  - name: sharedRoutes
+    kind: constant
+    status: declared
+  hub: true
+- path: frontend/src/components/RouterContainer.vue
+  owner: 前端路由与导航骨架卡
+  status: declared
+  exports:
+  - name: default
+    kind: component
+    status: declared
+  hub: true
+context_facades:
+- context: access
+  path: backend/src/modules/access/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §一
+  exports:
+  - name: CurrentUser
+    kind: type
+    status: planned
+    signature: 'type CurrentUser = { id: string; username: string; displayName: string; roleCode: ''admin''|''guard''|''host''; hostId: string | null }'
+  - name: getUserById
+    kind: function
+    status: planned
+    signature: 'async function getUserById(id: string): Promise<CurrentUser | null>'
+  - name: getUserByHostId
+    kind: function
+    status: planned
+    signature: 'async function getUserByHostId(hostId: string): Promise<CurrentUser | null>'
+  - name: getFirstAdminUser
+    kind: function
+    status: planned
+    signature: 'async function getFirstAdminUser(): Promise<CurrentUser | null>'
+- context: master
+  path: backend/src/modules/master/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §二
+  exports:
+  - name: VisitorTypeDto
+    kind: type
+    status: planned
+    signature: 'type VisitorTypeDto = { id: string; name: string; status: ''active'' | ''inactive'' }'
+  - name: HostDto
+    kind: type
+    status: planned
+    signature: 'type HostDto = { id: string; name: string; employeeNo: string; department: string; status: ''active'' | ''inactive'' }'
+  - name: GateDto
+    kind: type
+    status: planned
+    signature: 'type GateDto = { id: string; name: string; status: ''active'' | ''inactive'' }'
+  - name: DictionaryItemDto
+    kind: type
+    status: planned
+    signature: 'type DictionaryItemDto = { id: string; dictType: string; dictKey: string; dictLabel: string }'
+  - name: ReviewerRuleDto
+    kind: type
+    status: planned
+    signature: 'type ReviewerRuleDto = { id: string; visitorTypeId: string | null; gateId: string | null; startTime: string | null; endTime: string | null; reviewerKind: ''host'' | ''admin'' | ''designated''; reviewerUserId: string | null; declarationOrder: number; status: ''active'' | ''inactive'' }'
+  - name: getActiveVisitorTypes
+    kind: function
+    status: planned
+    signature: 'async function getActiveVisitorTypes(): Promise<VisitorTypeDto[]>'
+  - name: getActiveHosts
+    kind: function
+    status: planned
+    signature: 'async function getActiveHosts(): Promise<HostDto[]>'
+  - name: getActiveGates
+    kind: function
+    status: planned
+    signature: 'async function getActiveGates(): Promise<GateDto[]>'
+  - name: getDictionaryItems
+    kind: function
+    status: planned
+    signature: 'async function getDictionaryItems(dictType: string): Promise<DictionaryItemDto[]>'
+  - name: getConfig
+    kind: function
+    status: planned
+    signature: 'async function getConfig(key: string): Promise<string>'
+  - name: getConfigNumber
+    kind: function
+    status: planned
+    signature: 'async function getConfigNumber(key: string): Promise<number>'
+  - name: resolveReviewer
+    kind: function
+    status: planned
+    signature: 'async function resolveReviewer(input: { visitorTypeId: string; expectedGateId: string | null; visitStart: string; hostId: string }): Promise<string | null>'
+  - name: upsertReviewerRules
+    kind: function
+    status: planned
+    signature: 'async function upsertReviewerRules(rules: Omit<ReviewerRuleDto, ''id''>[]): Promise<ReviewerRuleDto[]>'
+  - name: checkBlacklist
+    kind: function
+    status: planned
+    signature: 'async function checkBlacklist(idNos: string[]): Promise<{ hit: boolean; matchedIdNos: string[] }>'
+  - name: expireBlacklistEntries
+    kind: function
+    status: planned
+    signature: 'async function expireBlacklistEntries(now: Date): Promise<number>'
+- context: notify
+  path: backend/src/modules/notify/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §三
+  exports:
+  - name: PublishNotificationInput
+    kind: type
+    status: planned
+    signature: 'type PublishNotificationInput = { recipientType: ''user'' | ''visitor''; recipientId: string; recipientName: string; recipientPhone?: string | null; templateType: ''提交通知'' | ''审核结果'' | ''改期提议'' | ''改期确认结果'' | ''到访提醒'' | ''黑名单命中'' | ''超时未离''; title: string; content: string; businessType: string; businessId: string | null; isSecurity: boolean }'
+  - name: publishNotification
+    kind: function
+    status: planned
+    signature: 'async function publishNotification(input: PublishNotificationInput): Promise<{ id: string }>'
+  - name: publishSecurityNotification
+    kind: function
+    status: planned
+    signature: 'async function publishSecurityNotification(input: PublishNotificationInput): Promise<{ id: string }>'
+- context: visit
+  path: backend/src/modules/visit/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §四
+  exports:
+  - name: AppointmentSummaryDto
+    kind: type
+    status: planned
+    signature: 'type AppointmentSummaryDto = { id: string; appointNo: string; visitorName: string | null; status: string; visitStart: string; visitEnd: string; hostId: string; reviewerId: string | null }'
+  - name: getAppointmentForCompliance
+    kind: function
+    status: planned
+    signature: 'async function getAppointmentForCompliance(id: string): Promise<AppointmentSummaryDto | null>'
+  - name: eraseAppointmentPii
+    kind: function
+    status: planned
+    signature: 'async function eraseAppointmentPii(id: string, actorId: string, reason: string): Promise<boolean>'
+  - name: expireAppointments
+    kind: function
+    status: planned
+    signature: 'async function expireAppointments(now: Date): Promise<number>'
+  - name: confirmRescheduleTimeout
+    kind: function
+    status: planned
+    signature: 'async function confirmRescheduleTimeout(now: Date): Promise<number>'
+- context: report
+  path: backend/src/modules/report/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §五
+  exports: []
+  note: report 不向其他上下文提供门面导出；仅使用只读 SQL。
+- context: compliance
+  path: backend/src/modules/compliance/index.ts
+  status: planned
+  source: docs/knowledge/phase-contracts/p1-contracts.md §六
+  exports: []
+  note: compliance 不向其他上下文提供门面导出。
