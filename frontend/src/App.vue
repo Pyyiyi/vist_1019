@@ -12,12 +12,14 @@ const layout = computed(() => route.meta.layout ?? 'app');
 
 <template>
   <a-config-provider :locale="zhCN" :auto-insert-space-in-button="false">
-    <H5Layout v-if="layout === 'h5'">
-      <router-view />
-    </H5Layout>
-    <AppLayout v-else-if="layout === 'app'">
-      <router-view />
-    </AppLayout>
-    <router-view v-else />
+    <a-app>
+      <H5Layout v-if="layout === 'h5'">
+        <router-view />
+      </H5Layout>
+      <AppLayout v-else-if="layout === 'app'">
+        <router-view />
+      </AppLayout>
+      <router-view v-else />
+    </a-app>
   </a-config-provider>
 </template>
