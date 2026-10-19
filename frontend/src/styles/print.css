@@ -12,6 +12,9 @@
   .app-sidebar,
   .app-header,
   .app-toolbar,
+  .page-header-actions,
+  .report-filters,
+  .operations-column,
   .ant-table-selection-column,
   .ant-table-cell-fix-right,
   .ant-pagination {
