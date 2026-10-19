@@ -214,6 +214,13 @@ curl -s http://localhost:13030/api/v1/health
 HOST_BACKEND_PORT=13030 npm run dev -- --port 18082
 ```
 
+## 截图证据
+
+- ![无权访问页](screenshots/VIS-P2-I01-forbidden.png)
+- ![后端停止错误态与重试](screenshots/VIS-P2-I01-error-retry.png)
+- ![门卫异常说明 tooltip](screenshots/VIS-P2-I01-gate-tooltip.png)
+- ![访客台账固定操作列](screenshots/VIS-P2-I01-ledger.png)
+
 ## 剩余风险
 
 - 性能：TC-LG-008 在 10,011 条记录上连续 10 次查询，最大值 51.5 ms、中位数 26.5 ms，低于 2,000 ms 门槛；本次集成未重新制造 1 万条压力数据。
