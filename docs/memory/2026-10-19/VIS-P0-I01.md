@@ -50,7 +50,7 @@
 | `grep -rn docker-entrypoint-initdb.d docker-compose.yml` | 0 命中 |
 | `docker compose down` 后 `docker volume inspect visitor_pgdata` | 卷仍存在 |
 | `node ./node_modules/vite/bin/vite.js` 与 `tsx watch src/main.ts` | 均正常启动；Vite 页面/`main.ts`/`App.vue` 返回 200 |
-| Headless Chromium 截图 | 页面居中渲染「校园访客系统」 |
+| Headless Chromium 截图 | 页面居中渲染「校园访客系统」；证据 `docs/memory/2026-10-19/screenshots/ui-home.png` |
 
 ## 环境约束
 
