@@ -1,0 +1,15 @@
+{
+  "storyId": "US-PT-003",
+  "title": "角色工作台路由",
+  "acceptanceCriteria": [
+    "admin → 管理员工作台（全模块）；guard → 门卫工作台；host → 教职工工作台；visitor → **直接进** H5 VS（无后台）。",
+    "adminOnly 清单与基线一致（附件 C）；非授权角色访问受限模块，前端隐藏**且**服务端 403（§3.22）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "后台用户",
+  "capability": "登录后按角色进入对应工作台",
+  "value": "只看到与我职责相关的功能",
+  "priority": "P0",
+  "traceability": "REQ-PT-002",
+  "page": "原型导航按角色显隐"
+}

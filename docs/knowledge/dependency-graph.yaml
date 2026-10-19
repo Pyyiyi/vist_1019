@@ -1,0 +1,111 @@
+# 校园访客系统 V1.0 · 依赖拓扑（dependency-graph）
+# 节点：六个限界上下文。边：facade（写/读经门面）、sql-read（只读 SQL）、event（站内通知）。
+version: 1
+round: v1
+updated_at: "2026-10-19"
+
+contexts:
+  - code: access
+    module: backend/src/modules/access
+    owns_tables: [users, roles, role_permissions, permissions, auth_types, sessions]
+    facade: backend/src/modules/access/index.ts
+    phase: 1
+  - code: master
+    module: backend/src/modules/master
+    owns_tables: [hosts, visitor_types, gates, blacklist_entries, time_rules, reviewer_rules, data_dictionary, system_config]
+    facade: backend/src/modules/master/index.ts
+    phase: 1
+  - code: notify
+    module: backend/src/modules/notify
+    owns_tables: [notifications, notification_channels]
+    facade: backend/src/modules/notify/index.ts
+    phase: 1
+  - code: visit
+    module: backend/src/modules/visit
+    owns_tables: [appointments, companions, visit_credentials, passage_records, consent_records, incidents, appointment_status_history, visitor_tokens]
+    facade: backend/src/modules/visit/index.ts
+    phase: 1
+  - code: report
+    module: backend/src/modules/report
+    owns_tables: []
+    facade: backend/src/modules/report/index.ts
+    phase: 1
+  - code: compliance
+    module: backend/src/modules/compliance
+    owns_tables: [operation_logs, privacy_cases]
+    facade: backend/src/modules/compliance/index.ts
+    phase: 1
+
+edges:
+  - from: visit
+    to: master
+    type: facade
+    symbols: [getActiveVisitorTypes, getActiveHosts, getActiveGates, getDictionaryItems, getConfig, getConfigNumber, resolveReviewer, upsertReviewerRules, checkBlacklist]
+    purpose: 预约表单选项、时段规则、审核人解析与配置、黑名单预检
+  - from: visit
+    to: notify
+    type: facade
+    symbols: [publishNotification, publishSecurityNotification]
+    purpose: 提交通知、审核结果、改期提议、改期确认结果、黑名单命中
+  - from: visit
+    to: access
+    type: facade
+    symbols: [getUserByHostId, getFirstAdminUser]
+    purpose: 审核人规则回退、管理员通知接收人
+  - from: notify
+    to: visit
+    type: sql-read
+    symbols: []
+    purpose: 到访提醒读取已通过预约与 host 联系人
+  - from: visit
+    to: notify
+    type: sql-read
+    symbols: []
+    purpose: 访客详情 messages[] 读取本人通知
+  - from: report
+    to: visit
+    type: sql-read
+    symbols: []
+    purpose: 台账、在校清单、统计读取预约与通行记录
+  - from: report
+    to: master
+    type: sql-read
+    symbols: []
+    purpose: 台账按访客类型筛选与展示
+  - from: compliance
+    to: visit
+    type: facade
+    symbols: [getAppointmentForCompliance, eraseAppointmentPii]
+    purpose: 人工清除与本人副本
+  - from: compliance
+    to: access
+    type: sql-read
+    symbols: []
+    purpose: 操作日志按操作人筛选
+  - from: access
+    to: visit
+    type: sql-read
+    symbols: []
+    purpose: 工作台待办与 KPI 汇总
+  - from: master
+    to: visit
+    type: sql-read
+    symbols: []
+    purpose: 停用访客类型时校验是否被历史预约引用
+
+events:
+  - name: notification:new
+    producer: notify
+    consumers: [access, notify]
+    transport: socket.io
+    room: "user:<userId>"
+    payload: [id, title, templateType, createdAt]
+
+forbidden:
+  - from: "*"
+    to: "*/internal/*"
+    reason: 跨上下文只能 import 门面 index.ts
+  - from: visit
+    to: master
+    type: write
+    reason: 跨上下文写入必须走门面函数，禁止直接写他人表

@@ -1,0 +1,17 @@
+{
+  "storyId": "US-AP-002",
+  "title": "随行人员逐人明细",
+  "acceptanceCriteria": [
+    "到访人数 = 1 + 明细条数。",
+    "明细 **≤10 条**（含主访客 **≤11 人**）；超限即拦。",
+    "随行证件号**同主访客规则**校验（AC 同 US-AP-001·AC2）。",
+    "黑名单预检**覆盖随行**——**任一**随行命中，整单按 D4 处理（软提示）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "逐人登记随行人员的 姓名/关系/证件号",
+  "value": "随行人员一并核验放行",
+  "priority": "P0",
+  "traceability": "REQ-AP-002（D9，G4）",
+  "page": "原型 #page-ap / #page-vs"
+}

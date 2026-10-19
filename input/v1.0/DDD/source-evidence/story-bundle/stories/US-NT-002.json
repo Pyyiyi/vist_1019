@@ -1,0 +1,14 @@
+{
+  "storyId": "US-NT-002",
+  "title": "异常提醒",
+  "acceptanceCriteria": [
+    "异常产生即**通知相关方**（管理员/门卫），站内消息。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员 / 门卫",
+  "capability": "收到超时未离、黑名单命中的异常提醒",
+  "value": "及时处置",
+  "priority": "P1",
+  "traceability": "REQ-NT-002",
+  "page": "原型 #page-nt"
+}

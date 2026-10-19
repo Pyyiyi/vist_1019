@@ -1,0 +1,15 @@
+{
+  "storyId": "US-PT-002",
+  "title": "访客免密进入（H5）",
+  "acceptanceCriteria": [
+    "Given 访客持有效预约标识，When 打开 H5，Then 直接进入「我的申请」，**不走**后台登录。",
+    "visitor **不占用**后台账号体系（无 web/后台工作台）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "凭预约标识免密进入 H5",
+  "value": "无需注册账号即可查看/出示我的预约",
+  "priority": "P0",
+  "traceability": "REQ-PT-001（D5）",
+  "page": "原型 #page-vs"
+}

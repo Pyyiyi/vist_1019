@@ -1,0 +1,15 @@
+{
+  "storyId": "US-VS-002",
+  "title": "我的申请（查看）与凭证出示",
+  "acceptanceCriteria": [
+    "**仅本人**可见（服务端强制）；越权 403。",
+    "页内出示二维码凭证供门卫核验。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "查看本人预约状态并在页内出示二维码凭证",
+  "value": "门卫核验",
+  "priority": "P0",
+  "traceability": "REQ-VS-002（§3.22）",
+  "page": "原型 #page-vs"
+}

@@ -1,0 +1,322 @@
+[
+  {
+    "name": "AccessApplicationService",
+    "bcId": "BC-ACCESS",
+    "responsibility": "协调登录、账号、授权、工作台和入口二维码。",
+    "commandNames": [
+      "AuthenticateUser",
+      "ProvisionAccount",
+      "DisableAccount",
+      "RestoreAccount",
+      "UpdateAuthorizationPolicy"
+    ],
+    "queries": [
+      {
+        "name": "CheckAuthorization",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "ApplyDataScope",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetAdminRouteManifest",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetMyWorkQueue",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [
+      {
+        "name": "OpenVisitorH5",
+        "responsibility": "完成OpenVisitorH5对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "RouteToRoleWorkspace",
+        "responsibility": "完成RouteToRoleWorkspace对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "NavigateToWorkItem",
+        "responsibility": "完成NavigateToWorkItem对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "GenerateVisitorEntryQr",
+        "responsibility": "完成GenerateVisitorEntryQr对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "DownloadVisitorEntryQr",
+        "responsibility": "完成DownloadVisitorEntryQr对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "PrintVisitorEntryQr",
+        "responsibility": "完成PrintVisitorEntryQr对应的客户端或环境交互，不直接修改领域状态。"
+      }
+    ],
+    "domainServiceNames": [
+      "AuthorizationDomainService"
+    ],
+    "sourceUserStoryIds": [
+      "US-OR-001",
+      "US-OR-002",
+      "US-OR-003",
+      "US-PT-001",
+      "US-PT-002",
+      "US-PT-003",
+      "US-PT-004",
+      "US-PT-006"
+    ]
+  },
+  {
+    "name": "VisitApplicationService",
+    "bcId": "BC-VISIT",
+    "responsibility": "协调预约、审核、核验、进出、凭证和异常流程。",
+    "commandNames": [
+      "SubmitAppointment",
+      "RescheduleAppointment",
+      "CancelAppointment",
+      "ApproveAppointment",
+      "RejectAppointment",
+      "ReviewRescheduleAppointment",
+      "ExpireAppointment",
+      "AdmitVisitor",
+      "RecordDeparture",
+      "RegisterWalkIn",
+      "RedeemVisitCredential",
+      "ReportIncident"
+    ],
+    "queries": [
+      {
+        "name": "GetAppointmentStatus",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "ListReviewTasks",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "InspectVisitorEligibility",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "SearchIncidents",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetGateTodayView",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetVisitorAppointments",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [
+      {
+        "name": "PresentCredentialQr",
+        "responsibility": "完成PresentCredentialQr对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "OpenApplicationFromQr",
+        "responsibility": "完成OpenApplicationFromQr对应的客户端或环境交互，不直接修改领域状态。"
+      }
+    ],
+    "domainServiceNames": [
+      "AppointmentPolicyService",
+      "GateVerificationService"
+    ],
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-AP-004",
+      "US-AP-005",
+      "US-AP-006",
+      "US-AT-001",
+      "US-AT-002",
+      "US-AT-004",
+      "US-BD-002",
+      "US-GV-001",
+      "US-GV-002",
+      "US-GV-003",
+      "US-GV-004",
+      "US-GV-005",
+      "US-GV-006",
+      "US-GV-007",
+      "US-VS-001",
+      "US-VS-002",
+      "US-VS-003",
+      "US-VS-004"
+    ]
+  },
+  {
+    "name": "MasterDataApplicationService",
+    "bcId": "BC-MASTER",
+    "responsibility": "协调主数据、黑名单和配置维护。",
+    "commandNames": [
+      "ConfigureReviewerAssignment",
+      "UpsertVisitorType",
+      "DeactivateVisitorType",
+      "UpsertBlacklistEntry",
+      "RemoveBlacklistEntry",
+      "ExpireBlacklistEntry",
+      "UpdateTimeRules",
+      "UpsertGate",
+      "DeactivateGate",
+      "UpsertHost",
+      "DeactivateHost",
+      "UpdateSystemParameter",
+      "UpdateDataDictionary",
+      "ConfigureNotificationChannels"
+    ],
+    "queries": [
+      {
+        "name": "CheckBlacklist",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [],
+    "domainServiceNames": [
+      "AppointmentPolicyService"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-003",
+      "US-BD-001",
+      "US-BD-002",
+      "US-BD-003",
+      "US-BD-004",
+      "US-BD-005",
+      "US-NT-003",
+      "US-PT-006",
+      "US-SM-003",
+      "US-SM-004"
+    ]
+  },
+  {
+    "name": "NotificationApplicationService",
+    "bcId": "BC-NOTIFY",
+    "responsibility": "协调消息发布、读取和业务对象跳转。",
+    "commandNames": [
+      "PublishNotification",
+      "MarkNotificationRead"
+    ],
+    "queries": [
+      {
+        "name": "ListNotifications",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [
+      {
+        "name": "OpenMessageTarget",
+        "responsibility": "完成OpenMessageTarget对应的客户端或环境交互，不直接修改领域状态。"
+      }
+    ],
+    "domainServiceNames": [
+      "NotificationRoutingService"
+    ],
+    "sourceUserStoryIds": [
+      "US-NT-001",
+      "US-NT-002",
+      "US-PT-005"
+    ]
+  },
+  {
+    "name": "ReportingApplicationService",
+    "bcId": "BC-REPORT",
+    "responsibility": "协调同源查询、统计、导出和打印。",
+    "commandNames": [],
+    "queries": [
+      {
+        "name": "SearchVisitLedger",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetOnCampusVisitors",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetVisitVolumeStatistics",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetIncidentStatistics",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [
+      {
+        "name": "ExportVisitLedger",
+        "responsibility": "完成ExportVisitLedger对应的客户端或环境交互，不直接修改领域状态。"
+      },
+      {
+        "name": "PrintVisitLedger",
+        "responsibility": "完成PrintVisitLedger对应的客户端或环境交互，不直接修改领域状态。"
+      }
+    ],
+    "domainServiceNames": [],
+    "sourceUserStoryIds": [
+      "US-AN-001",
+      "US-AN-002",
+      "US-LG-001",
+      "US-LG-002",
+      "US-LG-003",
+      "US-LG-004",
+      "US-LG-005"
+    ]
+  },
+  {
+    "name": "ComplianceApplicationService",
+    "bcId": "BC-COMPLIANCE",
+    "responsibility": "协调审计查询与个人信息保护动作。",
+    "commandNames": [
+      "RecordAuditEntry",
+      "AnonymizeExpiredPersonalData",
+      "ErasePersonalData",
+      "CorrectPersonalData"
+    ],
+    "queries": [
+      {
+        "name": "SearchAuditLog",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "GetAuditRetentionPolicy",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      },
+      {
+        "name": "ProvidePersonalData",
+        "mutatesDomainState": false,
+        "raisesDomainEvents": []
+      }
+    ],
+    "interactions": [],
+    "domainServiceNames": [
+      "PrivacyPolicyService"
+    ],
+    "sourceUserStoryIds": [
+      "US-AT-004",
+      "US-SM-001",
+      "US-SM-002"
+    ]
+  }
+]

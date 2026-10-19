@@ -1,0 +1,16 @@
+{
+  "storyId": "US-LG-001",
+  "title": "访客台账",
+  "acceptanceCriteria": [
+    "admin 全校；guard 仅当日/现场。",
+    "`page`（默认 1）/ `pageSize`（默认 20、**上限 100**）；**按到访时间倒序**。",
+    "返回 **`{items:[], total:0}`**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员 / 门卫",
+  "capability": "查看来访记录汇总（谁/类型/何时来/找谁/何时走/状态）",
+  "value": "掌握来访全貌",
+  "priority": "P0",
+  "traceability": "REQ-LG-001（D15）",
+  "page": "原型 #page-lg"
+}

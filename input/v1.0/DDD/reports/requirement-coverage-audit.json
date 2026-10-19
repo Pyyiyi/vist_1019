@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "metrics": {
+    "atoms.mapped": 45,
+    "atoms.equivalent": 2,
+    "sources": 47,
+    "atoms": 47
+  },
+  "errors": [],
+  "warnings": [],
+  "validationScope": "Evidence existence, ledger completeness and references to declared DDD elements.",
+  "semanticReview": "A reviewer must atomize requirements and decide semantic equivalence; this tool does not infer it from wording."
+}

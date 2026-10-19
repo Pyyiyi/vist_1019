@@ -1,0 +1,26 @@
+{
+  "status": "valid",
+  "schemaVersion": "ddd-annotation-v2.0",
+  "metrics": {
+    "sourceStories": 49,
+    "sourceAcceptanceCriteria": 110,
+    "mappedAcceptanceCriteria": 110,
+    "scenarios": 134,
+    "mappedScenarios": 134,
+    "stateChange.Attribute": 58,
+    "stateChange.Context": 14,
+    "stateChange.Information": 36,
+    "stateChange.Lifecycle": 19,
+    "stateChange.NoChange": 7,
+    "aggregates": 10,
+    "commands": 37,
+    "domainEvents": 37,
+    "queries": 19,
+    "stateMachines": 8
+  },
+  "errors": [],
+  "warnings": [],
+  "validationScope": "Schema, unchanged source AC coverage, reference types, ownership and explicitly declared state consistency.",
+  "semanticReview": "Required: structural success does not prove that every natural-language When maps to the correct operation.",
+  "runtimeAcceptance": "Not executed; pending business policies are not approved by this validator."
+}

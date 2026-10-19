@@ -1,0 +1,15 @@
+{
+  "storyId": "US-GV-006",
+  "title": "异常上报",
+  "acceptanceCriteria": [
+    "写异常记录并**通知管理员**。",
+    "异常可查（含类型/时间/对象）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "上报 黑名单命中 / 信息不符 / 强行闯入 / 手动上报超时未离",
+  "value": "留痕并通知管理员",
+  "priority": "P0",
+  "traceability": "REQ-GV-005（NT）",
+  "page": "原型 #page-gv"
+}

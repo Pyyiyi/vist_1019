@@ -1,0 +1,680 @@
+[
+  {
+    "name": "AuthenticateUserCompleted",
+    "scope": "Domain",
+    "raisedBy": "UserAccount",
+    "triggerCondition": "AuthenticateUser成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-PT-001"
+    ]
+  },
+  {
+    "name": "ProvisionAccountCompleted",
+    "scope": "Domain",
+    "raisedBy": "UserAccount",
+    "triggerCondition": "ProvisionAccount成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ]
+  },
+  {
+    "name": "DisableAccountCompleted",
+    "scope": "Domain",
+    "raisedBy": "UserAccount",
+    "triggerCondition": "DisableAccount成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ]
+  },
+  {
+    "name": "RestoreAccountCompleted",
+    "scope": "Domain",
+    "raisedBy": "UserAccount",
+    "triggerCondition": "RestoreAccount成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-OR-001"
+    ]
+  },
+  {
+    "name": "UpdateAuthorizationPolicyCompleted",
+    "scope": "Domain",
+    "raisedBy": "AuthorizationPolicy",
+    "triggerCondition": "UpdateAuthorizationPolicy成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-OR-002"
+    ]
+  },
+  {
+    "name": "SubmitAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "SubmitAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-VS-001",
+      "US-VS-003"
+    ]
+  },
+  {
+    "name": "RescheduleAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "RescheduleAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AP-004"
+    ]
+  },
+  {
+    "name": "CancelAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "CancelAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AP-005"
+    ]
+  },
+  {
+    "name": "ApproveAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "ApproveAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ]
+  },
+  {
+    "name": "RejectAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "RejectAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ]
+  },
+  {
+    "name": "ReviewRescheduleAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "ReviewRescheduleAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AT-002",
+      "US-AT-004"
+    ]
+  },
+  {
+    "name": "ExpireAppointmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "ExpireAppointment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AP-006"
+    ]
+  },
+  {
+    "name": "AdmitVisitorCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "AdmitVisitor成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-GV-002",
+      "US-GV-005"
+    ]
+  },
+  {
+    "name": "RecordDepartureCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "RecordDeparture成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-GV-005"
+    ]
+  },
+  {
+    "name": "RegisterWalkInCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "RegisterWalkIn成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-GV-003"
+    ]
+  },
+  {
+    "name": "RedeemVisitCredentialCompleted",
+    "scope": "Domain",
+    "raisedBy": "VisitAppointment",
+    "triggerCondition": "RedeemVisitCredential成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-GV-004"
+    ]
+  },
+  {
+    "name": "ReportIncidentCompleted",
+    "scope": "Domain",
+    "raisedBy": "IncidentRegistry",
+    "triggerCondition": "ReportIncident成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-GV-006",
+      "US-BD-002"
+    ]
+  },
+  {
+    "name": "ConfigureReviewerAssignmentCompleted",
+    "scope": "Domain",
+    "raisedBy": "SystemConfiguration",
+    "triggerCondition": "ConfigureReviewerAssignment成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AT-003"
+    ]
+  },
+  {
+    "name": "UpsertVisitorTypeCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "UpsertVisitorType成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-001"
+    ]
+  },
+  {
+    "name": "DeactivateVisitorTypeCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "DeactivateVisitorType成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-001"
+    ]
+  },
+  {
+    "name": "UpsertBlacklistEntryCompleted",
+    "scope": "Domain",
+    "raisedBy": "BlacklistRegistry",
+    "triggerCondition": "UpsertBlacklistEntry成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ]
+  },
+  {
+    "name": "RemoveBlacklistEntryCompleted",
+    "scope": "Domain",
+    "raisedBy": "BlacklistRegistry",
+    "triggerCondition": "RemoveBlacklistEntry成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ]
+  },
+  {
+    "name": "ExpireBlacklistEntryCompleted",
+    "scope": "Domain",
+    "raisedBy": "BlacklistRegistry",
+    "triggerCondition": "ExpireBlacklistEntry成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-002"
+    ]
+  },
+  {
+    "name": "UpdateTimeRulesCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "UpdateTimeRules成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-003"
+    ]
+  },
+  {
+    "name": "UpsertGateCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "UpsertGate成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-004"
+    ]
+  },
+  {
+    "name": "DeactivateGateCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "DeactivateGate成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-004"
+    ]
+  },
+  {
+    "name": "UpsertHostCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "UpsertHost成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-005"
+    ]
+  },
+  {
+    "name": "DeactivateHostCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "DeactivateHost成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-BD-005"
+    ]
+  },
+  {
+    "name": "UpdateSystemParameterCompleted",
+    "scope": "Domain",
+    "raisedBy": "SystemConfiguration",
+    "triggerCondition": "UpdateSystemParameter成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-PT-006",
+      "US-SM-003"
+    ]
+  },
+  {
+    "name": "UpdateDataDictionaryCompleted",
+    "scope": "Domain",
+    "raisedBy": "MasterDataCatalog",
+    "triggerCondition": "UpdateDataDictionary成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-SM-004"
+    ]
+  },
+  {
+    "name": "ConfigureNotificationChannelsCompleted",
+    "scope": "Domain",
+    "raisedBy": "SystemConfiguration",
+    "triggerCondition": "ConfigureNotificationChannels成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-NT-003"
+    ]
+  },
+  {
+    "name": "PublishNotificationCompleted",
+    "scope": "Domain",
+    "raisedBy": "NotificationBox",
+    "triggerCondition": "PublishNotification成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-NT-001",
+      "US-NT-002"
+    ]
+  },
+  {
+    "name": "MarkNotificationReadCompleted",
+    "scope": "Domain",
+    "raisedBy": "NotificationBox",
+    "triggerCondition": "MarkNotificationRead成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-PT-005"
+    ]
+  },
+  {
+    "name": "RecordAuditEntryCompleted",
+    "scope": "Domain",
+    "raisedBy": "AuditTrail",
+    "triggerCondition": "RecordAuditEntry成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-AT-004",
+      "US-SM-001"
+    ]
+  },
+  {
+    "name": "AnonymizeExpiredPersonalDataCompleted",
+    "scope": "Domain",
+    "raisedBy": "PrivacyCase",
+    "triggerCondition": "AnonymizeExpiredPersonalData成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ]
+  },
+  {
+    "name": "ErasePersonalDataCompleted",
+    "scope": "Domain",
+    "raisedBy": "PrivacyCase",
+    "triggerCondition": "ErasePersonalData成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ]
+  },
+  {
+    "name": "CorrectPersonalDataCompleted",
+    "scope": "Domain",
+    "raisedBy": "PrivacyCase",
+    "triggerCondition": "CorrectPersonalData成功提交聚合变更后",
+    "keyFields": [
+      "aggregateId",
+      "occurredAt"
+    ],
+    "consumers": [
+      "应用服务",
+      "AuditTrail/NotificationBox（按业务需要）"
+    ],
+    "idempotencyKey": "aggregateId+commandId",
+    "sourceUserStoryIds": [
+      "US-SM-002"
+    ]
+  }
+]

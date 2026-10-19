@@ -1,0 +1,14 @@
+{
+  "storyId": "US-BD-001",
+  "title": "访客类型管理",
+  "acceptanceCriteria": [
+    "跨周期增减用**软状态**停用，退出各下拉但**历史记录保留其分类**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "维护访客类型枚举（家长/外来人员/公务来访 + 可增）",
+  "value": "预约时选择分类",
+  "priority": "P0",
+  "traceability": "REQ-BD-001（D11，§3.21）",
+  "page": "原型 #page-bd"
+}

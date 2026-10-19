@@ -1,0 +1,14 @@
+{
+  "storyId": "US-GV-007",
+  "title": "门口当日视图",
+  "acceptanceCriteria": [
+    "仅展示当日在场数据；不暴露全校历史台账。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "门卫",
+  "capability": "只看当日/现场范围（当日预约、待核验、在校中）",
+  "value": "专注现场、不越界全校历史",
+  "priority": "P1",
+  "traceability": "REQ-GV-006",
+  "page": "原型 #page-gv"
+}

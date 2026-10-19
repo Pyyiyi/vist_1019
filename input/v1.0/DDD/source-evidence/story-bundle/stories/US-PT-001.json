@@ -1,0 +1,17 @@
+{
+  "storyId": "US-PT-001",
+  "title": "后台用户登录与身份识别",
+  "acceptanceCriteria": [
+    "Given 账号存在且状态 active，When 提交正确凭据，Then 登录成功并返回身份与角色。",
+    "Given 同一账号，When 连续输错密码达 **5 次**，Then 该账号**锁定 10 分钟**（按账号计数、**自动解锁**），期间正确密码亦拒绝。",
+    "密码长度 **≥6**、**不强制**复杂度；不满足即拒绝。",
+    "账号被停用（软状态），When 尝试登录，Then 返回 **401**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员 / 门卫 / 被访教职工",
+  "capability": "用账号（admin/guard）或工号（host）＋密码登录并识别我的身份",
+  "value": "进入与角色匹配的后台",
+  "priority": "P0",
+  "traceability": "REQ-PT-001（D5）",
+  "page": "原型 #page-pt（登录）"
+}

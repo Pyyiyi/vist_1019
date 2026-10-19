@@ -1,0 +1,15 @@
+{
+  "storyId": "US-BD-005",
+  "title": "被访人 / 教职工名册",
+  "acceptanceCriteria": [
+    "作为预约选被访人的数据来源。",
+    "**不支持硬删除**、仅**软状态停用**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "维护被访对象主数据（教职工）",
+  "value": "预约选择被访人",
+  "priority": "P0",
+  "traceability": "REQ-BD-005（D11）",
+  "page": "原型 #page-bd"
+}

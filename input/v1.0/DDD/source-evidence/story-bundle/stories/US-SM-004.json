@@ -1,0 +1,14 @@
+{
+  "storyId": "US-SM-004",
+  "title": "数据字典",
+  "acceptanceCriteria": [
+    "枚举/字典可维护，作为各下拉数据来源。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "维护枚举/字典",
+  "value": "作为各下拉数据来源",
+  "priority": "P1",
+  "traceability": "REQ-SM-004",
+  "page": "原型 #page-sm"
+}

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-OR-003",
+  "title": "数据范围控制（对象级隔离）",
+  "acceptanceCriteria": [
+    "对象级隔离以**绑定实体 id** 为准；越权读/写 **403**。",
+    "越权写「**越权拦截**」审计。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "被访人仅本人、访客仅本人（以绑定实体 id 为准）",
+  "value": "避免越权读写",
+  "priority": "P0",
+  "traceability": "REQ-OR-003（§3.22）",
+  "page": "原型 #page-or"
+}

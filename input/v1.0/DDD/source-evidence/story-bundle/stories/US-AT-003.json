@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AT-003",
+  "title": "审核人可配置",
+  "acceptanceCriteria": [
+    "默认审核人＝被访教职工；可配为 管理员 / 指定人。",
+    "配置**生效后**新预约流转到指定审核人（**前向不追溯**）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "把某类/某人的审核人配置为 管理员或指定人（默认被访教职工）",
+  "value": "分流审核职责",
+  "priority": "P2",
+  "traceability": "REQ-AT-003（BD）",
+  "page": "原型 #page-at / #page-bd"
+}

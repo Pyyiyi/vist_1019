@@ -1,0 +1,14 @@
+{
+  "storyId": "US-VS-004",
+  "title": "扫码进入",
+  "acceptanceCriteria": [
+    "兼容 **iOS Safari 15+ / Android Chrome 近两年主流 / 微信内置浏览器**，适配 **320–480px**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "访客",
+  "capability": "扫「申请入口二维码」直达「我要申请」",
+  "value": "快速发起预约",
+  "priority": "P1",
+  "traceability": "REQ-VS-004（D22）",
+  "page": "原型 #page-vs"
+}

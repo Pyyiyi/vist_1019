@@ -1,0 +1,1218 @@
+{
+  "schemaVersion": "ddd-requirement-coverage-v1",
+  "sources": [
+    {
+      "id": "PRD-REQ-AN-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AN-001 | 来访量统计 | 按日/周/月 × 访客类型统计来访量 | 统计口径与台账同源（§附件 E） | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-AN-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AN-002 | 异常统计 | 统计异常上报事件 | 与异常上报同源（§附件 E） | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-AP-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AP-001 | 提交来访预约 | 访客填写并提交来访预约 | 手机号 `^1\\d{10}$`；身份证 18 位含校验位、其他 5–20 位；到访时段起 < 止、同自然日不跨天、时长 15min–在校上限；字段规格见 §5.1（D6） | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-AP-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AP-002 | 随行逐人登记 | 主访客逐条登记随行人员 | 明细 ≤10 条（含主访客共 ≤11 人）；随行任一命中黑名单整单按黑名单处理（G4/D9） | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-AP-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AP-003 | 预约信息校验 | 校验重复预约、可预约性、禁入 | 重叠判定＝闭区间相交（含端点相接）；未终结态集合＝{待审核, 已通过, 已到访(在校中)}；终态可重新预约；黑名单禁入优先（D7/D8/D16） | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-AP-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AP-004 | 预约修改·取消 | 访客在允许范围内修改或取消预约 | 已到访/已离校不可改（返回 409）；改期新时段须重过 REQ-AP-003 全部校验（D8） | P1 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-AP-005",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AP-005 | 预约状态跟踪 | 访客查看预约当前状态与流转 | 8 态与台账同源（§5.3） | P1 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-AT-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AT-001 | 待审核列表 | 被访教职工查看待本人审核的预约 | 对象级隔离：仅本人被访项可见，服务端强制（越权 403，§4） | P0 | host |"
+    },
+    {
+      "id": "PRD-REQ-AT-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AT-002 | 审核处理 | 对预约作出通过/拒绝/改期决定 | 拒绝原因必填 2–100 字自由文本；改期给新时段并重过 REQ-AP-003；改期次数不限；重复处理 409（D10/D1） | P0 | host |"
+    },
+    {
+      "id": "PRD-REQ-AT-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AT-003 | 审核人可配置 | 预约的审核人可配置 | 默认被访教职工；配置变更前向不追溯（§附件 F） | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-AT-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-AT-004 | 审核留痕 | 记录审核动作与结果 | 写操作日志（§5.4） | P1 | host/系统 |"
+    },
+    {
+      "id": "PRD-REQ-BD-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-BD-001 | 访客类型管理 | 维护访客类型（家长/外来人员/公务来访） | 软状态（§附件 B） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-BD-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-BD-002 | 黑名单管理 | 维护全校统一黑名单 | 全校统一一份；提交软提示不拦；核验硬拦；无 override；命中通知门卫+管理员+异常+审计；可手工删除、到期自动失效（D4/D11） | P0 | admin |"
+    },
+    {
+      "id": "PRD-REQ-BD-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-BD-003 | 时段规则管理 | 维护可预约时段与缓冲、在校上限 | 可预约默认 07:00 至 18:00（按星期几）；缓冲默认 15min；在校上限默认 240min；禁入优先（D7/§附件 F） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-BD-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-BD-004 | 校门·通行点管理 | 维护校门/通行点 | 软状态（§附件 B） | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-BD-005",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-BD-005 | 被访人·教职工名册 | 维护被访人（教职工）名册 | 软状态（§附件 B） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-GV-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-001 | 现场核验 | 门卫现场核验访客身份与凭证合法性 | V1.0 仅人工核验（D3/D24：核验=比对身份与凭证合法性） | P0 | guard |"
+    },
+    {
+      "id": "PRD-REQ-GV-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-002 | 放行与现场登记 | 放行访客并做现场登记（含无预约登记） | 记录进校时刻，产生「已到访(在校中)」（D24：放行=允许进入并记录进校） | P0 | guard |"
+    },
+    {
+      "id": "PRD-REQ-GV-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-003 | 访客凭证核销 | 核销访客凭证防重复入校 | 短码 6 位数字全局唯一、随预约生成、有效至预约终结；首次核销成功、重复拒绝放行（D13/D24：核销=将凭证置为已用） | P0 | guard |"
+    },
+    {
+      "id": "PRD-REQ-GV-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-004 | 进校·离校登记 | 登记访客进校与离校 | 当天多次进出；已离校非绝对终态（当天再进回已到访）；时刻精确到分钟（D12） | P0 | guard |"
+    },
+    {
+      "id": "PRD-REQ-GV-005",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-005 | 异常上报 | 门卫上报现场异常 | 异常类型见 §5.2 枚举；通知门卫+管理员+异常统计 | P1 | guard |"
+    },
+    {
+      "id": "PRD-REQ-GV-006",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-GV-006 | 门口当日视图 | 展示当日预约/在校/待核验概况 | 派生取数同源（§附件 E） | P1 | guard |"
+    },
+    {
+      "id": "PRD-REQ-LG-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-LG-001 | 访客台账 | 全量访客来访记录分页查看 | 分页 page 默认 1 / pageSize 默认 20 上限 100；空数据 `{items:[],total:0}`；按到访时间倒序（D15） | P0 | admin/guard |"
+    },
+    {
+      "id": "PRD-REQ-LG-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-LG-002 | 在校实时清单 | 实时展示当前在校访客 | 按最后一次状态取数（G1/D12，§5.3） | P0 | admin/guard |"
+    },
+    {
+      "id": "PRD-REQ-LG-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-LG-003 | 多条件查询检索 | 按条件检索台账 | 脱敏后仅 admin 精确命中且不回显完整证件号；1 万条 <2s（D14/D23） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-LG-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-LG-004 | 导出·打印 | 导出台账、打印留痕 | 掩码前 4 后 4；命名 `访客台账_YYYYMMDD_HHmmss.{csv,xlsx}`；CSV 带 BOM UTF-8；导出与检索同源（D14/D20/D21） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-NT-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-NT-001 | 流转通知 | 状态流转触发站内通知 | 事件驱动；模板见 §3.3；到访提醒＝预约时段起前 30min（D18） | P1 | 全角色 |"
+    },
+    {
+      "id": "PRD-REQ-NT-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-NT-002 | 异常提醒 | 异常事件触发提醒 | 通知门卫+管理员 | P1 | admin/guard |"
+    },
+    {
+      "id": "PRD-REQ-NT-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-NT-003 | 通知渠道可配 | 通知渠道可配置 | V1.0 站内启用；短信/企微预留关闭（§附件 F） | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-OR-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-OR-001 | 用户·账号管理 | 管理用户账号 | 软状态停用（`status∈{active,inactive}`）；停用后登录 401；历史保留可恢复（D11/§附件 B） | P0 | admin |"
+    },
+    {
+      "id": "PRD-REQ-OR-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-OR-002 | 角色与权限 | 定义角色与资源权限边界 | 服务端强制 + 越权 403 + 审计留痕（§3.22/§4） | P0 | admin |"
+    },
+    {
+      "id": "PRD-REQ-OR-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-OR-003 | 数据范围控制 | 控制各角色数据可见范围 | 对象级隔离以绑定实体 id 为准（§4） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-PT-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-PT-001 | 统一登录与身份识别 | 管理员/门卫用账号登录、被访教职工用工号+密码登录；访客经 H5 免密进入 | 连续失败 5 次锁 10 分钟（按账号锁定、到时自动解锁）；密码 ≥6 位、不强制复杂度；访客免密不走后台登录（D5） | P0 | admin/guard/host/visitor |"
+    },
+    {
+      "id": "PRD-REQ-PT-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-PT-002 | 角色工作台路由 | 按角色呈现工作台与功能入口 | 角色路由与权限基线一致；adminOnly 路由见附件 C（§4） | P0 | 全角色 |"
+    },
+    {
+      "id": "PRD-REQ-PT-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-PT-003 | 我的待办聚合 | 聚合当前角色待办（待审核、待核验等） | 计数与列表同源（§附件 E） | P1 | admin/host/guard |"
+    },
+    {
+      "id": "PRD-REQ-PT-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-PT-004 | 通知与消息入口 | 统一通知/消息入口，未读可查看 | 通知模板见 §3.3；渠道可配（REQ-NT-003） | P1 | 全角色 |"
+    },
+    {
+      "id": "PRD-REQ-PT-005",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-PT-005 | 访客申请入口二维码 | 生成访客申请入口二维码供访客扫码进入 H5 | 入口 URL 由系统参数可配，默认 = 部署域名 + `/h5/apply`（D13） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-SM-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-SM-001 | 操作日志·留痕 | 记录关键操作日志 | 最小字段 user/time/objectType+objectId/action/result/before/after；留存 ≥180 天（D23/D25） | P0 | admin |"
+    },
+    {
+      "id": "PRD-REQ-SM-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-SM-002 | 个人信息保护 | 保护访客个人信息 | 留存默认 90 天可配、到期脱敏展示层；人工清除＝物理删除；本人可索取更正（G11/D14） | P0 | admin/visitor |"
+    },
+    {
+      "id": "PRD-REQ-SM-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-SM-003 | 参数配置 | 维护系统参数 | 生效口径见 §附件 F（可配项须绑定生效点） | P1 | admin |"
+    },
+    {
+      "id": "PRD-REQ-SM-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-SM-004 | 数据字典 | 维护枚举字典 | 枚举穷举见 §5.2 | P2 | admin |"
+    },
+    {
+      "id": "PRD-REQ-VS-001",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-VS-001 | 我要申请 | 访客在 H5 发起来访申请 | 免密进入，承接 REQ-AP-001 采集 | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-VS-002",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-VS-002 | 我的申请查看 | 访客查看本人申请 | 仅本人可见，服务端按 visitor_id 强制过滤（§4） | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-VS-003",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-VS-003 | 安全告知·授权告知确认 | 提交前展示安全告知并需授权确认 | 未勾选不可提交；每次提交均需确认、不记忆；留痕按预约含时间戳（D2/D19） | P0 | visitor |"
+    },
+    {
+      "id": "PRD-REQ-VS-004",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| REQ-VS-004 | 扫码进入 | 支持扫码/链接进入 H5 | iOS Safari 15+、Android Chrome 近两年、微信内置浏览器；适配 320–480px（D22） | P1 | visitor |"
+    },
+    {
+      "id": "PRD-STATE-EXPIRE",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| 已过期 | 定时任务：超时段未核验或已改期未确认 | 定时每 10min 扫描 | 待审核 / 已通过 / 已改期 |"
+    },
+    {
+      "id": "PRD-STATE-REENTRY",
+      "file": "../source-evidence/prd-evidence.md",
+      "evidence": "| 已离校 | 门卫登记离校 | 即时 | 已到访(在校中) |"
+    }
+  ],
+  "atoms": [
+    {
+      "id": "ATOM-REQ-AN-001",
+      "sourceIds": [
+        "PRD-REQ-AN-001"
+      ],
+      "description": "来访量统计：按日/周/月 × 访客类型统计来访量；统计口径与台账同源（§附件 E）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetVisitVolumeStatistics"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AN-002",
+      "sourceIds": [
+        "PRD-REQ-AN-002"
+      ],
+      "description": "异常统计：统计异常上报事件；与异常上报同源（§附件 E）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetIncidentStatistics"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AP-001",
+      "sourceIds": [
+        "PRD-REQ-AP-001"
+      ],
+      "description": "提交来访预约：访客填写并提交来访预约；手机号 `^1\\d{10}$`；身份证 18 位含校验位、其他 5–20 位；到访时段起 < 止、同自然日不跨天、时长 15min–在校上限；字段规格见 §5.1（D6）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "SubmitAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AP-002",
+      "sourceIds": [
+        "PRD-REQ-AP-002"
+      ],
+      "description": "随行逐人登记：主访客逐条登记随行人员；明细 ≤10 条（含主访客共 ≤11 人）；随行任一命中黑名单整单按黑名单处理（G4/D9）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "SubmitAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AP-003",
+      "sourceIds": [
+        "PRD-REQ-AP-003"
+      ],
+      "description": "预约信息校验：校验重复预约、可预约性、禁入；重叠判定＝闭区间相交（含端点相接）；未终结态集合＝{待审核, 已通过, 已到访(在校中)}；终态可重新预约；黑名单禁入优先（D7/D8/D16）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "SubmitAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AP-004",
+      "sourceIds": [
+        "PRD-REQ-AP-004"
+      ],
+      "description": "预约修改·取消：访客在允许范围内修改或取消预约；已到访/已离校不可改（返回 409）；改期新时段须重过 REQ-AP-003 全部校验（D8）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "RescheduleAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        },
+        {
+          "kind": "Command",
+          "name": "CancelAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AP-005",
+      "sourceIds": [
+        "PRD-REQ-AP-005"
+      ],
+      "description": "预约状态跟踪：访客查看预约当前状态与流转；8 态与台账同源（§5.3）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetAppointmentStatus"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AT-001",
+      "sourceIds": [
+        "PRD-REQ-AT-001"
+      ],
+      "description": "待审核列表：被访教职工查看待本人审核的预约；对象级隔离：仅本人被访项可见，服务端强制（越权 403，§4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "ListReviewTasks"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AT-002",
+      "sourceIds": [
+        "PRD-REQ-AT-002"
+      ],
+      "description": "审核处理：对预约作出通过/拒绝/改期决定；拒绝原因必填 2–100 字自由文本；改期给新时段并重过 REQ-AP-003；改期次数不限；重复处理 409（D10/D1）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ApproveAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        },
+        {
+          "kind": "Command",
+          "name": "RejectAppointment"
+        },
+        {
+          "kind": "Command",
+          "name": "ReviewRescheduleAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AT-003",
+      "sourceIds": [
+        "PRD-REQ-AT-003"
+      ],
+      "description": "审核人可配置：预约的审核人可配置；默认被访教职工；配置变更前向不追溯（§附件 F）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ConfigureReviewerAssignment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "SystemConfiguration"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-AT-004",
+      "sourceIds": [
+        "PRD-REQ-AT-004"
+      ],
+      "description": "审核留痕：记录审核动作与结果；写操作日志（§5.4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "SearchAuditLog"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-BD-001",
+      "sourceIds": [
+        "PRD-REQ-BD-001"
+      ],
+      "description": "访客类型管理：维护访客类型（家长/外来人员/公务来访）；软状态（§附件 B）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpsertVisitorType"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "MasterDataCatalog"
+        },
+        {
+          "kind": "Command",
+          "name": "DeactivateVisitorType"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-BD-002",
+      "sourceIds": [
+        "PRD-REQ-BD-002"
+      ],
+      "description": "黑名单管理：维护全校统一黑名单；全校统一一份；提交软提示不拦；核验硬拦；无 override；命中通知门卫+管理员+异常+审计；可手工删除、到期自动失效（D4/D11）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "CheckBlacklist"
+        },
+        {
+          "kind": "Command",
+          "name": "RemoveBlacklistEntry"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "BlacklistRegistry"
+        },
+        {
+          "kind": "Command",
+          "name": "ExpireBlacklistEntry"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-BD-003",
+      "sourceIds": [
+        "PRD-REQ-BD-003"
+      ],
+      "description": "时段规则管理：维护可预约时段与缓冲、在校上限；可预约默认 07:00 至 18:00（按星期几）；缓冲默认 15min；在校上限默认 240min；禁入优先（D7/§附件 F）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpdateTimeRules"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "MasterDataCatalog"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-BD-004",
+      "sourceIds": [
+        "PRD-REQ-BD-004"
+      ],
+      "description": "校门·通行点管理：维护校门/通行点；软状态（§附件 B）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpsertGate"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "MasterDataCatalog"
+        },
+        {
+          "kind": "Command",
+          "name": "DeactivateGate"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-BD-005",
+      "sourceIds": [
+        "PRD-REQ-BD-005"
+      ],
+      "description": "被访人·教职工名册：维护被访人（教职工）名册；软状态（§附件 B）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpsertHost"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "MasterDataCatalog"
+        },
+        {
+          "kind": "Command",
+          "name": "DeactivateHost"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-001",
+      "sourceIds": [
+        "PRD-REQ-GV-001"
+      ],
+      "description": "现场核验：门卫现场核验访客身份与凭证合法性；V1.0 仅人工核验（D3/D24：核验=比对身份与凭证合法性）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "InspectVisitorEligibility"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-002",
+      "sourceIds": [
+        "PRD-REQ-GV-002"
+      ],
+      "description": "放行与现场登记：放行访客并做现场登记（含无预约登记）；记录进校时刻，产生「已到访(在校中)」（D24：放行=允许进入并记录进校）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "AdmitVisitor"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        },
+        {
+          "kind": "Command",
+          "name": "RegisterWalkIn"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-003",
+      "sourceIds": [
+        "PRD-REQ-GV-003"
+      ],
+      "description": "访客凭证核销：核销访客凭证防重复入校；短码 6 位数字全局唯一、随预约生成、有效至预约终结；首次核销成功、重复拒绝放行（D13/D24：核销=将凭证置为已用）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "RedeemVisitCredential"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-004",
+      "sourceIds": [
+        "PRD-REQ-GV-004"
+      ],
+      "description": "进校·离校登记：登记访客进校与离校；当天多次进出；已离校非绝对终态（当天再进回已到访）；时刻精确到分钟（D12）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "AdmitVisitor"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        },
+        {
+          "kind": "Command",
+          "name": "RecordDeparture"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-005",
+      "sourceIds": [
+        "PRD-REQ-GV-005"
+      ],
+      "description": "异常上报：门卫上报现场异常；异常类型见 §5.2 枚举；通知门卫+管理员+异常统计",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ReportIncident"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "IncidentRegistry"
+        },
+        {
+          "kind": "Query",
+          "name": "SearchIncidents"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-GV-006",
+      "sourceIds": [
+        "PRD-REQ-GV-006"
+      ],
+      "description": "门口当日视图：展示当日预约/在校/待核验概况；派生取数同源（§附件 E）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetGateTodayView"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-LG-001",
+      "sourceIds": [
+        "PRD-REQ-LG-001"
+      ],
+      "description": "访客台账：全量访客来访记录分页查看；分页 page 默认 1 / pageSize 默认 20 上限 100；空数据 `{items:[],total:0}`；按到访时间倒序（D15）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "SearchVisitLedger"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-LG-002",
+      "sourceIds": [
+        "PRD-REQ-LG-002"
+      ],
+      "description": "在校实时清单：实时展示当前在校访客；按最后一次状态取数（G1/D12，§5.3）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetOnCampusVisitors"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-LG-003",
+      "sourceIds": [
+        "PRD-REQ-LG-003"
+      ],
+      "description": "多条件查询检索：按条件检索台账；脱敏后仅 admin 精确命中且不回显完整证件号；1 万条 <2s（D14/D23）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "SearchVisitLedger"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-LG-004",
+      "sourceIds": [
+        "PRD-REQ-LG-004"
+      ],
+      "description": "导出·打印：导出台账、打印留痕；掩码前 4 后 4；命名 `访客台账_YYYYMMDD_HHmmss.{csv,xlsx}`；CSV 带 BOM UTF-8；导出与检索同源（D14/D20/D21）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Interaction",
+          "name": "ExportVisitLedger"
+        },
+        {
+          "kind": "Interaction",
+          "name": "PrintVisitLedger"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-NT-001",
+      "sourceIds": [
+        "PRD-REQ-NT-001"
+      ],
+      "description": "流转通知：状态流转触发站内通知；事件驱动；模板见 §3.3；到访提醒＝预约时段起前 30min（D18）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "PublishNotification"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "NotificationBox"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-NT-002",
+      "sourceIds": [
+        "PRD-REQ-NT-002"
+      ],
+      "description": "异常提醒：异常事件触发提醒；通知门卫+管理员",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "PublishNotification"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "NotificationBox"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-NT-003",
+      "sourceIds": [
+        "PRD-REQ-NT-003"
+      ],
+      "description": "通知渠道可配：通知渠道可配置；V1.0 站内启用；短信/企微预留关闭（§附件 F）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ConfigureNotificationChannels"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "SystemConfiguration"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-OR-001",
+      "sourceIds": [
+        "PRD-REQ-OR-001"
+      ],
+      "description": "用户·账号管理：管理用户账号；软状态停用（`status∈{active,inactive}`）；停用后登录 401；历史保留可恢复（D11/§附件 B）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ProvisionAccount"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "UserAccount"
+        },
+        {
+          "kind": "Command",
+          "name": "DisableAccount"
+        },
+        {
+          "kind": "Command",
+          "name": "RestoreAccount"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-OR-002",
+      "sourceIds": [
+        "PRD-REQ-OR-002"
+      ],
+      "description": "角色与权限：定义角色与资源权限边界；服务端强制 + 越权 403 + 审计留痕（§3.22/§4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "CheckAuthorization"
+        },
+        {
+          "kind": "Command",
+          "name": "UpdateAuthorizationPolicy"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "AuthorizationPolicy"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-OR-003",
+      "sourceIds": [
+        "PRD-REQ-OR-003"
+      ],
+      "description": "数据范围控制：控制各角色数据可见范围；对象级隔离以绑定实体 id 为准（§4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "ApplyDataScope"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-PT-001",
+      "sourceIds": [
+        "PRD-REQ-PT-001"
+      ],
+      "description": "统一登录与身份识别：管理员/门卫用账号登录、被访教职工用工号+密码登录；访客经 H5 免密进入；连续失败 5 次锁 10 分钟（按账号锁定、到时自动解锁）；密码 ≥6 位、不强制复杂度；访客免密不走后台登录（D5）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "AuthenticateUser"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "UserAccount"
+        },
+        {
+          "kind": "Interaction",
+          "name": "OpenVisitorH5"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-PT-002",
+      "sourceIds": [
+        "PRD-REQ-PT-002"
+      ],
+      "description": "角色工作台路由：按角色呈现工作台与功能入口；角色路由与权限基线一致；adminOnly 路由见附件 C（§4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Interaction",
+          "name": "RouteToRoleWorkspace"
+        },
+        {
+          "kind": "Query",
+          "name": "CheckAuthorization"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-PT-003",
+      "sourceIds": [
+        "PRD-REQ-PT-003"
+      ],
+      "description": "我的待办聚合：聚合当前角色待办（待审核、待核验等）；计数与列表同源（§附件 E）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetMyWorkQueue"
+        },
+        {
+          "kind": "Interaction",
+          "name": "NavigateToWorkItem"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-PT-004",
+      "sourceIds": [
+        "PRD-REQ-PT-004"
+      ],
+      "description": "通知与消息入口：统一通知/消息入口，未读可查看；通知模板见 §3.3；渠道可配（REQ-NT-003）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "ListNotifications"
+        },
+        {
+          "kind": "Command",
+          "name": "MarkNotificationRead"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "NotificationBox"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-PT-005",
+      "sourceIds": [
+        "PRD-REQ-PT-005"
+      ],
+      "description": "访客申请入口二维码：生成访客申请入口二维码供访客扫码进入 H5；入口 URL 由系统参数可配，默认 = 部署域名 + `/h5/apply`（D13）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Interaction",
+          "name": "GenerateVisitorEntryQr"
+        },
+        {
+          "kind": "Interaction",
+          "name": "DownloadVisitorEntryQr"
+        },
+        {
+          "kind": "Interaction",
+          "name": "PrintVisitorEntryQr"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-SM-001",
+      "sourceIds": [
+        "PRD-REQ-SM-001"
+      ],
+      "description": "操作日志·留痕：记录关键操作日志；最小字段 user/time/objectType+objectId/action/result/before/after；留存 ≥180 天（D23/D25）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "RecordAuditEntry"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "AuditTrail"
+        },
+        {
+          "kind": "Query",
+          "name": "SearchAuditLog"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-SM-002",
+      "sourceIds": [
+        "PRD-REQ-SM-002"
+      ],
+      "description": "个人信息保护：保护访客个人信息；留存默认 90 天可配、到期脱敏展示层；人工清除＝物理删除；本人可索取更正（G11/D14）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "AnonymizeExpiredPersonalData"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "PrivacyCase"
+        },
+        {
+          "kind": "Command",
+          "name": "ErasePersonalData"
+        },
+        {
+          "kind": "Command",
+          "name": "CorrectPersonalData"
+        },
+        {
+          "kind": "Query",
+          "name": "ProvidePersonalData"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-SM-003",
+      "sourceIds": [
+        "PRD-REQ-SM-003"
+      ],
+      "description": "参数配置：维护系统参数；生效口径见 §附件 F（可配项须绑定生效点）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpdateSystemParameter"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "SystemConfiguration"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-SM-004",
+      "sourceIds": [
+        "PRD-REQ-SM-004"
+      ],
+      "description": "数据字典：维护枚举字典；枚举穷举见 §5.2",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "UpdateDataDictionary"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "MasterDataCatalog"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-VS-001",
+      "sourceIds": [
+        "PRD-REQ-VS-001"
+      ],
+      "description": "我要申请：访客在 H5 发起来访申请；免密进入，承接 REQ-AP-001 采集",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "SubmitAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-VS-002",
+      "sourceIds": [
+        "PRD-REQ-VS-002"
+      ],
+      "description": "我的申请查看：访客查看本人申请；仅本人可见，服务端按 visitor_id 强制过滤（§4）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Query",
+          "name": "GetVisitorAppointments"
+        },
+        {
+          "kind": "Interaction",
+          "name": "PresentCredentialQr"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-VS-003",
+      "sourceIds": [
+        "PRD-REQ-VS-003"
+      ],
+      "description": "安全告知·授权告知确认：提交前展示安全告知并需授权确认；未勾选不可提交；每次提交均需确认、不记忆；留痕按预约含时间戳（D2/D19）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "SubmitAppointment"
+        },
+        {
+          "kind": "Aggregate",
+          "name": "VisitAppointment"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-REQ-VS-004",
+      "sourceIds": [
+        "PRD-REQ-VS-004"
+      ],
+      "description": "扫码进入：支持扫码/链接进入 H5；iOS Safari 15+、Android Chrome 近两年、微信内置浏览器；适配 320–480px（D22）",
+      "status": "mapped",
+      "dddRefs": [
+        {
+          "kind": "Interaction",
+          "name": "OpenApplicationFromQr"
+        }
+      ],
+      "rationale": "PRD条款与用户故事直接能力一致，落点引用真实命令、查询、交互或聚合；具体AC映射见traceabilityMatrix。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-PRD-STATE-EXPIRE",
+      "sourceIds": [
+        "PRD-STATE-EXPIRE"
+      ],
+      "description": "| 已过期 | 定时任务：超时段未核验或已改期未确认 | 定时每 10min 扫描 | 待审核 / 已通过 / 已改期 |",
+      "status": "equivalent",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "ExpireAppointment"
+        },
+        {
+          "kind": "StateMachine",
+          "name": "SM-AppointmentStatus"
+        }
+      ],
+      "rationale": "PRD明确补充过期迁移触发与前态；用户故事已声明已过期为八态之一。",
+      "openQuestions": []
+    },
+    {
+      "id": "ATOM-PRD-STATE-REENTRY",
+      "sourceIds": [
+        "PRD-STATE-REENTRY"
+      ],
+      "description": "| 已离校 | 门卫登记离校 | 即时 | 已到访(在校中) |",
+      "status": "equivalent",
+      "dddRefs": [
+        {
+          "kind": "Command",
+          "name": "RecordDeparture"
+        },
+        {
+          "kind": "StateMachine",
+          "name": "SM-AppointmentStatus"
+        }
+      ],
+      "rationale": "与用户故事当天多次进出规则共同落在非绝对终态的Left状态及离校命令。",
+      "openQuestions": []
+    }
+  ]
+}

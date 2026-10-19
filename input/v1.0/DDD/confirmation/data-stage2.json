@@ -1,0 +1,120 @@
+{
+  "stage": 2,
+  "title": "访客系统 V1.0 DDD 模块与核心数据框架",
+  "scenario_count": 49,
+  "module_count": 6,
+  "module_relationship_diagram": "身份权限 → 来访闭环 ← 业务策略主数据\n来访闭环 → 通知中心 / 台账分析 / 审计隐私\n审计隐私 → 台账分析（脱敏约束）",
+  "modules": [
+    {
+      "name": "身份与权限",
+      "type": "generic",
+      "responsibility": "管理后台身份、账号生命周期、授权与对象级数据范围。",
+      "coreData": [
+        "UserAccount",
+        "AuthorizationPolicy"
+      ],
+      "relations": [
+        {
+          "target": "来访闭环",
+          "description": "身份、角色和对象范围声明供预约与审核鉴权。"
+        }
+      ],
+      "keyConstraints": [
+        "服务端强制权限与对象隔离",
+        "账号停用保留历史且可恢复"
+      ]
+    },
+    {
+      "name": "来访闭环",
+      "type": "core",
+      "responsibility": "管理预约、审核、凭证、核验、进出与现场异常的核心业务闭环。",
+      "coreData": [
+        "VisitAppointment",
+        "IncidentRegistry"
+      ],
+      "relations": [
+        {
+          "target": "通知中心",
+          "description": "预约提交、审核结果和异常事实驱动通知。"
+        },
+        {
+          "target": "台账与分析",
+          "description": "台账和统计遵从来访状态与进出事实的唯一口径。"
+        },
+        {
+          "target": "审计与隐私",
+          "description": "敏感业务动作和个人信息事实进入审计与隐私流程。"
+        }
+      ],
+      "keyConstraints": [
+        "预约八态按命令守卫迁移",
+        "当天离校后允许再次进校",
+        "凭证仅首次核销成功"
+      ]
+    },
+    {
+      "name": "业务策略与主数据",
+      "type": "supporting",
+      "responsibility": "维护访客类型、校门、教职工、黑名单、时段和系统参数。",
+      "coreData": [
+        "MasterDataCatalog",
+        "BlacklistRegistry",
+        "SystemConfiguration"
+      ],
+      "relations": [
+        {
+          "target": "来访闭环",
+          "description": "主数据、黑名单、时段和审核人配置供预约与核验消费。"
+        }
+      ],
+      "keyConstraints": [
+        "禁入时段优先于可预约时段",
+        "主数据停用不改写历史"
+      ]
+    },
+    {
+      "name": "通知中心",
+      "type": "supporting",
+      "responsibility": "生成、投递、展示并维护站内通知读取状态。",
+      "coreData": [
+        "NotificationBox"
+      ],
+      "relations": [],
+      "keyConstraints": [
+        "站内启用必达且已读持久"
+      ]
+    },
+    {
+      "name": "台账与分析",
+      "type": "supporting",
+      "responsibility": "提供同源台账、在校清单、统计、导出与打印读模型。",
+      "coreData": [
+        "ReadModel"
+      ],
+      "relations": [],
+      "keyConstraints": [
+        "派生取数与来访状态同源",
+        "检索导出打印脱敏一致"
+      ]
+    },
+    {
+      "name": "审计与隐私",
+      "type": "generic",
+      "responsibility": "记录敏感操作并执行个人信息留存、脱敏、清除和主体请求。",
+      "coreData": [
+        "AuditTrail",
+        "PrivacyCase"
+      ],
+      "relations": [
+        {
+          "target": "台账与分析",
+          "description": "脱敏政策约束检索、导出与打印显示。"
+        }
+      ],
+      "keyConstraints": [
+        "关键日志至少保留180天",
+        "到期仅展示层脱敏"
+      ]
+    }
+  ]
+}

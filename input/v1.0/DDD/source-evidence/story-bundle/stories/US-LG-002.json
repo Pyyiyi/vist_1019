@@ -1,0 +1,15 @@
+{
+  "storyId": "US-LG-002",
+  "title": "在校（实时）清单",
+  "acceptanceCriteria": [
+    "进校即入列、离校即移出，**准实时刷新**。",
+    "**按最后一次状态取数**（D12）。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员 / 门卫",
+  "capability": "看到当前仍在校访客实时名单（谁/何时进/找谁/已在校多久）",
+  "value": "掌握在校人员",
+  "priority": "P0",
+  "traceability": "REQ-LG-002（D12，G1）",
+  "page": "原型 #page-lg"
+}

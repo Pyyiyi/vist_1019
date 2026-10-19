@@ -1,0 +1,11 @@
+{
+  "project": "访客系统 V1.0",
+  "schemaVersion": "ddd-annotation-v2.0",
+  "inputSource": "adapted_user_story_markdown",
+  "sopVersion": "ddd-builder-v2",
+  "sourceStoryBundle": "../source-evidence/story-bundle/",
+  "annotator": "Codex agent",
+  "date": "2026-10-12",
+  "method": "agent",
+  "externalSystems": []
+}

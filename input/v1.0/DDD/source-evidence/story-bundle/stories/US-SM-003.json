@@ -1,0 +1,14 @@
+{
+  "storyId": "US-SM-003",
+  "title": "参数配置",
+  "acceptanceCriteria": [
+    "参数集中管理，**修改即生效**，供各取数点（如入口 URL、留存期限）消费。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "集中管理系统参数与可配项",
+  "value": "修改即生效供各取数点消费",
+  "priority": "P1",
+  "traceability": "REQ-SM-003",
+  "page": "原型 #page-sm"
+}

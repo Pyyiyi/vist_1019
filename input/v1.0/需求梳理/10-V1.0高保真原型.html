@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>访客系统 · V1.0 高保真可操作原型（阶段三）</title>
+<style>
+  :root{
+    --bg:#eef2f7; --panel:#ffffff; --ink:#1f2b38; --muted:#6b7a8d; --line:#dde5ee;
+    --brand:#2e5c8a; --brand2:#3f7fbf; --brand-d:#22466b; --accent:#f5b431;
+    --ok:#2e9e63; --okbg:#e3f4ea; --warn:#c47f00; --warnbg:#fdf1d6;
+    --danger:#c0392b; --dangerbg:#fbe3e0; --soft:#eef4fb; --softline:#c9ddf2;
+    --shadow:0 1px 3px rgba(31,43,56,.06),0 8px 24px rgba(31,43,56,.06);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+       background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.6;}
+  .app{max-width:1280px;margin:0 auto;padding:0 16px 64px;}
+
+  /* ============ 顶栏 ============ */
+  header.topbar{position:sticky;top:0;z-index:40;background:linear-gradient(90deg,var(--brand-d),var(--brand));
+    color:#fff;margin:0 -16px 12px;padding:11px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    box-shadow:0 3px 14px rgba(34,70,107,.32);}
+  .topbar .logo{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--brand-d);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;}
+  .topbar h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.4px;}
+  .topbar .sub{font-size:11.5px;opacity:.85;border-left:1px solid rgba(255,255,255,.35);padding-left:12px;}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12.5px;flex-wrap:wrap;}
+  .bell{position:relative;cursor:pointer;font-size:17px;}
+  .bell .dot{position:absolute;top:-4px;right:-6px;background:var(--danger);color:#fff;border-radius:10px;
+    font-size:10px;font-weight:700;padding:0 5px;line-height:15px;min-width:15px;text-align:center;}
+  .who{display:flex;align-items:center;gap:7px;}
+  .who .avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .role-switch{display:flex;align-items:center;gap:6px;}
+  .role-switch select{padding:5px 9px;border-radius:8px;border:none;font-size:12.5px;color:var(--brand-d);
+    font-weight:700;cursor:pointer;outline:none;background:#fff;}
+  .src-btn{padding:5px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);
+    color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+  .src-btn:hover{background:rgba(255,255,255,.26);}
+  .src-badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#fde9c8;color:#8a5a00;}
+
+  /* ============ 演示数据横幅 ============ */
+  .demo-banner{background:linear-gradient(90deg,#fff3cd,#fde9c8);border:1px solid #f0dcae;color:#8a5a00;
+    border-radius:12px;padding:10px 14px;font-size:12.4px;margin:0 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .demo-banner b{font-weight:800;}
+  .demo-banner .sp{margin-left:auto;display:flex;align-items:center;gap:8px;}
+
+  /* ============ 布局 ============ */
+  .layout{display:grid;grid-template-columns:224px 1fr;gap:18px;align-items:start;}
+  @media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  nav.side{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px;
+    position:sticky;top:70px;box-shadow:var(--shadow);}
+  nav.side .cap{font-size:11px;color:var(--muted);padding:7px 10px 6px;font-weight:800;letter-spacing:.8px;}
+  nav.side a{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:9px;color:var(--ink);
+    text-decoration:none;font-size:13px;margin-bottom:1px;cursor:pointer;transition:.15s;}
+  nav.side a:hover{background:var(--soft);}
+  nav.side a.active{background:var(--brand);color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(46,92,138,.28);}
+  nav.side a .code{font-size:10px;color:var(--muted);margin-left:auto;font-weight:800;letter-spacing:.5px;}
+  nav.side a.active .code{color:var(--accent);}
+  nav.side a.hidden{display:none;}
+
+  main.content{min-height:560px;}
+  .page{display:none;animation:fade .22s ease;}
+  .page.show{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+
+  /* ============ 卡片 ============ */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    margin-bottom:16px;box-shadow:var(--shadow);}
+  .card-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px;}
+  .card h2{margin:0;font-size:16.5px;}
+  .card h3{margin:20px 0 9px;font-size:14px;color:var(--brand-d);display:flex;align-items:center;gap:8px;}
+  .card h3::before{content:"";width:4px;height:15px;background:var(--brand2);border-radius:2px;display:inline-block;}
+  .hint{color:var(--muted);font-size:12.5px;margin:6px 0 14px;}
+  .reqpill{display:inline-block;background:var(--soft);color:var(--brand);border:1px solid var(--softline);
+    border-radius:20px;font-size:11px;font-weight:700;padding:1px 9px;letter-spacing:.2px;}
+  .reqpill.g{background:var(--okbg);color:var(--ok);border-color:#bce3cc;}
+
+  /* ============ 网格 ============ */
+  .grid{display:grid;gap:12px;}
+  .grid.c2{grid-template-columns:repeat(2,1fr);}
+  .grid.c3{grid-template-columns:repeat(3,1fr);}
+  .grid.c4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:860px){.grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr;}}
+
+  .kpi{background:linear-gradient(180deg,#f6faff,#eef4fb);border:1px solid var(--softline);border-radius:12px;padding:14px 16px;}
+  .kpi .n{font-size:25px;font-weight:800;color:var(--brand);line-height:1.1;}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:3px;}
+  .kpi.warn{background:linear-gradient(180deg,#fff9ec,#fdf1d6);border-color:#f0dcae;}
+  .kpi.warn .n{color:var(--warn);}
+  .kpi.danger{background:linear-gradient(180deg,#fdf1ef,#fbe3e0);border-color:#f2c9c3;}
+  .kpi.danger .n{color:var(--danger);}
+
+  .entry{cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:#fff;transition:.15s;}
+  .entry:hover{border-color:var(--brand2);box-shadow:0 8px 20px rgba(63,127,191,.16);transform:translateY(-2px);}
+  .entry .t{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+  .entry .d{color:var(--muted);font-size:12px;margin-top:6px;}
+
+  /* ============ 表格 ============ */
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  th{background:var(--soft);color:var(--brand-d);font-weight:800;font-size:11.8px;white-space:nowrap;letter-spacing:.2px;}
+  tbody tr:hover td{background:#f8fbff;}
+  td .op{display:flex;gap:5px;flex-wrap:wrap;}
+  .muted{color:var(--muted);}
+
+  /* 8 态状态标签 */
+  .tag{display:inline-block;padding:1px 9px;border-radius:20px;font-size:11.3px;font-weight:700;white-space:nowrap;}
+  .tag.wait{background:var(--warnbg);color:#9a6b00;}
+  .tag.pass{background:var(--okbg);color:#1e7a48;}
+  .tag.rej{background:var(--dangerbg);color:#a8342a;}
+  .tag.resched{background:#eae6fb;color:#5b46b8;}
+  .tag.expire{background:#eceef2;color:#67707c;}
+  .tag.ing{background:#e2eefc;color:#2e5c8a;}
+  .tag.left{background:#e6f3f0;color:#1f7a66;}
+  .tag.cancel{background:#f0f1f3;color:#8a929c;}
+  .tag.off{background:#f0f1f3;color:#8a929c;}
+
+  /* ============ 按钮 ============ */
+  button{font-family:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#fff;
+    color:var(--ink);padding:7px 13px;font-size:12.8px;transition:.15s;}
+  button:hover{border-color:var(--brand2);color:var(--brand);}
+  button.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700;}
+  button.primary:hover{background:var(--brand-d);color:#fff;}
+  button.danger{background:#fff;border-color:#e0a49c;color:var(--danger);}
+  button.danger:hover{background:var(--dangerbg);border-color:var(--danger);color:var(--danger);}
+  button.mini{padding:3px 9px;font-size:11.5px;border-radius:7px;}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* ============ 表单 ============ */
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+  .field .req::after{content:" *";color:var(--danger);}
+  .field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--line);
+    border-radius:9px;font-family:inherit;font-size:13px;outline:none;background:#fff;color:var(--ink);}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px rgba(63,127,191,.12);}
+  .field .fh{font-size:11px;color:var(--muted);margin-top:4px;}
+  .field .err{font-size:11px;color:var(--danger);margin-top:4px;}
+  .chk{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--ink);}
+  .chk input{width:auto;margin-top:2px;}
+
+  /* 帮助说明 tooltip（§3.20） */
+  .help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+    background:var(--soft);color:var(--brand);font-size:10.5px;font-weight:800;cursor:help;border:1px solid var(--softline);
+    margin-left:5px;position:relative;flex:0 0 auto;}
+  .help:hover::after{content:attr(data-tip);position:absolute;bottom:130%;left:50%;transform:translateX(-50%);
+    background:var(--brand-d);color:#fff;font-size:11.3px;font-weight:400;padding:8px 11px;border-radius:8px;
+    width:230px;line-height:1.55;z-index:60;box-shadow:0 8px 22px rgba(0,0,0,.24);text-align:left;white-space:normal;}
+
+  /* ============ 提示条 ============ */
+  .note{background:#fffaf0;border:1px solid #f2e0b6;border-radius:10px;padding:10px 14px;
+    font-size:12.2px;color:#8a6d20;margin-top:12px;}
+  .note.blue{background:var(--soft);border-color:var(--softline);color:#2e5c8a;}
+  .note.red{background:var(--dangerbg);border-color:#f2c9c3;color:#a8342a;}
+  .note.green{background:var(--okbg);border-color:#bce3cc;color:#1e7a48;}
+  .note b{font-weight:800;}
+
+  /* ============ 时间线（状态跟踪） ============ */
+  .timeline{list-style:none;margin:10px 0 0;padding:0;position:relative;}
+  .timeline li{position:relative;padding:0 0 14px 24px;border-left:2px solid var(--line);margin-left:6px;}
+  .timeline li:last-child{border-left-color:transparent;}
+  .timeline li::before{content:"";position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;
+    background:#fff;border:2px solid var(--brand2);}
+  .timeline li.done::before{background:var(--brand2);}
+  .timeline .tt{font-size:12.8px;font-weight:700;}
+  .timeline .ts{font-size:11.3px;color:var(--muted);}
+
+  /* ============ 凭证 ============ */
+  .cred{background:#fff;border:2px dashed var(--brand2);border-radius:12px;padding:16px;text-align:center;}
+  .cred .qr{width:118px;height:118px;margin:10px auto;border-radius:8px;
+    background:repeating-conic-gradient(#1f2b38 0 25%, #fff 0 50%) 0 0/15px 15px;}
+  .cred .no{font-size:22px;font-weight:800;letter-spacing:5px;color:var(--brand);}
+  .cred .cn{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;}
+
+  /* ============ 访客端手机壳 ============ */
+  .content.visitor-mode{max-width:392px;margin:34px auto 0;border:12px solid #1f2b38;border-radius:36px;
+    padding:16px 12px 22px;background:#f6fafd;box-shadow:0 18px 48px rgba(31,43,56,.32);position:relative;}
+  .content.visitor-mode::before{content:"📱 访客端 · 手机 H5（320–480px 适配）";position:absolute;top:-30px;left:0;right:0;
+    text-align:center;font-size:12px;color:var(--brand);font-weight:800;letter-spacing:.4px;}
+  .content.visitor-mode .card{box-shadow:none;padding:14px 15px;}
+  .content.visitor-mode .grid.c3,.content.visitor-mode .grid.c2,.content.visitor-mode .grid.c4{grid-template-columns:1fr;}
+  .phone-step{font-size:12.5px;color:var(--brand);font-weight:800;margin:16px 0 9px;border-top:1px dashed var(--line);padding-top:13px;}
+  .phone-step:first-of-type{border-top:none;padding-top:0;margin-top:2px;}
+
+  /* ============ 分析占位 ============ */
+  .seg{display:flex;background:var(--soft);border-radius:10px;padding:3px;margin-bottom:18px;max-width:260px;}
+  .seg button{flex:1;border:none;background:transparent;border-radius:8px;padding:8px;font-weight:700;color:var(--muted);font-size:12.8px;}
+  .seg button.on{background:#fff;color:var(--brand);box-shadow:0 2px 8px rgba(31,43,56,.1);}
+  .barchart{display:flex;align-items:flex-end;gap:16px;height:170px;padding:10px 6px 0;border-bottom:2px solid var(--line);}
+  .barchart .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;}
+  .barchart .b i{display:block;width:100%;max-width:64px;background:linear-gradient(180deg,var(--brand2),var(--brand));
+    border-radius:6px 6px 0 0;transition:.3s;}
+  .barchart .b .v{font-size:12px;font-weight:800;color:var(--brand);}
+  .barchart .b .k{font-size:11.5px;color:var(--muted);}
+
+  /* ============ toast / modal ============ */
+  .toast-wrap{position:fixed;right:20px;bottom:20px;z-index:300;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+  .toast{background:var(--brand-d);color:#fff;border-radius:10px;padding:10px 14px;font-size:12.8px;
+    box-shadow:0 10px 30px rgba(0,0,0,.28);max-width:360px;animation:fade .2s;}
+  .toast.ok{background:#1e7a48;} .toast.warn{background:#9a6b00;} .toast.err{background:#a8342a;}
+  .modal-mask{display:none;position:fixed;inset:0;background:rgba(20,30,42,.45);z-index:310;align-items:center;justify-content:center;padding:20px;}
+  .modal-mask.show{display:flex;}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:470px;box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden;}
+  .modal-hd{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:800;color:var(--brand-d);display:flex;align-items:center;}
+  .modal-bd{padding:16px 18px;max-height:62vh;overflow:auto;}
+  .modal-ft{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;}
+
+  /* ============ §3.11 需求验证侧栏抽屉 ============ */
+  .drawer-toggle{position:fixed;right:0;top:52%;transform:translateY(-50%);z-index:150;background:var(--brand);color:#fff;border:none;
+    border-radius:10px 0 0 10px;padding:14px 8px;writing-mode:vertical-rl;font-size:12px;font-weight:800;letter-spacing:2px;
+    cursor:pointer;box-shadow:-4px 0 14px rgba(46,92,138,.3);}
+  .drawer-toggle:hover{background:var(--brand-d);color:#fff;}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:390px;max-width:94vw;background:#fff;z-index:160;
+    box-shadow:-10px 0 40px rgba(0,0,0,.25);transform:translateX(103%);transition:transform .24s;display:flex;flex-direction:column;}
+  .drawer.show{transform:none;}
+  .drawer-hd{padding:14px 16px;background:var(--brand-d);color:#fff;display:flex;align-items:center;gap:10px;}
+  .drawer-hd .x{margin-left:auto;cursor:pointer;font-size:19px;line-height:1;}
+  .drawer-prog{padding:10px 16px;border-bottom:1px solid var(--line);font-size:12.3px;color:var(--muted);}
+  .drawer-prog .bar{height:8px;border-radius:6px;background:var(--soft);margin-top:6px;overflow:hidden;}
+  .drawer-prog .bar i{display:block;height:100%;background:var(--ok);width:0;transition:.2s;}
+  .drawer-bd{overflow:auto;padding:6px 10px 24px;}
+  .vgroup{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px;padding:10px 8px 4px;}
+  .vitem{display:flex;gap:8px;align-items:flex-start;padding:7px 8px;border-radius:8px;font-size:12.2px;cursor:pointer;}
+  .vitem:hover{background:var(--soft);}
+  .vitem.cur{background:#eef4fb;box-shadow:inset 3px 0 0 var(--brand2);}
+  .vitem input{margin-top:2px;width:auto;}
+  .vitem .vt b{font-weight:800;color:var(--brand-d);}
+  .vitem .vt .vp{color:var(--muted);font-size:11.4px;margin-top:1px;}
+  .vitem .cur-dot{font-size:9px;color:var(--brand2);font-weight:800;margin-left:4px;}
+
+  .footer{text-align:center;color:var(--muted);font-size:11.8px;padding:24px 0 0;line-height:1.9;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="logo">访</div>
+    <h1>访客系统 · V1.0 高保真可操作原型</h1>
+    <span class="sub">阶段三 · 需求梳理闭环 ｜ §3.11 逐页确认 ＋ §3.27 可操作化 ｜ 覆盖 45 条 REQ</span>
+    <div class="topbar-right">
+      <span class="src-badge" id="srcBadge">数据源：Mock 内存态</span>
+      <button class="src-btn" id="srcBtn" onclick="toggleSource()">🔀 切换真实接口</button>
+      <span class="bell" title="站内消息 · 有新通知" onclick="go('nt',null)">🔔<span class="dot" id="bellDot">0</span></span>
+      <div class="who"><span class="avatar" id="whoAv">管</span><span id="whoName">系统管理员</span></div>
+      <div class="role-switch">
+        <label for="roleSel" style="font-size:12px;">切换演示角色：</label>
+        <select id="roleSel" onchange="switchRole()">
+          <option value="admin">管理员</option>
+          <option value="guard">门卫 / 保安</option>
+          <option value="host">被访教职工</option>
+          <option value="visitor">访客本人（H5）</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="demo-banner">
+    ⚠️ <b>演示数据（mock），非真实后端数据</b>——本原型内置内存态数据层（<code>mockStore</code> / <code>mockApi</code>），
+    按钮 / 表单 / 列表 / 弹窗均真实可操作，操作结果前端即时可见；接口形态与真实 API 对齐，右上角「🔀 切换真实接口」可一键对接
+    <code id="realBaseTxt"></code>。
+    <span class="sp"><button class="mini" onclick="resetMock()">↺ 重置演示数据</button></span>
+  </div>
+
+  <div class="layout">
+    <nav class="side" id="sideNav">
+      <div class="cap">工作台</div>
+      <a data-page="pt" data-roles="admin,guard,host" class="active" onclick="go('pt',this)">工作台 · 待办 · 消息 · 二维码<span class="code">PT</span></a>
+      <div class="cap" style="margin-top:6px;">业务闭环</div>
+      <a data-page="ap" data-roles="admin,host" onclick="go('ap',this)">访客预约<span class="code">AP</span></a>
+      <a data-page="at" data-roles="admin,host" onclick="go('at',this)">被访人审核<span class="code">AT</span></a>
+      <a data-page="gv" data-roles="admin,guard" onclick="go('gv',this)">门卫核验放行<span class="code">GV</span></a>
+      <a data-page="vs" data-roles="visitor" onclick="go('vs',this)">我的申请与凭证<span class="code">VS</span></a>
+      <a data-page="lg" data-roles="admin,guard" onclick="go('lg',this)">台账 · 在校清单 · 检索 · 导出<span class="code">LG</span></a>
+      <a data-page="an" data-roles="admin" onclick="go('an',this)">统计分析<span class="code">AN</span></a>
+      <div class="cap" style="margin-top:6px;">基础设置</div>
+      <a data-page="or" data-roles="admin" onclick="go('or',this)">组织 · 用户 · 角色权限<span class="code">OR</span></a>
+      <a data-page="bd" data-roles="admin" onclick="go('bd',this)">主数据（类型/黑名单/时段/校门/名册）<span class="code">BD</span></a>
+      <a data-page="nt" data-roles="admin,guard,host" onclick="go('nt',this)">通知与消息<span class="code">NT</span></a>
+      <a data-page="sm" data-roles="admin" onclick="go('sm',this)">系统管理（日志/信息保护/参数/字典）<span class="code">SM</span></a>
+    </nav>
+
+    <main class="content" id="content">
+
+      <!-- ============ PT 工作台 ============ -->
+      <section class="page show" id="page-pt">
+        <div class="card">
+          <div class="card-hd"><h2>工作台 <span class="muted" id="ptRole"></span></h2>
+            <span class="reqpill">REQ-PT-001 · REQ-PT-002 · REQ-PT-003 · REQ-PT-004 · REQ-PT-005</span></div>
+          <p class="hint">登录后按角色进入不同工作台；统一身份识别 + 待办聚合 + 站内消息 + 申请入口二维码。<b>KPI 由 mock 数据实时统计</b>。</p>
+          <div class="grid c4" id="ptKpi"></div>
+          <h3>我的待办 / 快捷入口</h3>
+          <div class="grid c3" id="ptEntries"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>访客申请入口二维码</h2><span class="reqpill">REQ-PT-005（D13）</span></div>
+          <p class="hint">后台生成指向 H5「我要申请」的入口二维码，可查看 / 下载（PNG）/ 打印；入口 URL 为系统参数可配。</p>
+          <div class="grid c2">
+            <div class="cred" style="border-style:solid;">
+              <div class="qr"></div>
+              <div class="cn">扫码进入「我要申请」</div>
+              <div class="btnrow" style="justify-content:center;">
+                <button class="mini primary" onclick="mockDownloadQr()">下载 PNG</button>
+                <button class="mini" onclick="toast('已发送打印（入口二维码）','ok')">打印</button>
+              </div>
+            </div>
+            <div>
+              <div class="field"><label>入口 URL（系统参数可配）
+                <span class="help" data-tip="是什么：二维码指向的 H5 地址。影响什么：改后二维码内容随之更新。怎么填：默认＝部署域名 + /h5/apply。"></span></label>
+                <input id="entryUrl" value="http://127.0.0.1:4310/h5/apply" readonly /></div>
+              <div class="note blue">访客扫码 → 直达「我要申请」（VS-004，兼容 iOS Safari 15+ / Android Chrome / 微信内置，适配 320–480px）。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AP 访客预约 ============ -->
+      <section class="page" id="page-ap">
+        <div class="card">
+          <div class="card-hd"><h2>访客预约 · 填写与提交</h2><span class="reqpill">REQ-AP-001 · REQ-AP-002 · REQ-AP-003（D6/D7/D8/D9/D16）</span></div>
+          <p class="hint">访客本人或被访人代提。逐字段必填 / 长度 / 格式见规格表；提交即过校验并生成「待审核」。<b>提交后可在下方「我的预约」看到新记录。</b></p>
+          <div class="grid c2">
+            <div>
+              <div class="field"><label class="req">访客姓名</label><input id="apName" placeholder="如：张小明" /></div>
+              <div class="field"><label class="req">手机号
+                <span class="help" data-tip="是什么：访客联系电话。影响什么：用于到访提醒。怎么填：^1\\d{10}$（11 位、以 1 开头）。"></span></label>
+                <input id="apPhone" placeholder="如：13800000000" /></div>
+              <div class="field"><label class="req">证件号
+                <span class="help" data-tip="是什么：访客证件编号。影响什么：核验与黑名单比对主键。怎么填：身份证 18 位含校验位；其他证件 5–20 位。"></span></label>
+                <input id="apIdNo" placeholder="身份证 18 位 / 其他证件 5–20 位" /></div>
+              <div class="field"><label class="req">访客类型</label><select id="apType"></select></div>
+              <div class="field"><label>车牌号（选填）</label><input id="apPlate" placeholder="如：京A·12345" /></div>
+            </div>
+            <div>
+              <div class="field"><label class="req">被访人（教职工）</label><select id="apHost"></select></div>
+              <div class="field"><label class="req">到访时段（起 ~ 止）
+                <span class="help" data-tip="是什么：预计到访的起止时间。影响什么：决定能否预约、凭证有效期。怎么填：起<止、须在同一自然日、时长 15min–在校上限(240min)。"></span></label>
+                <input id="apStart" value="2026-10-12 09:00:00" /><input id="apEnd" value="2026-10-12 10:30:00" style="margin-top:6px;" /></div>
+              <div class="field"><label class="req">来访事由</label><input id="apReason" placeholder="如：家长会 / 送材料 / 维修" /></div>
+              <div class="field"><label>随行人员（逐人明细，G4）
+                <span class="help" data-tip="是什么：随行人员逐个登记。影响什么：到访人数=1+明细条数，且随行也过黑名单。怎么填：≤10 条（含主访客共 ≤11 人）。"></span></label>
+                <input id="apCompanionCount" value="0 人（见下方逐人明细）" readonly /></div>
+            </div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="submitAppt()">提交预约</button>
+            <button onclick="toast('已暂存草稿（原型演示）','ok')">暂存</button>
+          </div>
+          <div class="note blue">提交时校验：①必填；②时段落在启用「可预约时段」内且未过期（当前<时段起）；③黑名单预检；④同访客同时段防重复（重叠=闭区间相交、含端点相接；未终结={待审核,已通过,已到访}）。禁入时段优先于可预约（D7）。终态后可重新发起新预约（D16）。</div>
+        </div>
+
+        <div class="card">
+          <h3>随行人员逐人明细（G4 · D9）</h3>
+          <table>
+            <thead><tr><th>姓名</th><th>与主访客关系</th><th>证件号</th><th>操作</th></tr></thead>
+            <tbody id="apCompanions"></tbody>
+          </table>
+          <div class="btnrow"><button class="mini" onclick="addCompanion()">＋ 添加随行人员</button></div>
+          <div class="note red">黑名单预检<b>覆盖随行</b>：任一随行命中 → 整单按 D4 处理（提交时软提示、核验时硬拦）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>我的预约 · 状态跟踪</h2><span class="reqpill">REQ-AP-004 · REQ-AP-005</span></div>
+          <p class="hint" id="apListHint"></p>
+          <table>
+            <thead><tr><th>预约编号</th><th>访客</th><th>被访人</th><th>到访时段</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="apMyList"></tbody>
+          </table>
+          <h3>状态流转时间线 <span class="muted" id="apTlTitle"></span></h3>
+          <ul class="timeline" id="apTimeline"></ul>
+          <div class="note">到访前可改期 / 取消，权限=访客本人 / 被访人 / 管理员；<b>已到访、已离校不可改</b>，已到访操作返回 409。状态与台账<b>同源</b>（§3.24）。</div>
+        </div>
+      </section>
+
+      <!-- ============ AT 被访人审核 ============ -->
+      <section class="page" id="page-at">
+        <div class="card">
+          <div class="card-hd"><h2>待审核列表</h2><span class="reqpill">REQ-AT-001（对象级隔离 §3.22）</span></div>
+          <p class="hint" id="atHint">被访教职工仅见<b>本人</b>相关预约（服务端强制）；管理员见全校（兜底）。越权读他人返回 403 并留痕。</p>
+          <div class="grid c3" id="atKpi"></div>
+          <table>
+            <thead><tr><th>预约编号</th><th>访客</th><th>类型</th><th>到访时段</th><th>事由</th><th>操作</th></tr></thead>
+            <tbody id="atList"></tbody>
+          </table>
+          <div class="note blue">点「同意 / 拒绝 / 改期」即真实处理：状态流转 + 通知访客 + 写审核留痕（下方表格同步）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h3 style="margin-top:0;">审核决定说明</h3><span class="reqpill">REQ-AT-002（D1/D10）</span></div>
+          <div class="grid c3">
+            <div class="field"><label class="req">决定</label>
+              <select disabled><option>同意</option><option>拒绝（须填原因）</option><option>改期（须给新时段）</option></select></div>
+            <div class="field"><label>拒绝原因（拒绝时必填）
+              <span class="help" data-tip="是什么：拒绝理由。影响什么：随通知发给访客。怎么填：2–100 字、自由文本、不枚举。"></span></label>
+              <textarea rows="2" placeholder="点击列表「拒绝」按钮时于弹窗内填写" disabled></textarea></div>
+            <div class="field"><label>新到访时段（改期时必填）</label><input placeholder="点击列表「改期」按钮时于弹窗内填写" disabled /></div>
+          </div>
+          <div class="note">改期次数<b>不限</b>（D1）；重复处理同一预约返回 409。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h3 style="margin-top:0;">审核人可配置</h3><span class="reqpill">REQ-AT-003</span></div>
+          <div class="grid c3">
+            <div class="field"><label>默认审核人</label><input value="被访教职工（本人）" readonly /></div>
+            <div class="field"><label>可指定为</label><select id="atReviewer"><option value="host">被访教职工（默认）</option><option value="admin">管理员</option><option value="assign">指定人</option></select></div>
+            <div class="field"><label>配置生效范围
+              <span class="help" data-tip="是什么：审核人配置对哪些预约生效。影响什么：决定流转到谁。怎么填：配置生效后新预约流转到指定审核人（历史预约不追溯）。"></span></label>
+              <input value="配置生效后的新预约" readonly /></div>
+          </div>
+          <div class="btnrow"><button class="mini primary" onclick="saveReviewer()">保存审核人配置</button></div>
+          <div class="note">审核人配置落 <b>BD 主数据</b>（系统参数 reviewer_default）；配置生效后<b>新预约</b>流转到指定审核人（前向不追溯，§3.21）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h3 style="margin-top:0;">审核留痕</h3><span class="reqpill">REQ-AT-004 · REQ-SM-001</span></div>
+          <table>
+            <thead><tr><th>时间</th><th>审核人</th><th>决定</th><th>原因</th><th>预约</th></tr></thead>
+            <tbody id="atLogs"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ GV 门卫核验放行 ============ -->
+      <section class="page" id="page-gv">
+        <div class="card">
+          <div class="card-hd"><h2>门口当日视图</h2><span class="reqpill">REQ-GV-006</span></div>
+          <p class="hint">门卫仅见<b>当日 / 现场</b>范围（当日预约、待核验、在校中）；不越界到全校历史。<b>KPI 实时统计。</b></p>
+          <div class="grid c4" id="gvKpi"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>现场核验</h2><span class="reqpill">REQ-GV-001 · REQ-GV-003（D3/D13）</span></div>
+          <p class="hint">核对 身份信息 + 预约/凭证一致性 + 是否在有效时段。<b>V1.0 仅人工核验</b>（不含自动识别 G2/G3，归 V1.1）。</p>
+          <div class="grid c3">
+            <div class="field"><label>访客凭证（预约编号 / 二维码 / 短码）
+              <span class="help" data-tip="是什么：核验入口。影响什么：定位预约与有效性。怎么填：短码=6 位数字、全局唯一、有效至预约终结。"></span></label>
+              <input id="gvKey" placeholder="输入预约编号或 6 位短码，如 480312" /></div>
+            <div class="field"><label>校门 / 通行点</label><select id="gvGate"></select></div>
+            <div class="field"><label>核验结论</label>
+              <select id="gvConclusion"><option>一致且在有效时段</option><option>信息不符</option><option>已过期</option><option>黑名单命中</option></select></div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="gvVerifyAndAdmit()">核验并放行</button>
+            <button onclick="gvOnsiteDialog()">无预约 · 现场登记</button>
+            <button class="danger" onclick="gvBlock()">拦截放行</button>
+          </div>
+          <div class="note red">黑名单命中：提交时软提示可提交（打标记、不拦）/ 核验时<b>硬拦不放行</b>；V1.0 无临时放行；命中即时通知门卫+管理员并写异常记录+审计。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>凭证核销 · 进校/离校登记</h2><span class="reqpill">REQ-GV-003 · REQ-GV-004（D12）</span></div>
+          <h3>今日进校 / 在校中 / 离校</h3>
+          <table>
+            <thead><tr><th>访客</th><th>找谁</th><th>进校时刻</th><th>离校时刻</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="gvToday"></tbody>
+          </table>
+          <div class="note blue">凭证首次核销成功，重复核销拒绝放行（防重复）。<b>「已离校」非绝对终态</b>：同一预约当天可多次进校/离校，再进则回「已到访·在校中」，每次进出留痕（时刻精确到秒，§3.12/D12）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>异常上报</h2><span class="reqpill">REQ-GV-005 · REQ-NT-002</span></div>
+          <div class="grid c4">
+            <div class="field"><label>异常类型</label>
+              <select id="gvAnomType"><option>黑名单命中</option><option>信息不符</option><option>强行闯入</option><option>超时未离（手动）</option></select></div>
+            <div class="field"><label>关联访客</label><input id="gvAnomWho" placeholder="姓名 / 短码" /></div>
+            <div class="field"><label>说明</label><input id="gvAnomRemark" placeholder="简述现场情况" /></div>
+            <div class="field" style="display:flex;align-items:flex-end;"><button class="primary" style="width:100%;" onclick="gvReportAnomaly()">上报异常</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VS 访客端（H5） ============ -->
+      <section class="page" id="page-vs">
+        <div class="card">
+          <div class="card-hd"><h2>访客端 · 手机 H5</h2><span class="reqpill">REQ-VS-001 · REQ-VS-002 · REQ-VS-003 · REQ-VS-004</span></div>
+          <p class="hint">访客本人使用移动端 H5，<b>无 web / 后台端</b>。V1.0 两项：① 我要申请、② 我的申请（查看）。仅本人可见本人数据。</p>
+        </div>
+
+        <div class="card">
+          <div class="phone-step">🖼 扫码进入（VS-004 · D22）</div>
+          <div class="note blue" style="margin-top:0;">扫「申请入口二维码」或校内张贴码 → 直达「我要申请」。兼容 iOS Safari 15+ / Android Chrome 近两年主流 / 微信内置浏览器，适配 320–480px。</div>
+
+          <div class="phone-step">① 我要申请（VS-001）</div>
+          <div class="field"><label class="req">访客姓名</label><input id="vsName" placeholder="请输入姓名" /></div>
+          <div class="field"><label class="req">手机号</label><input id="vsPhone" value="13800000031" placeholder="11 位手机号" /></div>
+          <div class="field"><label class="req">证件号</label><input id="vsIdNo" placeholder="身份证 18 位 / 其他证件 5–20 位" /></div>
+          <div class="field"><label class="req">访客类型</label><select id="vsType"></select></div>
+          <div class="field"><label class="req">被访人（教职工）</label><select id="vsHost"></select></div>
+          <div class="field"><label class="req">到访时段</label><input id="vsStart" value="2026-10-12 09:00:00" /></div>
+          <div class="field"><label class="req">来访事由</label><input id="vsReason" placeholder="如：家长会 / 送材料" /></div>
+
+          <div class="phone-step">② 安全告知 / 授权告知确认（VS-003 · D2/D19）</div>
+          <div class="field"><div class="chk"><input type="checkbox" id="cb1" /><label for="cb1">我已阅读并同意《安全告知》（未勾选不可提交）</label></div></div>
+          <div class="field"><div class="chk"><input type="checkbox" id="cb2" /><label for="cb2">我已阅读并同意《个人信息授权告知》</label></div></div>
+          <div class="note red" style="margin-top:4px;">每次提交均需确认（<b>不记忆</b>），留痕粒度按预约（含秒级时间戳）。未勾选不可提交。</div>
+
+          <div class="btnrow"><button class="primary" onclick="vsSubmit()">提交申请</button></div>
+
+          <div class="phone-step">③ 我的申请（VS-002 · 仅本人）</div>
+          <table>
+            <thead><tr><th>被访人</th><th>到访时段</th><th>状态</th></tr></thead>
+            <tbody id="vsList"></tbody>
+          </table>
+          <h3>可用通行凭证</h3>
+          <div id="vsCred"></div>
+        </div>
+      </section>
+
+      <!-- ============ LG 台账 / 在校清单 / 检索 / 导出 ============ -->
+      <section class="page" id="page-lg">
+        <div class="card">
+          <div class="card-hd"><h2>多条件查询 / 检索</h2><span class="reqpill">REQ-LG-003（D14/D23）</span></div>
+          <div class="grid c3">
+            <div class="field"><label>姓名 / 证件号 / 手机号</label><input id="lgKw" placeholder="脱敏后仅管理员可精确命中" /></div>
+            <div class="field"><label>被访人</label><input id="lgHost" placeholder="教职工姓名" /></div>
+            <div class="field"><label>访客类型</label><select id="lgType"></select></div>
+            <div class="field"><label>状态</label><select id="lgStatus">
+              <option value="">全部</option><option value="pending">待审核</option><option value="approved">已通过</option>
+              <option value="on_campus">已到访(在校中)</option><option value="left">已离校</option><option value="rejected">已拒绝</option>
+              <option value="rescheduled">已改期</option><option value="expired">已过期</option><option value="cancelled">已取消</option></select></div>
+            <div class="field" style="display:flex;align-items:flex-end;gap:8px;">
+              <button class="primary" style="flex:1;" onclick="lgSearch()">查询</button>
+              <button style="flex:1;" onclick="lgReset()">重置</button></div>
+          </div>
+          <div class="note blue">脱敏后仅管理员可精确命中检索（精确命中但不回显完整证件号，显示掩码）。台账 1 万条内查询响应 &lt; 2s（D23）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>在校（实时）清单（G1）</h2><span class="reqpill">REQ-LG-002（D12）</span></div>
+          <p class="hint">当前仍在校访客实时名单（谁 / 何时进 / 找谁 / 已在校多久）——应急疏散核心视图。进校即入列、离校即移出、准实时刷新，按最后一次状态取数。</p>
+          <table>
+            <thead><tr><th>访客</th><th>找谁</th><th>进校时刻</th><th>已在校时长</th><th>状态</th></tr></thead>
+            <tbody id="lgOnsite"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>访客台账</h2><span class="reqpill">REQ-LG-001（D15）</span></div>
+          <p class="hint">全部来访记录汇总；管理员全校、门卫仅当日/现场。分页 page(默认1)/pageSize(默认20、上限100)，默认按创建时间倒序（台账按到访时间倒序），空数据 {items:[], total:0}。</p>
+          <table>
+            <thead><tr><th>预约编号</th><th>访客</th><th>类型</th><th>找谁</th><th>到访时间</th><th>离校时间</th><th>状态</th></tr></thead>
+            <tbody id="lgTable"></tbody>
+          </table>
+          <div class="btnrow">
+            <button onclick="lgPage(-1)">‹ 上一页</button>
+            <span class="muted" style="align-self:center;" id="lgPageInfo">第 1 / 1 页 · 共 0 条</span>
+            <button onclick="lgPage(1)">下一页 ›</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>导出 / 打印（含脱敏 G11）</h2><span class="reqpill">REQ-LG-004（D14/D20/D21）</span></div>
+          <div class="field"><label>导出列（固定）</label>
+            <input value="预约编号 / 姓名 / 访客类型 / 手机号 / 证件号(脱敏) / 被访人 / 到访时段 / 进校时刻 / 离校时刻 / 状态 / 事由" readonly /></div>
+          <div class="grid c3">
+            <div class="field"><label>脱敏规则</label><input value="掩码（前 4 后 4）" readonly /></div>
+            <div class="field"><label>文件命名</label><input value="访客台账_YYYYMMDD_HHmmss.{csv,xlsx}" readonly /></div>
+            <div class="field"><label>CSV 编码</label><input value="BOM UTF-8" readonly /></div>
+          </div>
+          <div class="btnrow">
+            <button class="primary" onclick="lgExport('csv')">导出 CSV</button>
+            <button onclick="lgExport('xlsx')">导出 Excel</button>
+            <button onclick="toast('已发送打印（含脱敏）','ok')">打印</button>
+          </div>
+          <div class="note">超留存期限记录导出时自动脱敏；导出与检索<b>共用同一脱敏口径</b>（D14/D20）。</div>
+        </div>
+      </section>
+
+      <!-- ============ AN 统计分析 ============ -->
+      <section class="page" id="page-an">
+        <div class="card">
+          <div class="card-hd"><h2>统计分析</h2><span class="reqpill">REQ-AN-001 · REQ-AN-002</span></div>
+          <div class="grid c4" id="anKpi"></div>
+          <h3>来访量统计（按访客类型 · 实时自 mock 数据）</h3>
+          <div class="barchart" id="anChart"></div>
+          <div class="seg" style="margin-top:14px;"><button class="on">日</button><button onclick="toast('已切换为按周汇总（演示）','ok')">周</button><button onclick="toast('已切换为按月汇总（演示）','ok')">月</button></div>
+          <div class="grid c2">
+            <div>
+              <h3>异常统计（与异常记录同源）</h3>
+              <table>
+                <thead><tr><th>异常类型</th><th>次数</th><th>占比</th></tr></thead>
+                <tbody id="anAnom"></tbody>
+              </table>
+            </div>
+            <div>
+              <h3>口径说明</h3>
+              <div class="note blue">统计口径与台账<b>同源</b>（复用状态机唯一定义源 §3.24）：来访量按「已通过 / 已到访 / 已离校」计数；异常统计直接读异常记录表。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ OR 组织 / 用户 / 角色权限 ============ -->
+      <section class="page" id="page-or">
+        <div class="card">
+          <div class="card-hd"><h2>用户 / 账号管理</h2><span class="reqpill">REQ-OR-001（D11 · §3.21）</span></div>
+          <p class="hint">维护 admin/guard/host 账号；开通 / 停用。账号不支持硬删除，仅软状态停用；停用后登录 401、历史留痕保留、可恢复。</p>
+          <table>
+            <thead><tr><th>账号</th><th>姓名</th><th>角色</th><th>数据范围</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="orUsers"></tbody>
+          </table>
+          <div class="btnrow"><button class="primary" onclick="orAddUser()">＋ 新增账号</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>角色与权限 · 数据范围控制</h2><span class="reqpill">REQ-OR-002 · REQ-OR-003（§3.22）</span></div>
+          <div class="grid c2">
+            <div>
+              <h3>角色 × 资源边界（服务端强制）</h3>
+              <table>
+                <thead><tr><th>角色</th><th>可访问资源</th><th>数据范围</th></tr></thead>
+                <tbody>
+                  <tr><td>管理员</td><td>全部</td><td>全校</td></tr>
+                  <tr><td>门卫 / 保安</td><td>核验放行 / 当日台账 / 在校清单</td><td>当日 · 现场</td></tr>
+                  <tr><td>被访教职工</td><td>本人审核 / 本人预约</td><td>仅本人</td></tr>
+                  <tr><td>访客本人</td><td>H5 我要申请 / 我的申请</td><td>仅本人</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div class="note blue">① 服务端强制点 = 路由/接口 + 越权 403，对象级读写都落；② 审计留痕（越权拦截写审计）；③ 前端 adminOnly 仅体验层，逐条列明并与基线一致。</div>
+              <div class="note red">登录 ≠ 有权限。边界以用户绑定实体 id 在服务端强制；越权读/写 403 并写「越权拦截」审计。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BD 主数据 ============ -->
+      <section class="page" id="page-bd">
+        <div class="card">
+          <div class="card-hd"><h2>主数据</h2><span class="reqpill">REQ-BD-001 · REQ-BD-002 · REQ-BD-003 · REQ-BD-004 · REQ-BD-005</span></div>
+          <p class="hint">访客类型、黑名单、时段规则、校门 / 通行点、被访人 / 教职工名册。跨周期增减一律用软状态（在用 / 停用），保留历史、可恢复（§3.21）。<b>停用项将退出各下拉候选。</b></p>
+          <div class="grid c2">
+            <div>
+              <h3>访客类型（BD-001）</h3>
+              <table><thead><tr><th>类型</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody id="bdTypes"></tbody></table>
+              <div class="btnrow"><button class="mini" onclick="bdAddType()">＋ 新增类型</button></div>
+              <div class="note">停用类型退出各下拉，但历史记录保留其分类。</div>
+            </div>
+            <div>
+              <h3>黑名单（BD-002 · D4/D11）</h3>
+              <table><thead><tr><th>姓名 / 证件</th><th>原因</th><th>操作</th></tr></thead>
+                <tbody id="bdBlack"></tbody></table>
+              <div class="btnrow"><button class="mini" onclick="bdAddBlack()">＋ 拉黑</button></div>
+              <div class="note red">全校统一一份。提交软提示 / 核验硬拦；V1.0 无临时放行；命中通知门卫+管理员并写异常+审计；可手工删除、到期自动失效（留痕）。</div>
+            </div>
+            <div>
+              <h3>时段规则（BD-003 · D7）</h3>
+              <table><thead><tr><th>项</th><th>取值</th><th>操作</th></tr></thead>
+                <tbody id="bdRules"></tbody></table>
+              <div class="btnrow"><button class="mini" onclick="bdAddRule()">＋ 新增时段规则</button></div>
+              <div class="note">规则被 AP / GV 消费生效（§3.25 双向验收）；禁入时段与可预约冲突时禁入优先。</div>
+            </div>
+            <div>
+              <h3>校门 / 通行点（BD-004）</h3>
+              <table><thead><tr><th>名称</th><th>状态</th><th>��作</th></tr></thead>
+                <tbody id="bdGates"></tbody></table>
+              <div class="btnrow"><button class="mini" onclick="bdAddGate()">＋ 新增校门</button></div>
+              <div class="note">放行记录归属校门；不支持硬删除，仅软状态停用。</div>
+            </div>
+          </div>
+          <h3>被访人 / 教职工名册（BD-005）</h3>
+          <table>
+            <thead><tr><th>姓名</th><th>部门</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="bdStaff"></tbody>
+          </table>
+          <div class="btnrow"><button class="mini" onclick="bdAddStaff()">＋ 新增教职工</button></div>
+          <div class="note">预约选被访人的数据来源；不支持硬删除，仅软状态停用。</div>
+        </div>
+      </section>
+
+      <!-- ============ NT 通知与消息 ============ -->
+      <section class="page" id="page-nt">
+        <div class="card">
+          <div class="card-hd"><h2>站内消息</h2><span class="reqpill">REQ-PT-004 · REQ-NT-001 · REQ-NT-002</span></div>
+          <p class="hint">事件驱动，事件产生即推送、接收方可见；有新增显红点、可标记已读、已读状态持久。</p>
+          <table>
+            <thead><tr><th>时间</th><th>消息</th><th>关联</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="ntList"></tbody>
+          </table>
+          <div class="btnrow"><button class="mini" onclick="ntReadAll()">全部标记已读</button></div>
+          <div class="note blue">通知模板见 §0.5·C（D18）。<b>到访提醒触发＝预约时段起前 30 分钟</b>。流转通知：提交→通知被访人；审核结果→通知访客。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>通知渠道（可配）</h2><span class="reqpill">REQ-NT-003（§3.25）</span></div>
+          <div class="grid c3">
+            <div class="field"><label>站内消息
+              <span class="help" data-tip="是什么：系统内消息。影响什么：站内必达。怎么填：V1.0 启用。"></span></label>
+              <select><option>启用（默认）</option></select></div>
+            <div class="field"><label>短信</label><select id="ntSms"><option value="false">预留 · 关闭</option><option value="true">启用</option></select></div>
+            <div class="field"><label>企微</label><select id="ntWecom"><option value="false">预留 · 关闭</option><option value="true">启用</option></select></div>
+          </div>
+          <div class="btnrow"><button class="mini primary" onclick="ntSaveChannels()">保存渠道配置</button></div>
+          <div class="note">V1.0 <b>站内启用</b>、短信 / 企微<b>预留关闭</b>；关闭态下不发（§3.25 双向可证伪验收）。</div>
+        </div>
+      </section>
+
+      <!-- ============ SM 系统管理 ============ -->
+      <section class="page" id="page-sm">
+        <div class="card">
+          <div class="card-hd"><h2>操作日志 / 留痕</h2><span class="reqpill">REQ-SM-001（D25/D23）</span></div>
+          <div class="grid c3">
+            <div class="field"><label>操作人</label><input id="smWho" placeholder="如 guard01" /></div>
+            <div class="field"><label>动作类型</label><select id="smAction">
+              <option value="">全部</option><option>审核同意</option><option>审核拒绝</option><option>放行</option>
+              <option>失败核验</option><option>取消</option><option>异常</option><option>越权拦截</option><option>系统配置</option></select></div>
+            <div class="field" style="display:flex;align-items:flex-end;"><button class="primary" style="width:100%;" onclick="smSearch()">查询日志</button></div>
+          </div>
+          <table>
+            <thead><tr><th>时间</th><th>操作人</th><th>对象(object)</th><th>动作</th><th>结果</th><th>前后值</th></tr></thead>
+            <tbody id="smLogs"></tbody>
+          </table>
+          <div class="note">最小字段＝谁/何时/对象(objectType+objectId)/动作/结果/前后值；可查维度＝操作人 / 时间范围 / 对象 / 动作类型；关键操作埋点日志留存 <b>≥180 天</b>（D25/D23）。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>个人信息保护（G11）</h2><span class="reqpill">REQ-SM-002（D14）</span></div>
+          <div class="grid c3">
+            <div class="field"><label>授权告知</label><input value="采集前展示告知并留痕" readonly /></div>
+            <div class="field"><label>最小必要收集</label><input value="仅收集到访所需最少字段" readonly /></div>
+            <div class="field"><label>留存期限（可配）
+              <span class="help" data-tip="是什么：个人信息保存周期。影响什么：到期自动脱敏。怎么填：默认 90 天，可配置。"></span></label>
+              <input id="smRetention" value="90" /></div>
+          </div>
+          <div class="btnrow">
+            <button onclick="smPurge('mask')">到期自动脱敏</button>
+            <button class="danger" onclick="smPurge('purge')">人工清除</button>
+            <button onclick="toast('已导出本人信息副本（本人索取）','ok')">本人索取</button>
+          </div>
+          <div class="note">脱敏发生在<b>展示层</b>（底层保留、不回显）；<b>「人工清除」为物理删除</b>（删除后不可检索、留痕）。支持本人索取 / 更正。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><h2>参数配置 · 数据字典</h2><span class="reqpill">REQ-SM-003 · REQ-SM-004</span></div>
+          <div class="grid c2">
+            <div>
+              <h3>系统参数（修改即生效，供各取数点消费）</h3>
+              <table><thead><tr><th>参数</th><th>值</th></tr></thead><tbody id="smParams"></tbody></table>
+              <div class="noref"></div>
+            </div>
+            <div>
+              <h3>数据字典（各下拉数据来源）</h3>
+              <table><thead><tr><th>字典</th><th>项</th></tr></thead><tbody id="smDict"></tbody></table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="footer">
+    访客系统 · V1.0 高保真可操作原型（阶段三 · §3.11 逐页确认 ＋ §3.27 可操作化）｜ 覆盖 45 条 REQ（PT5 AP5 AT4 GV6 VS4 LG4 AN2 OR3 BD5 NT3 SM4）<br />
+    生成时刻：2026-10-12 16:00:00（本版升级时刻 2026-10-13 15:00:00）｜ 本原型内置 mock 数据层，除无真实后端数据外可当可用系统直接操作
+  </div>
+</div>
+
+<!-- ============ §3.11 需求验证侧栏 ============ -->
+<button class="drawer-toggle" onclick="toggleDrawer()">需求验证清单</button>
+<div class="drawer" id="drawer">
+  <div class="drawer-hd">
+    <span>📋 需求验证清单</span>
+    <span class="x" onclick="toggleDrawer()">×</span>
+  </div>
+  <div class="drawer-prog">
+    <span id="vpText">已验证 0 / 45</span>
+    <div class="bar"><i id="vpBar"></i></div>
+  </div>
+  <div class="drawer-bd" id="drawerBody"></div>
+</div>
+
+<!-- toast / modal 容器 -->
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <div class="modal-hd" id="modalTitle">提示</div>
+    <div class="modal-bd" id="modalBody"></div>
+    <div class="modal-ft">
+      <button onclick="closeModal()">取消</button>
+      <button class="primary" onclick="modalConfirm()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   访客系统 V1.0 高保真可操作原型
+   §3.27 三件套：① 交互闭环（真实操作）② mock 数据层（内存态 + 接��形态对齐）
+                ③ 可操作化登记表（另见 16-V1.0高保真原型-可操作化登记表.md）
+   §3.11：右侧「需求验证清单」侧栏（可勾选 / 随导航高亮 / 进度）
+   一键切真接口：USE_REAL＝true 时全部请求改走 fetch(REAL_BASE)
+   ============================================================ */
+
+/* ---------- 0. 数据源开关（集中一处） ---------- */
+let USE_REAL = false;                         // 🔀 Mock / 真实接口 一键切换
+const REAL_BASE = 'http://127.0.0.1:4310';    // 真实后端（workspace/app · zero-dep Node）
+
+/* ---------- 1. 通用工具 ---------- */
+const pad = n => String(n).padStart(2, '0');
+function ts(d){ d = d || new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '
+       + pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }   // §3.12 秒级
+const clone = o => JSON.parse(JSON.stringify(o));
+const delay = ms => new Promise(r => setTimeout(r, ms));
+const $  = id => document.getElementById(id);
+const setHtml = (id, h) => { $(id).innerHTML = h; };
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const STATUS = { pending:'待审核', approved:'已通过', rejected:'已拒绝', rescheduled:'已改期',
+                 expired:'已过期', on_campus:'已到访(在校中)', left:'已离校', cancelled:'已取消' };
+const TAGCLS = { pending:'wait', approved:'pass', rejected:'rej', rescheduled:'resched',
+                 expired:'expire', on_campus:'ing', left:'left', cancelled:'cancel' };
+const NON_TERMINAL = ['pending','approved','on_campus'];
+const CANCELABLE = ['pending','approved','rescheduled'];
+const statusLabel = s => STATUS[s] || s;
+const tag = s => '<span class="tag '+(TAGCLS[s]||'off')+'">'+esc(statusLabel(s))+'</span>';
+
+/* ---------- 2. mock 数据层（种子对齐 workspace/app/src/seed.mjs） ---------- */
+function seed(){
+  return {
+    seq:{ appt:12, user:5, notif:4, audit:6, anomaly:4, type:4, gate:4, staff:6, black:3, rule:3, dict:1 },
+    users:[
+      { id:1, role:'admin', account:'admin',   password:'admin123', name:'张管理', dept:'信息中心', status:'active' },
+      { id:2, role:'guard', account:'guard01', password:'guard123', name:'李门卫', dept:'安保处', gate_id:1, status:'active' },
+      { id:3, role:'host',  account:'T1001',   password:'host123',  name:'王老师', dept:'数学组', teacher_id:'T1001', status:'active' },
+      { id:4, role:'host',  account:'T1002',   password:'host123',  name:'陈老师', dept:'语文组', teacher_id:'T1002', status:'active' }
+    ],
+    visitor_types:[
+      { id:1, name:'家长', status:'active' }, { id:2, name:'外来人员', status:'active' },
+      { id:3, name:'公务来访', status:'active' }, { id:4, name:'访客合作方', status:'inactive' }
+    ],
+    gates:[
+      { id:1, name:'南门', status:'active' }, { id:2, name:'北门', status:'active' }, { id:3, name:'东侧门', status:'inactive' }
+    ],
+    staff:[
+      { id:1, name:'王老师', teacher_id:'T1001', dept:'数学组', status:'active' },
+      { id:2, name:'陈老师', teacher_id:'T1002', dept:'语文组', status:'active' },
+      { id:3, name:'刘老师', teacher_id:'T1003', dept:'英语组', status:'active' },
+      { id:4, name:'赵老师', teacher_id:'T1004', dept:'教务处', status:'active' },
+      { id:5, name:'孙老师', teacher_id:'T1005', dept:'物理组', status:'inactive' }
+    ],
+    blacklist:[
+      { id:1, name:'赵某某', id_no:'310101199001011234', reason:'多次强行闯入校门', until:'长期' },
+      { id:2, name:'钱某',   id_no:'110101198505054321', reason:'校内推销被劝离', until:'长期' }
+    ],
+    time_rules:[
+      { id:1, kind:'open', weekday:'周一至周五', start:'07:00', end:'18:00', remark:'' },
+      { id:2, kind:'deny', weekday:'周三',       start:'12:00', end:'13:00', remark:'午间静校' }
+    ],
+    params:[
+      { key:'system_name', value:'校园访客管理系统 V1.0', remark:'系统名称' },
+      { key:'apply_entry_url', value:REAL_BASE+'/h5/apply', remark:'H5 申请入口 URL' },
+      { key:'retention_days', value:'90', remark:'留存期限（天）' },
+      { key:'period_buffer_min', value:'15', remark:'有效时段缓冲（分钟）' },
+      { key:'max_stay_min', value:'240', remark:'在校时长上限（分钟）' },
+      { key:'arrival_remind_min', value:'30', remark:'到访提醒提前量（分钟）' },
+      { key:'reviewer_default', value:'host', remark:'默认审核人' },
+      { key:'login_lock', value:'5/10', remark:'登录失败锁定（次/分钟）' },
+      { key:'notify_channels', value:'{in_site:true,sms:false,wecom:false}', remark:'通知渠道开关' }
+    ],
+    dict:{ companion_relation:[
+      { id:1, dict:'companion_relation', value:'spouse', label:'配偶' },
+      { id:2, dict:'companion_relation', value:'child',  label:'子女（学生）' },
+      { id:3, dict:'companion_relation', value:'parent', label:'父母' },
+      { id:4, dict:'companion_relation', value:'colleague', label:'同事' },
+      { id:5, dict:'companion_relation', value:'other',  label:'其他' }
+    ]},
+    appointments:[
+      { id:1,  appoint_no:'V-20261012-0031', short_code:'480312', visitor_type:'家长',   visitor_name:'周女士', visitor_phone:'13800000031', visitor_id_no:'110101198801011234', plate:'', reason:'家长会',   companions:[], people_count:1, host_name:'王老师', host_teacher_id:'T1001', visit_start:'2026-10-12 09:00:00', visit_end:'2026-10-12 10:30:00', status:'pending',     black_hit:0, source:'h5',    created_at:'2026-10-12 08:12:30', updated_at:'2026-10-12 08:12:30' },
+      { id:2,  appoint_no:'V-20261012-0033', short_code:'512734', visitor_type:'公务来访', visitor_name:'刘工',   visitor_phone:'13800000033', visitor_id_no:'310101199002022345', plate:'', reason:'设备检修', companions:[], people_count:1, host_name:'赵老师', host_teacher_id:'T1004', visit_start:'2026-10-12 14:00:00', visit_end:'2026-10-12 15:00:00', status:'pending',     black_hit:0, source:'h5',    created_at:'2026-10-12 08:40:10', updated_at:'2026-10-12 08:40:10' },
+      { id:3,  appoint_no:'V-20261012-0027', short_code:'623918', visitor_type:'公务来访', visitor_name:'孙主任', visitor_phone:'13800000027', visitor_id_no:'110101197505053456', plate:'', reason:'教学督导', companions:[], people_count:1, host_name:'赵老师', host_teacher_id:'T1004', visit_start:'2026-10-12 13:30:00', visit_end:'2026-10-12 16:00:00', status:'approved',    black_hit:0, source:'admin', created_at:'2026-10-12 07:40:00', updated_at:'2026-10-12 07:45:00' },
+      { id:4,  appoint_no:'V-20261012-0030', short_code:'834521', visitor_type:'外来人员', visitor_name:'吴先生', visitor_phone:'13800000030', visitor_id_no:'320101198803034567', plate:'', reason:'送材料',   companions:[], people_count:1, host_name:'王老师', host_teacher_id:'T1001', visit_start:'2026-10-12 08:00:00', visit_end:'2026-10-12 12:00:00', status:'on_campus',  black_hit:0, source:'h5',    verified_at:'2026-10-12 08:55:12', checkin_at:'2026-10-12 08:55:12', active_inside:1, created_at:'2026-10-12 07:50:00', updated_at:'2026-10-12 08:55:12' },
+      { id:5,  appoint_no:'V-20261011-0020', short_code:'945632', visitor_type:'外来人员', visitor_name:'郑师傅', visitor_phone:'13800000020', visitor_id_no:'330101198504045678', plate:'', reason:'空调维修', companions:[], people_count:1, host_name:'赵老师', host_teacher_id:'T1004', visit_start:'2026-10-11 14:00:00', visit_end:'2026-10-11 16:00:00', status:'left',       black_hit:0, source:'h5',    verified_at:'2026-10-11 14:05:00', checkin_at:'2026-10-11 14:05:00', checkout_at:'2026-10-11 15:40:00', active_inside:0, created_at:'2026-10-11 13:30:00', updated_at:'2026-10-11 15:40:00' },
+      { id:6,  appoint_no:'V-20261010-0015', short_code:'156743', visitor_type:'外来人员', visitor_name:'推销员甲', visitor_phone:'13800000015', visitor_id_no:'440101199006066789', plate:'', reason:'业务推销', companions:[], people_count:1, host_name:'陈老师', host_teacher_id:'T1002', visit_start:'2026-10-10 10:00:00', visit_end:'2026-10-10 11:00:00', status:'rejected',   black_hit:0, source:'h5',    reject_reason:'非教学相关来访，谢绝', created_at:'2026-10-10 09:10:00', updated_at:'2026-10-10 09:20:00' },
+      { id:7,  appoint_no:'V-20261011-0019', short_code:'267854', visitor_type:'家长',   visitor_name:'李女士', visitor_phone:'13800000019', visitor_id_no:'110101199007078901', plate:'', reason:'取成绩单', companions:[], people_count:1, host_name:'王老师', host_teacher_id:'T1001', visit_start:'2026-10-11 15:00:00', visit_end:'2026-10-11 16:00:00', status:'rescheduled',black_hit:0, source:'h5',    created_at:'2026-10-11 10:15:00', updated_at:'2026-10-11 16:20:11' },
+      { id:8,  appoint_no:'V-20261009-0012', short_code:'378965', visitor_type:'家长',   visitor_name:'访客乙', visitor_phone:'13800000012', visitor_id_no:'110101198809090012', plate:'', reason:'家长会',   companions:[], people_count:1, host_name:'刘老师', host_teacher_id:'T1003', visit_start:'2026-10-09 10:00:00', visit_end:'2026-10-09 11:00:00', status:'expired',    black_hit:0, source:'h5',    created_at:'2026-10-08 18:00:00', updated_at:'2026-10-09 11:30:00' },
+      { id:9,  appoint_no:'V-20261008-0005', short_code:'489076', visitor_type:'公务来访', visitor_name:'巡察组', visitor_phone:'13800000005', visitor_id_no:'110101197001010003', plate:'', reason:'安全检查', companions:[], people_count:1, host_name:'赵老师', host_teacher_id:'T1004', visit_start:'2026-10-08 09:00:00', visit_end:'2026-10-08 10:00:00', status:'cancelled',  black_hit:0, source:'admin', created_at:'2026-10-08 08:00:00', updated_at:'2026-10-08 08:30:00' },
+      { id:10, appoint_no:'V-20261012-0028', short_code:'579087', visitor_type:'家长',   visitor_name:'周女士', visitor_phone:'13800000031', visitor_id_no:'110101198801011234', plate:'', reason:'家长会（补约）', companions:[], people_count:1, host_name:'王老师', host_teacher_id:'T1001', visit_start:'2026-10-12 15:00:00', visit_end:'2026-10-12 16:00:00', status:'approved',   black_hit:0, source:'h5',    created_at:'2026-10-12 09:05:00', updated_at:'2026-10-12 09:30:00' },
+      { id:11, appoint_no:'V-20261012-0035', short_code:'690198', visitor_type:'家长',   visitor_name:'陈先生', visitor_phone:'13800000035', visitor_id_no:'110101199101012345', plate:'', reason:'送书本',   companions:[], people_count:1, host_name:'王老师', host_teacher_id:'T1001', visit_start:'2026-10-12 16:30:00', visit_end:'2026-10-12 17:30:00', status:'pending',     black_hit:0, source:'h5',    created_at:'2026-10-12 10:02:00', updated_at:'2026-10-12 10:02:00' }
+    ],
+    notifications:[
+      { id:1, to_role:'host',  title:'【待审核】', body:'周女士提交了来访预约（家长会）', ref:'V-20261012-0031', read:0, at:'2026-10-12 08:12:35' },
+      { id:2, to_role:'visitor', title:'【审核通过】', body:'您的预约已通过，请准时来访', ref:'V-20261012-0031', read:0, at:'2026-10-12 08:41:06' },
+      { id:3, to_role:'guard', title:'【异常】', body:'孙师傅超时未离校（已在校 2h37m）', ref:'V-20261012-0034', read:0, at:'2026-10-12 07:30:20' },
+      { id:4, to_role:'visitor', title:'【到访提醒】', body:'您的到访时段 09:00 将于 30 分钟后开始', ref:'V-20261012-0031', read:1, at:'2026-10-12 08:30:00' }
+    ],
+    audit_logs:[
+      { id:1, at:'2026-10-12 08:55:12', who:'guard01', object:'来访 · V-20261012-0030', action:'放行',   result:'成功', before:'— → 在校中' },
+      { id:2, at:'2026-10-12 08:41:03', who:'T1001',   object:'预约 · V-20261012-0031', action:'审核同意', result:'成功', before:'待审核 → 已通过' },
+      { id:3, at:'2026-10-11 16:02:44', who:'guard01', object:'短码 9XK21',              action:'失败核验', result:'拒绝 · 黑名单', before:'—' },
+      { id:4, at:'2026-10-11 10:11:20', who:'T1002',   object:'预约 · V-20261011-0039', action:'越权拦截', result:'403', before:'—' },
+      { id:5, at:'2026-10-10 09:20:00', who:'T1002',   object:'预约 · V-20261010-0015', action:'审核拒绝', result:'成功', before:'待审核 → 已拒绝' }
+    ],
+    anomalies:[
+      { id:1, at:'2026-10-12 07:30:00', type:'超时未离', who:'郑师傅', remark:'已在校 2h37m', by:'guard01' },
+      { id:2, at:'2026-10-11 16:02:44', type:'黑名单命中', who:'赵某某', remark:'核验命中黑名单，硬拦', by:'guard01' },
+      { id:3, at:'2026-10-11 10:11:20', type:'信息不符', who:'钱某', remark:'证件与预约不符', by:'guard01' }
+    ]
+  };
+}
+let S = seed();
+
+/* ---------- 3. 业务纯函数（口径同源，与 app/src/api.mjs 对齐） ---------- */
+const activeTypes = () => S.visitor_types.filter(t => t.status === 'active').map(t => t.name);
+const activeGates = () => S.gates.filter(g => g.status === 'active').map(g => g.name);
+const activeStaff = () => S.staff.filter(s => s.status === 'active');
+const dispAppt = a => ({ ...a, status_label: statusLabel(a.status) });
+function findAppt(key){ if(!key) return null; const k = String(key).trim();
+  return S.appointments.find(a => a.appoint_no === k || a.short_code === k || String(a.id) === k) || null; }
+const toMs = s => new Date(String(s).replace(/-/g,'/')).getTime();
+function overlap(s1,e1,s2,e2){ return toMs(s1) <= toMs(e2) && toMs(s2) <= toMs(e1); }   // 闭区间相交
+const blackHit = idno => S.blacklist.some(b => b.id_no === idno);
+function maskId(id){ if(!id) return '—'; const t = String(id); return t.length <= 8 ? t : t.slice(0,4)+'********'+t.slice(-4); }
+function nextShort(){ let c; do { c = String(Math.floor(100000 + Math.random()*900000)); } while(S.appointments.some(a => a.short_code === c)); return c; }
+function newNo(){ const d = new Date(); const ymd = ''+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate());
+  return 'V-'+ymd+'-'+String(S.seq.appt).padStart(4,'0'); }
+function pushNotif(to_role, title, body, ref){ S.notifications.unshift({ id:S.seq.notif++, to_role, title, body, ref, read:0, at:ts() }); }
+function pushAudit(who, object, action, result, before){ S.audit_logs.unshift({ id:S.seq.audit++, at:ts(), who, object, action, result, before }); }
+function param(k){ const p = S.params.find(p => p.key === k); return p ? p.value : null; }
+
+/* ---------- 4. mockApi（返回结构对齐真实接口） ---------- */
+const routes = [];
+const R = (m, p, fn) => routes.push({ m, p, fn });
+function matchPat(pat, path){ const a = pat.split('/'), b = path.split('/');
+  if(a.length !== b.length) return null; const params = {};
+  for(let i=0;i<a.length;i++){ if(a[i][0] === ':') params[a[i].slice(1)] = decodeURIComponent(b[i]); else if(a[i] !== b[i]) return null; }
+  return params; }
+
+R('POST','/auth/login', (_,b) => {
+  const u = S.users.find(x => x.account === b.account);
+  if(!u || u.password !== b.password) throw new Error('账号或密码错误');
+  if(u.status !== 'active') throw new Error('账号已停用（401）');
+  return { token:'mock-'+u.account, user:{ id:u.id, role:u.role, name:u.name, dept:u.dept, account:u.account, teacher_id:u.teacher_id, gate_id:u.gate_id } };
+});
+R('GET','/dashboard/todos', (_,__,q) => S.appointments.filter(a => NON_TERMINAL.includes(a.status)).slice(0,20).map(dispAppt));
+R('GET','/notifications', (_,__,q) => { const role = q.get('role') || SESSION.user.role;
+  const items = S.notifications.filter(n => n.to_role === role); return { items, unread: items.filter(n => !n.read).length }; });
+R('GET','/notifications/unread-count', () => ({ count: S.notifications.filter(n => n.to_role === SESSION.user.role && !n.read).length }));
+R('POST','/notifications/:id/read', p => { const n = S.notifications.find(x => x.id === +p.id); if(n) n.read = 1; return { ok:true }; });
+R('POST','/notifications/read-all', () => { S.notifications.forEach(n => { if(n.to_role === SESSION.user.role) n.read = 1; }); return { ok:true }; });
+R('GET','/public/config', () => ({ system_name:param('system_name'), visitor_types:activeTypes(),
+  staff:activeStaff().map(s => ({ name:s.name, teacher_id:s.teacher_id, dept:s.dept })), relations:S.dict.companion_relation,
+  apply_entry_url:param('apply_entry_url'), max_stay_min:+param('max_stay_min'), buffer_min:+param('period_buffer_min') }));
+R('GET','/public/qr-entry', () => ({ url:param('apply_entry_url') }));
+R('GET','/appointments', (_,__,q) => {
+  let items = S.appointments.slice();
+  const role = q.get('role') || SESSION.user.role;
+  if(role === 'host') items = items.filter(a => a.host_teacher_id === SESSION.user.teacher_id);
+  const kw = q.get('kw'), st = q.get('status'), ty = q.get('type'), host = q.get('host');
+  if(kw) items = items.filter(a => a.visitor_name.includes(kw) || a.visitor_phone.includes(kw) || a.visitor_id_no.includes(kw) || a.appoint_no.includes(kw));
+  if(st) items = items.filter(a => a.status === st);
+  if(ty) items = items.filter(a => a.visitor_type === ty);
+  if(host) items = items.filter(a => a.host_name.includes(host));
+  const page = +(q.get('page')||1), pageSize = Math.min(+(q.get('pageSize')||20), 100);
+  return { items: items.slice((page-1)*pageSize, page*pageSize).map(dispAppt), total: items.length, page, pageSize };
+});
+R('GET','/appointments/:id', p => { const a = findAppt(p.id); if(!a) throw new Error('预约不存在'); return dispAppt(a); });
+R('POST','/appointments', (_,b) => createAppt(b));
+R('PATCH','/appointments/:id', (p,b) => {
+  const a = findAppt(p.id); if(!a) throw new Error('预约不存在');
+  if(!CANCELABLE.includes(a.status)) throw new Error('该状态不可改期（409）');
+  if(b.visit_start && b.visit_end){ a.visit_start = b.visit_start; a.visit_end = b.visit_end; a.status = 'rescheduled'; a.rescheduled_at = ts(); }
+  a.updated_at = ts(); pushNotif('visitor','【已改期】','您的预约时段已更新', a.appoint_no);
+  pushAudit(SESSION.user.account, '预约 · '+a.appoint_no, '改期', '成功', b.visit_start+' → '+b.visit_end);
+  return dispAppt(a);
+});
+R('POST','/appointments/:id/cancel', p => {
+  const a = findAppt(p.id); if(!a) throw new Error('预约不存在');
+  if(!CANCELABLE.includes(a.status)) throw new Error('该状态不可取消（409）');
+  a.status = 'cancelled'; a.updated_at = ts(); pushAudit(SESSION.user.account, '预约 · '+a.appoint_no, '取消', '成功', '→ 已取消');
+  return dispAppt(a);
+});
+R('GET','/reviews', (_,__,q) => { const role = q.get('role') || SESSION.user.role;
+  let items = S.appointments.filter(a => a.status === 'pending');
+  if(role === 'host') items = items.filter(a => a.host_teacher_id === SESSION.user.teacher_id);
+  return { items: items.map(dispAppt) };
+});
+R('POST','/reviews/:id/decision', (p,b) => {
+  const a = findAppt(p.id); if(!a) throw new Error('预约不存在');
+  if(a.status !== 'pending') throw new Error('该预约已处理（409）');
+  if(b.decision === 'approve'){ a.status = 'approved'; pushNotif('visitor','【审核通过】','您的预约已通过，请准时来访', a.appoint_no); pushAudit(SESSION.user.account, '预约 · '+a.appoint_no, '审核同意', '成功', '待审核 → 已通过'); }
+  else if(b.decision === 'reject'){ if(!b.reject_reason || b.reject_reason.length < 2) throw new Error('拒绝原因需 2–100 字');
+    a.status = 'rejected'; a.reject_reason = b.reject_reason; pushNotif('visitor','【已拒绝】',b.reject_reason, a.appoint_no); pushAudit(SESSION.user.account, '预约 · '+a.appoint_no, '审核拒绝', '成功', '待审核 → 已拒绝'); }
+  else if(b.decision === 'reschedule'){ if(!b.new_start || !b.new_end) throw new Error('改期需给新时段');
+    a.visit_start = b.new_start; a.visit_end = b.new_end; a.status = 'rescheduled'; pushNotif('visitor','【已改期】','被访人调整了到访时段', a.appoint_no); pushAudit(SESSION.user.account, '预约 · '+a.appoint_no, '审核改期', '成功', '→ '+b.new_start); }
+  else throw new Error('未知决定');
+  a.updated_at = ts(); return { ok:true, ...dispAppt(a) };
+});
+R('GET','/gate/today', () => {
+  const today = new Date().toISOString().slice(0,10);
+  const list = S.appointments.filter(a => (a.visit_start||'').slice(0,10) === today || (a.checkin_at||'').slice(0,10) === today);
+  return { today, pendingVerify: list.filter(a => a.status === 'approved').length,
+           onCampus: S.appointments.filter(a => a.status === 'on_campus').length, anomalies: S.anomalies.length, list: list.map(dispAppt) };
+});
+R('POST','/gate/verify', (_,b) => {
+  const a = findAppt(b.key); if(!a) return { ok:false, found:false, reasons:['未找到该预约'] };
+  const reasons = [];
+  if(blackHit(a.visitor_id_no)) reasons.push('黑名单命中');
+  if(a.status === 'expired') reasons.push('凭证已过期');
+  if(['cancelled','rejected'].includes(a.status)) reasons.push('凭证已'+statusLabel(a.status));
+  if(a.status === 'left') reasons.push('该凭证当日已离校（可再次进校）');
+  return { ok: reasons.length === 0, found:true, appointment:dispAppt(a), reasons };
+});
+R('POST','/gate/admit', (_,b) => {
+  const a = findAppt(b.key); if(!a) throw new Error('预约不存在');
+  if(blackHit(a.visitor_id_no)){ pushAudit(SESSION.user.account,'来访 · '+a.appoint_no,'失败核验','拒绝 · 黑名单','—'); throw new Error('黑名单命中，硬拦不放行'); }
+  a.status = 'on_campus'; a.verified_at = a.verified_at || ts(); a.checkin_at = ts(); a.active_inside = 1; a.updated_at = ts();
+  pushNotif('guard','【进校】', a.visitor_name+' 已核验进校（'+a.host_name+'）', a.appoint_no);
+  pushAudit(SESSION.user.account,'来访 · '+a.appoint_no,'放行','成功','— → 在校中');
+  return dispAppt(a);
+});
+R('POST','/gate/checkout', (_,b) => {
+  const a = findAppt(b.key); if(!a) throw new Error('预约不存在');
+  a.status = 'left'; a.checkout_at = ts(); a.active_inside = 0; a.updated_at = ts();
+  pushAudit(SESSION.user.account,'来访 · '+a.appoint_no,'离校登记','成功','在校中 → 已离校');
+  return dispAppt(a);
+});
+R('POST','/gate/onsite', (_,b) => createAppt({ ...b, source:'gate', direct:'on_campus' }));
+R('POST','/gate/anomaly', (_,b) => {
+  const rec = { id:S.seq.anomaly++, at:ts(), type:b.type||'其它', who:b.who||'—', remark:b.remark||'', by:SESSION.user.account };
+  S.anomalies.unshift(rec);
+  pushNotif('admin','【异常上报】', rec.type+'：'+rec.who, b.who);
+  pushNotif('guard','【异常上报】', rec.type+'：'+rec.who, b.who);
+  pushAudit(SESSION.user.account,'异常 · '+rec.who,'异常',rec.type,rec.remark);
+  return rec;
+});
+R('GET','/oncampus', () => ({ items: S.appointments.filter(a => a.status === 'on_campus').map(dispAppt) }));
+R('GET','/anomalies', () => ({ items: S.anomalies.slice() }));
+R('GET','/stats/visits', () => {
+  const counted = S.appointments.filter(a => ['approved','on_campus','left'].includes(a.status));
+  const byType = {}; activeTypes().forEach(t => byType[t] = 0);
+  counted.forEach(a => { byType[a.visitor_type] = (byType[a.visitor_type]||0) + 1; });
+  return { total: counted.length, byType };
+});
+R('GET','/stats/anomalies', () => {
+  const byType = {}; S.anomalies.forEach(x => byType[x.type] = (byType[x.type]||0) + 1);
+  return { total:S.anomalies.length, byType };
+});
+R('GET','/users', () => ({ items: S.users.map(u => ({ id:u.id, account:u.account, name:u.name, role:u.role, dept:u.dept, status:u.status })) }));
+R('POST','/users', (_,b) => { const u = { id:S.seq.user++, role:b.role, account:b.account, password:b.password||'123456', name:b.name, dept:b.dept||'', status:'active' }; S.users.push(u);
+  pushAudit(SESSION.user.account,'用户 · '+u.account,'新增账号','成功','—'); return { ok:true, user:{ id:u.id, account:u.account, name:u.name, role:u.role, dept:u.dept, status:u.status } }; });
+R('POST','/users/:id/toggle', p => { const u = S.users.find(x => x.id === +p.id); if(!u) throw new Error('用户不存在');
+  u.status = u.status === 'active' ? 'inactive' : 'active';
+  pushAudit(SESSION.user.account,'用户 · '+u.account, u.status==='active'?'启用账号':'停用账号','成功','→ '+u.status);
+  return { ok:true, status:u.status }; });
+R('GET','/master/visitor-types', () => ({ items:S.visitor_types.slice() }));
+R('POST','/master/visitor-types', (_,b) => { const t={ id:S.seq.type++, name:b.name, status:'active' }; S.visitor_types.push(t); return t; });
+R('PATCH','/master/visitor-types/:id', p => { const t=S.visitor_types.find(x=>x.id===+p.id); t.status = t.status==='active'?'inactive':'active'; return t; });
+R('GET','/master/gates', () => ({ items:S.gates.slice() }));
+R('POST','/master/gates', (_,b) => { const g={ id:S.seq.gate++, name:b.name, status:'active' }; S.gates.push(g); return g; });
+R('PATCH','/master/gates/:id', p => { const g=S.gates.find(x=>x.id===+p.id); g.status = g.status==='active'?'inactive':'active'; return g; });
+R('GET','/master/staff', () => ({ items:S.staff.slice() }));
+R('POST','/master/staff', (_,b) => { const s={ id:S.seq.staff++, name:b.name, teacher_id:b.teacher_id, dept:b.dept||'', status:'active' }; S.staff.push(s); return s; });
+R('PATCH','/master/staff/:id', p => { const s=S.staff.find(x=>x.id===+p.id); s.status = s.status==='active'?'inactive':'active'; return s; });
+R('GET','/master/blacklist', () => ({ items:S.blacklist.slice() }));
+R('POST','/master/blacklist', (_,b) => { const x={ id:S.seq.black++, name:b.name, id_no:b.id_no, reason:b.reason||'', until:b.until||'长期' }; S.blacklist.push(x); return x; });
+R('DELETE','/master/blacklist/:id', p => { S.blacklist = S.blacklist.filter(x => x.id !== +p.id); return { ok:true }; });
+R('GET','/master/time-rules', () => ({ items:S.time_rules.slice() }));
+R('POST','/master/time-rules', (_,b) => { const r={ id:S.seq.rule++, kind:b.kind||'deny', weekday:b.weekday||'周一', start:b.start, end:b.end, remark:b.remark||'' }; S.time_rules.push(r); return r; });
+R('DELETE','/master/time-rules/:id', p => { S.time_rules = S.time_rules.filter(r => r.id !== +p.id); return { ok:true }; });
+R('GET','/system/audit-logs', (_,__,q) => { let items = S.audit_logs.slice();
+  const who = q.get('who'), act = q.get('action');
+  if(who) items = items.filter(l => (l.who||'').includes(who));
+  if(act) items = items.filter(l => l.action === act);
+  return { items }; });
+R('GET','/system/params', () => ({ items:S.params.slice() }));
+R('PUT','/system/params', (_,b) => { (b.items||[]).forEach(it => { const p=S.params.find(x=>x.key===it.key); if(p) p.value = it.value; }); return { ok:true }; });
+R('GET','/system/privacy', () => ({ retention_days:+param('retention_days') }));
+
+/* ---------- 5. api 门面（Mock ↔ 真实接口 一键切换） ---------- */
+let SESSION = { token:'mock-admin', user:{ id:1, role:'admin', name:'张管理', account:'admin' } };
+
+async function api(method, path, body){
+  if(USE_REAL) return realRequest(method, path, body);
+  await delay(80);
+  const [p, qs] = path.split('?');
+  const q = new URLSearchParams(qs || '');
+  for(const r of routes){ if(r.m !== method) continue; const params = matchPat(r.p, p); if(params) return r.fn(params, body || {}, q); }
+  throw new Error('mock 未实现路由：' + method + ' ' + path);
+}
+async function realRequest(method, path, body){
+  const res = await fetch(REAL_BASE + path, {
+    method,
+    headers: Object.assign({ 'Content-Type':'application/json' },
+      SESSION.token ? { Authorization:'Bearer ' + SESSION.token } : {}),
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const txt = await res.text(); let data; try { data = JSON.parse(txt); } catch { data = txt; }
+  if(!res.ok) throw new Error((data && data.message) || ('HTTP ' + res.status));
+  return data;
+}
+
+/* ---------- 6. 创建 / 校验（口径同源） ---------- */
+function createAppt(b){
+  if(!b.visitor_name) throw new Error('访客姓名必填');
+  if(!/^1\d{10}$/.test(b.visitor_phone || '')) throw new Error('手机号格式不正确（^1\\d{10}$）');
+  if(!b.visitor_id_no || b.visitor_id_no.length < 5) throw new Error('证件号必填（5–20 位）');
+  if(!b.host_name) throw new Error('被访人必填');
+  if(!b.visit_start || !b.visit_end) throw new Error('到访时段必填');
+  if(toMs(b.visit_start) >= toMs(b.visit_end)) throw new Error('到访时段：起必须早于止');
+  const direct = b.direct === 'on_campus';
+  const a = {
+    id:S.seq.appt++, appoint_no:newNo(), short_code:nextShort(),
+    visitor_type:b.visitor_type || activeTypes()[0], visitor_name:b.visitor_name,
+    visitor_phone:b.visitor_phone, visitor_id_no:b.visitor_id_no, plate:b.plate || '',
+    reason:b.reason || '', companions:b.companions || [], people_count:1 + (b.companions||[]).length,
+    host_name:b.host_name, host_teacher_id:b.host_teacher_id || '',
+    visit_start:b.visit_start, visit_end:b.visit_end,
+    status: direct ? 'on_campus' : 'pending', black_hit: blackHit(b.visitor_id_no) ? 1 : 0,
+    source:b.source || 'h5', created_at:ts(), updated_at:ts()
+  };
+  if(direct){ a.verified_at = ts(); a.checkin_at = ts(); a.active_inside = 1; }
+  S.appointments.unshift(a);
+  if(direct){ pushNotif('guard','【现场登记】', a.visitor_name+' 现场登记进校（'+a.host_name+'）', a.appoint_no);
+    pushAudit(SESSION.user.account,'来访 · '+a.appoint_no,'现场登记放行','成功','— → 在校中'); }
+  else { pushNotif('host','【待审核】', a.visitor_name+'提交了来访预约（'+a.reason+'）', a.appoint_no);
+    pushAudit(SESSION.user.account,'预约 · '+a.appoint_no,'提交预约','成功','— → 待审核'); }
+  return dispAppt(a);
+}
+
+/* ---------- 7. UI 基础：toast / modal ---------- */
+function toast(msg, type){ const w = $('toastWrap'); const d = document.createElement('div');
+  d.className = 'toast ' + (type || ''); d.textContent = msg; w.appendChild(d);
+  setTimeout(() => { d.style.opacity = '0'; d.style.transition = '.3s'; setTimeout(() => d.remove(), 320); }, 2600); }
+let _modalOk = null;
+function showModal(title, bodyHtml, onOk){ $('modalTitle').textContent = title; $('modalBody').innerHTML = bodyHtml; _modalOk = onOk; $('modalMask').classList.add('show'); }
+function closeModal(){ $('modalMask').classList.remove('show'); _modalOk = null; }
+function modalConfirm(){ if(!_modalOk) return closeModal(); const r = _modalOk(); if(r === false) return; closeModal(); }
+function collectModal(){ const v = {}; document.querySelectorAll('#modalBody [data-f]').forEach(el => v[el.getAttribute('data-f')] = el.value); return v; }
+function askModal(title, fields, onOk){
+  const html = '<div>' + fields.map(f => {
+    const lbl = '<div class="field"><label>'+esc(f.label)+'</label>';
+    if(f.type === 'select') return lbl + '<select data-f="'+f.name+'">' + (f.options||[]).map(o => '<option value="'+esc(o)+'">'+esc(o)+'</option>').join('') + '</select></div>';
+    if(f.type === 'textarea') return lbl + '<textarea data-f="'+f.name+'" rows="3" placeholder="'+esc(f.ph||'')+'">'+esc(f.value||'')+'</textarea></div>';
+    return lbl + '<input data-f="'+f.name+'" value="'+esc(f.value||'')+'" placeholder="'+esc(f.ph||'')+'" /></div>';
+  }).join('') + '</div>';
+  showModal(title, html, () => { const v = collectModal(); return onOk(v); });
+}
+function downloadText(filename, text, mime){
+  const blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+/* ---------- 8. 角色 / 导航 ---------- */
+const ROLE_AV = { admin:'管', guard:'李', host:'王', visitor:'访' };
+function switchRole(){
+  const role = $('roleSel').value;
+  const map = {
+    admin:  { id:1, role:'admin',  name:'张管理 · 系统管理员', account:'admin' },
+    guard:  { id:2, role:'guard',  name:'李门卫 · 保安', account:'guard01', gate_id:1 },
+    host:   { id:3, role:'host',   name:'王老师 · 被访教职工', account:'T1001', teacher_id:'T1001' },
+    visitor:{ id:0, role:'visitor',name:'访客本人（H5）', account:'visitor', phone:'13800000031' }
+  };
+  SESSION.user = map[role];
+  document.querySelectorAll('#sideNav a[data-roles]').forEach(a => {
+    const roles = a.getAttribute('data-roles').split(',');
+    a.classList.toggle('hidden', !roles.includes(role));
+  });
+  $('content').classList.toggle('visitor-mode', role === 'visitor');
+  $('whoName').textContent = SESSION.user.name; $('whoAv').textContent = ROLE_AV[role];
+  if(_drawerOpen) renderDrawer();
+  if(role === 'visitor'){ go('vs'); } else {
+    const active = document.querySelector('#sideNav a.active');
+    if(active && active.classList.contains('hidden')) go('pt');
+  }
+  refresh();
+}
+function go(page, el){
+  const role = $('roleSel').value;
+  const link = document.querySelector('#sideNav a[data-page="'+page+'"]');
+  if(link && link.classList.contains('hidden')) page = 'pt';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+  const t = $('page-'+page); if(t) t.classList.add('show');
+  document.querySelectorAll('#sideNav a').forEach(a => a.classList.remove('active'));
+  const nl = document.querySelector('#sideNav a[data-page="'+page+'"]'); if(nl) nl.classList.add('active');
+  CUR_PAGE = page; window.scrollTo({ top:0, behavior:'smooth' });
+  if(_drawerOpen) renderDrawer();
+}
+
+/* ---------- 9. 数据源切换 ---------- */
+function toggleSource(){
+  if(!USE_REAL){
+    api('GET','/public/qr-entry').then(() => {}).catch(() => {});
+    makeReal();
+  } else { makeMock(); }
+}
+async function makeReal(){
+  try {
+    USE_REAL = true;
+    const cfg = await realRequest('GET','/public/config');
+    toast('已切换为真实接口（'+REAL_BASE+'）：' + (cfg.system_name || 'OK'), 'ok');
+    $('srcBadge').textContent = '数据源：真实接口'; $('srcBadge').style.background = '#e3f4ea';
+    $('srcBadge').style.color = '#1e7a48'; $('srcBtn').textContent = '🔀 切回 Mock 演示';
+    refresh();
+  } catch(e){ USE_REAL = false; toast('真实接口不可用：'+e.message+'（请先 node server.mjs 启动 app，端口 4310）','err'); }
+}
+function makeMock(){
+  USE_REAL = false;
+  $('srcBadge').textContent = '数据源：Mock 内存态'; $('srcBadge').style.background = '#fde9c8';
+  $('srcBadge').style.color = '#8a5a00'; $('srcBtn').textContent = '🔀 切换真实接口';
+  toast('已切回 Mock 内存态（演示数据）', 'warn'); refresh();
+}
+function resetMock(){ S = seed(); toast('已重置为初始演示数据', 'ok'); refresh(); }
+
+/* ---------- 10. 各页渲染 ---------- */
+function refresh(){
+  try {
+    fillSelects(); renderPT(); renderAP(); renderAT(); renderGV(); renderVS();
+    renderLG(); renderAN(); renderOR(); renderBD(); renderNT(); renderSM();
+    updateBell();
+  } catch(e){ console.error(e); toast('渲染异常：'+e.message, 'err'); }
+}
+function fillSelects(){
+  const types = activeTypes().map(t => '<option>'+esc(t)+'</option>').join('');
+  const staff = activeStaff().map(s => '<option value="'+s.teacher_id+'">'+esc(s.name)+'（'+esc(s.dept)+'）</option>').join('');
+  const gates = activeGates().map(g => '<option>'+esc(g)+'</option>').join('');
+  ['apType','vsType','lgType'].forEach(id => { const el=$(id); if(el){ const cur=el.value; el.innerHTML = (id==='lgType' ? '<option value="">全部</option>' : '') + types; if(cur) el.value = cur; } });
+  ['apHost','vsHost'].forEach(id => { const el=$(id); if(el){ const cur=el.value; el.innerHTML = staff; if(cur && el.querySelector('[value="'+cur+'"]')) el.value = cur; } });
+  const g = $('gvGate'); if(g){ const cur=g.value; g.innerHTML = gates; if(cur && g.querySelector('option[value="'+cur+'"]')) g.value = cur; }
+}
+function updateBell(){ const c = S.notifications.filter(n => n.to_role === SESSION.user.role && !n.read).length; $('bellDot').textContent = c; $('bellDot').style.display = c ? 'block' : 'none'; }
+
+/* PT */
+function renderPT(){
+  const role = $('roleSel').value, kpis = [], entries = [];
+  if(role === 'admin'){
+    kpis.push([S.appointments.filter(a=>a.status==='pending').length,'待审核（兜底）']);
+    kpis.push([S.anomalies.length,'异常记录']);
+    kpis.push([S.appointments.filter(a=>a.status==='on_campus').length,'在校访客']);
+    kpis.push(['1','超时未离校']);
+    entries.push(['访客预约','代提 / 维护预约','ap'],['被访人审核','兜底处理全部审核','at'],['门卫核验放行','监控全校核验放行','gv'],
+                 ['访客台账','全校来访记录查询','lg'],['统计分析','来访量 / 异常统计','an'],['组织与用户','账号 / 角色 / 权限','or']);
+  } else if(role === 'guard'){
+    kpis.push([S.appointments.filter(a=>a.status==='approved').length,'待核验']);
+    kpis.push([S.appointments.filter(a=>a.status==='on_campus').length,'在校中']);
+    kpis.push(['1','超时未离校']);
+    kpis.push([S.appointments.filter(a=>a.checkin_at).length,'今日进校']);
+    entries.push(['门口当日视图','当日预约 / 待核验 / 在校中','gv'],['现场核验放行','核验 / 现场登记 / 异常上报','gv'],
+                 ['访客台账','查看当日 / 现场记录','lg'],['站内消息','异常与提醒','nt']);
+  } else {
+    const mine = S.appointments.filter(a => a.host_teacher_id === SESSION.user.teacher_id);
+    kpis.push([mine.filter(a=>a.status==='pending').length,'待我审核']);
+    kpis.push([mine.filter(a=>a.status==='rescheduled').length,'已改期']);
+    kpis.push([S.audit_logs.filter(l=>l.who===SESSION.user.account).length,'本周已处理']);
+    kpis.push([mine.filter(a=>['approved','on_campus'].includes(a.status)).length,'今日来访']);
+    entries.push(['待审核列表','仅本人相关预约','at'],['访客预约','为来访人代提预约','ap'],['站内消息','审核与到访提醒','nt']);
+  }
+  setHtml('ptRole', '（'+SESSION.user.name+' 视角）');
+  setHtml('ptKpi', kpis.map(k => '<div class="kpi"><div class="n">'+k[0]+'</div><div class="l">'+esc(k[1])+'</div></div>').join(''));
+  setHtml('ptEntries', entries.map(e => '<div class="entry" onclick="go(\''+e[2]+'\')"><div class="t">'+esc(e[0])+' →</div><div class="d">'+esc(e[1])+'</div></div>').join(''));
+  $('entryUrl').value = param('apply_entry_url');
+}
+function mockDownloadQr(){ downloadText('访客系统_申请入口二维码.txt', '【原型演示】入口二维码 PNG\nURL: '+param('apply_entry_url')+'\n生成时刻: '+ts()); toast('已下载二维码 PNG（原型演示）','ok'); }
+
+/* AP */
+let apCompanions = [];
+function renderAP(){
+  renderCompanionRows();
+  const role = $('roleSel').value;
+  let list = S.appointments.slice();
+  if(role === 'host'){ list = list.filter(a => a.host_teacher_id === SESSION.user.teacher_id); $('apListHint').textContent = '当前仅显示你（'+SESSION.user.name+'）作为被访人的预约。'; }
+  else { $('apListHint').textContent = '管理员视角：全校预约。'; }
+  if(!list.length){ setHtml('apMyList','<tr><td colspan="6" class="muted">暂无预约，去上方提交一条试试。</td></tr>'); }
+  else setHtml('apMyList', list.map(a => '<tr><td>'+esc(a.appoint_no)+'</td><td>'+esc(a.visitor_name)+'</td><td>'+esc(a.host_name)+'</td>'
+    +'<td>'+esc(a.visit_start.slice(5,16))+'~'+esc(a.visit_end.slice(11,16))+'</td><td>'+tag(a.status)+'</td>'
+    +'<td><div class="op">'+apOps(a)+'</div></td></tr>').join(''));
+  const first = list[0];
+  if(first){ $('apTlTitle').textContent = '（示例：'+first.appoint_no+'）';
+    const evs = buildEvents(first);
+    setHtml('apTimeline', evs.map((e,i) => '<li class="'+(i<evs.length-1?'done':'')+'"><div class="tt">'+esc(e.t)+'</div><div class="ts">'+esc(e.at)+'</div></li>').join(''));
+  } else { $('apTlTitle').textContent=''; setHtml('apTimeline',''); }
+}
+function apOps(a){
+  const b = [];
+  if(['pending','approved','rescheduled'].includes(a.status)){
+    b.push('<button class="mini" onclick="apReschedule('+a.id+')">改期</button>');
+    b.push('<button class="mini" onclick="apCancel('+a.id+')">取消</button>');
+  }
+  if(a.status === 'approved') b.push('<button class="mini" onclick="go(\'vs\')">查看凭证</button>');
+  if(['rejected','expired','cancelled'].includes(a.status)) b.push('<button class="mini" onclick="go(\'ap\')">重新预约</button>');
+  return b.join('') || '<span class="muted">—</span>';
+}
+function buildEvents(a){
+  const ev = [{ t:'提交预约 → 待审核', at:a.created_at }];
+  if(a.status === 'approved') ev.push({ t:'被访人审核通过 → 已通过', at:a.updated_at });
+  if(a.status === 'rejected') ev.push({ t:'被访人拒绝 → 已拒绝（'+esc(a.reject_reason||'')+'）', at:a.updated_at });
+  if(a.status === 'rescheduled') ev.push({ t:'改期 → 已改期', at:a.updated_at });
+  if(a.status === 'cancelled') ev.push({ t:'撤销 → 已取消', at:a.updated_at });
+  if(['on_campus','left'].includes(a.status)){ ev.push({ t:'门卫核验放行 → 已到访(在校中)', at:a.checkin_at }); }
+  if(a.status === 'left') ev.push({ t:'离校登记 → 已离校', at:a.checkout_at });
+  if(a.status === 'expired') ev.push({ t:'超时未到访 → 已过期', at:a.updated_at });
+  ev.push({ t:'当前状态：'+statusLabel(a.status), at:['pending'].includes(a.status) ? '等待处理' : a.updated_at });
+  return ev;
+}
+function submitAppt(){
+  const hid = $('apHost').value;
+  const st = activeStaff().find(s => s.teacher_id === hid);
+  const b = { visitor_name:$('apName').value.trim(), visitor_phone:$('apPhone').value.trim(), visitor_id_no:$('apIdNo').value.trim(),
+    visitor_type:$('apType').value, plate:$('apPlate').value.trim(), host_name:st?st.name:'', host_teacher_id:hid,
+    visit_start:$('apStart').value.trim(), visit_end:$('apEnd').value.trim(), reason:$('apReason').value.trim(),
+    companions:apCompanions.slice(), source:'admin' };
+  api('POST','/appointments', b).then(a => {
+    toast('✅ 预约已提交，状态：待审核；已通知被访人（'+a.host_name+'）', 'ok');
+    if(a.black_hit) toast('⚠️ 该访客命中黑名单（软提示，可提交；核验时硬拦）', 'warn');
+    ['apName','apPhone','apIdNo','apPlate','apReason'].forEach(id => $(id).value='');
+    apCompanions = []; refresh();
+  }).catch(e => toast('提交失败：'+e.message, 'err'));
+}
+function renderCompanionRows(){
+  const rel = S.dict.companion_relation.map(r => r.label);
+  if(!apCompanions.length){ setHtml('apCompanions','<tr><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td></tr>'); $('apCompanionCount').value='0 人（见下方逐人明细）'; return; }
+  setHtml('apCompanions', apCompanions.map((c,i) => '<tr><td>'+esc(c.name)+'</td><td>'+esc(c.relation)+'</td><td>'+esc(maskId(c.id_no))+'</td>'
+    +'<td><button class="mini danger" onclick="delCompanion('+i+')">删除</button></td></tr>').join(''));
+  $('apCompanionCount').value = apCompanions.length + ' 人（见下方逐人明细）';
+}
+function addCompanion(){
+  if(apCompanions.length >= 10) return toast('随行人员上限 10 条', 'warn');
+  const rel = S.dict.companion_relation.map(r => r.label);
+  askModal('添加随行人员', [
+    { name:'name', label:'姓名', ph:'随行人姓名' },
+    { name:'relation', label:'与主访客关系', type:'select', options:rel },
+    { name:'id_no', label:'证件号', ph:'身份证 18 位 / 其他 5–20 位' }
+  ], v => { if(!v.name) { toast('请填写姓名','warn'); return false; } apCompanions.push({ name:v.name, relation:v.relation, id_no:v.id_no }); renderCompanionRows(); toast('已添加随行人员','ok'); });
+}
+function delCompanion(i){ apCompanions.splice(i,1); renderCompanionRows(); }
+function apReschedule(id){ const a = findAppt(id); askModal('改期 · '+a.appoint_no, [
+  { name:'s', label:'新到访开始（yyyy-MM-dd HH:mm:ss）', value:a.visit_start },
+  { name:'e', label:'新到访结束', value:a.visit_end }], v => {
+  api('PATCH','/appointments/'+id, { visit_start:v.s, visit_end:v.e }).then(() => { toast('已改期','ok'); refresh(); }).catch(e => toast(e.message,'err')); }); }
+function apCancel(id){ const a = findAppt(id); showModal('确认取消', '<p>确认取消预约 <b>'+esc(a.appoint_no)+'</b>（'+esc(a.visitor_name)+'）？</p>', () => {
+  api('POST','/appointments/'+id+'/cancel').then(() => { toast('已取消','ok'); refresh(); }).catch(e => toast(e.message,'err')); }); }
+
+/* AT */
+function renderAT(){
+  const role = $('roleSel').value;
+  api('GET','/reviews?role='+role).then(r => {
+    const items = r.items;
+    setHtml('atList', items.length ? items.map(a => '<tr><td>'+esc(a.appoint_no)+'</td><td>'+esc(a.visitor_name)+'</td><td>'+esc(a.visitor_type)+'</td>'
+      +'<td>'+esc(a.visit_start.slice(5,16))+'~'+esc(a.visit_end.slice(11,16))+'</td><td>'+esc(a.reason)+'</td>'
+      +'<td><div class="op"><button class="mini primary" onclick="atDecide('+a.id+',\'approve\')">同意</button>'
+      +'<button class="mini" onclick="atDecide('+a.id+',\'reject\')">拒绝</button>'
+      +'<button class="mini" onclick="atDecide('+a.id+',\'reschedule\')">改期</button></div></td></tr>').join('')
+      : '<tr><td colspan="6" class="muted">当前无待审核预约。</td></tr>');
+    const mine = role === 'host' ? S.appointments.filter(a => a.host_teacher_id === SESSION.user.teacher_id) : [];
+    setHtml('atKpi', [
+      [items.length,'待我审核'],
+      [S.audit_logs.filter(l => l.who === SESSION.user.account && (l.action==='审核同意'||l.action==='审核拒绝'||l.action==='审核改期')).length,'本周已处理'],
+      [(role==='host'?mine:[]).filter(a=>a.status==='rescheduled').length,'已改期']
+    ].map(k => '<div class="kpi"><div class="n">'+k[0]+'</div><div class="l">'+esc(k[1])+'</div></div>').join(''));
+    $('atHint').innerHTML = role === 'host' ? '被访教职工仅见<b>本人</b>相关预约（当前：'+esc(SESSION.user.name)+'）。' : '管理员视角：全校待审核（兜底）。';
+  });
+  setHtml('atLogs', S.audit_logs.filter(l => ['审核同意','审核拒绝','审核改期'].includes(l.action)).map(l =>
+    '<tr><td>'+esc(l.at)+'</td><td>'+esc(l.who)+'</td><td>'+l.action.replace('审核','')+'</td><td class="muted">'+esc(l.before)+'</td><td>'+esc(l.object)+'</td></tr>').join('')
+    || '<tr><td colspan="5" class="muted">暂无审核记录。</td></tr>');
+}
+function atDecide(id, decision){
+  const a = findAppt(id);
+  if(decision === 'approve'){ showModal('确认同意', '<p>同意 <b>'+esc(a.visitor_name)+'</b> 的来访预约（'+esc(a.appoint_no)+'）？</p>', () => {
+    api('POST','/reviews/'+id+'/decision', { decision:'approve' }).then(() => { toast('已同意 · 已通知访客','ok'); refresh(); }).catch(e => toast(e.message,'err')); }); }
+  else if(decision === 'reject'){ askModal('拒绝 · '+a.appoint_no, [{ name:'reason', label:'拒绝原因（2–100 字）', type:'textarea', ph:'随通知发给访客' }], v => {
+    api('POST','/reviews/'+id+'/decision', { decision:'reject', reject_reason:v.reason }).then(() => { toast('已拒绝 · 已通知访客','ok'); refresh(); }).catch(e => toast(e.message,'err')); }); }
+  else { askModal('改期 · '+a.appoint_no, [
+    { name:'s', label:'新到访开始（将重过 AP-003 全部校验）', value:a.visit_start },
+    { name:'e', label:'新到访结束', value:a.visit_end }], v => {
+    api('POST','/reviews/'+id+'/decision', { decision:'reschedule', new_start:v.s, new_end:v.e }).then(() => { toast('已改期 · 已通知访客','ok'); refresh(); }).catch(e => toast(e.message,'err')); }); }
+}
+function saveReviewer(){ const v = $('atReviewer').value; const p = S.params.find(x => x.key === 'reviewer_default'); if(p) p.value = v;
+  toast('已保存审核人配置：'+v+'（对配置生效后的新预约生效）','ok'); }
+
+/* GV */
+function renderGV(){
+  api('GET','/gate/today').then(t => {
+    setHtml('gvKpi', [
+      [t.list.length,'今日预约'],[t.pendingVerify,'待核验'],[t.onCampus,'在校中'],[t.anomalies,'异常记录']
+    ].map((k,i) => '<div class="kpi'+(i===3?' danger':'')+'"><div class="n">'+k[0]+'</div><div class="l">'+esc(k[1])+'</div></div>').join(''));
+    const show = S.appointments.filter(a => ['approved','on_campus','left'].includes(a.status));
+    setHtml('gvToday', show.length ? show.map(a => '<tr><td>'+esc(a.visitor_name)+'</td><td>'+esc(a.host_name)+'</td>'
+      +'<td>'+esc((a.checkin_at||'—').slice(5,19))+'</td><td>'+esc((a.checkout_at||'—').slice(5,19))+'</td><td>'+tag(a.status)+'</td>'
+      +'<td><div class="op">'+gvOps(a)+'</div></td></tr>').join('')
+      : '<tr><td colspan="6" class="muted">今日暂无已放行记录。</td></tr>');
+  });
+}
+function gvOps(a){
+  if(a.status === 'approved') return '<button class="mini primary" onclick="gvAdmit('+a.id+')">核销并进校</button>';
+  if(a.status === 'on_campus') return '<button class="mini" onclick="gvCheckout('+a.id+')">离校登记</button>';
+  if(a.status === 'left') return '<button class="mini" onclick="gvAdmit('+a.id+')">再次进校</button>';
+  return '<span class="muted">—</span>';
+}
+function gvAdmit(id){ const a = findAppt(id); api('POST','/gate/admit', { key:a.appoint_no }).then(() => { toast('✅ 核验通过 → 放行：'+a.visitor_name,'ok'); refresh(); }).catch(e => toast(e.message,'err')); }
+function gvCheckout(id){ const a = findAppt(id); api('POST','/gate/checkout', { key:a.appoint_no }).then(() => { toast('已记录离校时刻（允许当天再次进校）','ok'); refresh(); }); }
+function gvVerifyAndAdmit(){
+  const key = $('gvKey').value.trim(); if(!key) return toast('请输入预约编号 / 短码','warn');
+  api('POST','/gate/verify', { key }).then(r => {
+    if(!r.found) return toast('未找到该凭证：'+key,'err');
+    if(!r.ok) return showModal('核验不通过', '<p>凭证 <b>'+esc(r.appointment.appoint_no)+'</b>（'+esc(r.appointment.visitor_name)+'）核验不通过：</p><div class="note red">'+r.reasons.map(esc).join('；')+'</div>', () => {});
+    api('POST','/gate/admit', { key }).then(a => { toast('✅ 核验通过 → 放行：'+a.visitor_name,'ok'); $('gvKey').value=''; refresh(); }).catch(e => toast(e.message,'err'));
+  });
+}
+function gvBlock(){
+  const key = $('gvKey').value.trim(); const a = key ? findAppt(key) : null;
+  const who = a ? a.visitor_name : (key || '未知访客');
+  api('POST','/gate/anomaly', { type:'黑名单命中', who, remark:'核验命中，硬拦不放行' }).then(() => {
+    toast('⛔ 已拦截：黑名单命中（硬拦，无临时放行/白名单 override）','err'); $('gvKey').value=''; refresh(); });
+}
+function gvOnsiteDialog(){
+  const staff = activeStaff().map(s => s.name+'（'+s.dept+'）');
+  askModal('无预约 · 现场登记', [
+    { name:'visitor_name', label:'访客姓名', ph:'如：孙师傅' },
+    { name:'visitor_phone', label:'手机号', ph:'13800000000' },
+    { name:'visitor_id_no', label:'证件号', ph:'18 位 / 5–20 位' },
+    { name:'visitor_type', label:'访客类型', type:'select', options:activeTypes() },
+    { name:'host_name', label:'被访人', type:'select', options:staff },
+    { name:'reason', label:'来访事由', ph:'如：设备维修' }
+  ], v => { if(!v.host_name){ toast('请选择被访人','warn'); return false; }
+    const hn = v.host_name.split('（')[0];
+    api('POST','/gate/onsite', { visitor_name:v.visitor_name, visitor_phone:v.visitor_phone, visitor_id_no:v.visitor_id_no,
+      visitor_type:v.visitor_type, host_name:hn, reason:v.reason, visit_start:ts(), visit_end:'2026-10-12 18:00:00', source:'gate' })
+      .then(a => { toast('✅ 现场登记已完成并放行（'+a.appoint_no+'）','ok'); refresh(); }).catch(e => toast(e.message,'err')); });
+}
+function gvReportAnomaly(){
+  api('POST','/gate/anomaly', { type:$('gvAnomType').value, who:$('gvAnomWho').value.trim() || '—', remark:$('gvAnomRemark').value.trim() })
+    .then(() => { toast('✅ 异常已上报：写异常记录 + 通知管理员 + 通知门卫','ok'); $('gvAnomWho').value=''; $('gvAnomRemark').value=''; refresh(); });
+}
+
+/* VS */
+function renderVS(){
+  const phone = SESSION.user.phone || '13800000031';
+  const mine = S.appointments.filter(a => a.visitor_phone === phone);
+  setHtml('vsList', mine.length ? mine.map(a => '<tr><td>'+esc(a.host_name)+'</td><td>'+esc(a.visit_start.slice(5,16))+'~'+esc(a.visit_end.slice(11,16))+'</td><td>'+tag(a.status)+'</td></tr>').join('')
+    : '<tr><td colspan="3" class="muted">暂无申请，去上方提交一条。</td></tr>');
+  const cred = mine.find(a => a.status === 'approved');
+  if(cred){ setHtml('vsCred', '<div class="cred"><div class="no">'+esc(cred.short_code)+'</div><div class="qr"></div>'
+    +'<div class="cn">预约编号 '+esc(cred.appoint_no)+' ｜ 到访 '+esc(cred.visit_start.slice(5,16))+'</div>'
+    +'<div class="btnrow" style="justify-content:center;"><button class="mini primary" onclick="toast(\'凭证已出示（门卫处扫码核销）\',\'ok\')">出示凭证</button></div></div>'); }
+  else setHtml('vsCred', '<div class="note blue">暂无可用凭证（预约通过审核后生成）。</div>');
+}
+function vsSubmit(){
+  if(!$('cb1').checked || !$('cb2').checked) return toast('请先勾选《安全告知》与《个人信息授权告知》','warn');
+  const hid = $('vsHost').value; const st = activeStaff().find(s => s.teacher_id === hid);
+  const b = { visitor_name:$('vsName').value.trim(), visitor_phone:$('vsPhone').value.trim(), visitor_id_no:$('vsIdNo').value.trim(),
+    visitor_type:$('vsType').value, host_name:st?st.name:'', host_teacher_id:hid,
+    visit_start:$('vsStart').value.trim(), visit_end:'2026-10-12 18:00:00', reason:$('vsReason').value.trim(), source:'h5' };
+  api('POST','/appointments', b).then(a => {
+    toast('✅ 已提交，状态：待审核（已记录本次告知确认留痕）','ok');
+    if(a.black_hit) toast('⚠️ 命中黑名单（软提示，可提交）','warn');
+    $('cb1').checked = false; $('cb2').checked = false; ['vsName','vsIdNo','vsReason'].forEach(id => $(id).value=''); refresh();
+  }).catch(e => toast('提交失败：'+e.message,'err'));
+}
+
+/* LG */
+let lgState = { page:1, pageSize:8, kw:'', status:'', type:'', host:'' };
+function lgQuery(){ const p = new URLSearchParams({ page:lgState.page, pageSize:lgState.pageSize });
+  if(lgState.kw) p.set('kw', lgState.kw); if(lgState.status) p.set('status', lgState.status);
+  if(lgState.type) p.set('type', lgState.type); if(lgState.host) p.set('host', lgState.host); return p.toString(); }
+function renderLG(){
+  api('GET','/appointments?'+lgQuery()).then(r => {
+    setHtml('lgTable', r.items.length ? r.items.map(a => '<tr><td>'+esc(a.appoint_no)+'</td><td>'+esc(a.visitor_name)+'</td><td>'+esc(a.visitor_type)+'</td>'
+      +'<td>'+esc(a.host_name)+'</td><td>'+esc((a.checkin_at||a.visit_start).slice(5,16))+'</td><td>'+esc(a.checkout_at?a.checkout_at.slice(5,16):'—')+'</td><td>'+tag(a.status)+'</td></tr>').join('')
+      : '<tr><td colspan="7" class="muted">无匹配记录 {items:[], total:0}</td></tr>');
+    const pages = Math.max(1, Math.ceil(r.total / lgState.pageSize));
+    $('lgPageInfo').textContent = '第 '+lgState.page+' / '+pages+' 页 · 共 '+r.total+' 条';
+  });
+  const onsite = S.appointments.filter(a => a.status === 'on_campus');
+  setHtml('lgOnsite', onsite.length ? onsite.map(a => '<tr><td>'+esc(a.visitor_name)+'</td><td>'+esc(a.host_name)+'</td><td>'+esc((a.checkin_at||'').slice(5,19))+'</td>'
+    +'<td>'+esc(insideDur(a))+'</td><td>'+tag(a.status)+'</td></tr>').join('') : '<tr><td colspan="5" class="muted">当前无人在校。</td></tr>');
+}
+function insideDur(a){ if(!a.checkin_at) return '—'; const m = Math.max(0, Math.round((Date.now() - toMs(a.checkin_at))/60000));
+  return Math.floor(m/60)+' 时 '+pad(m%60)+' 分'; }
+function lgSearch(){ lgState.kw = $('lgKw').value.trim(); lgState.host = $('lgHost').value.trim(); lgState.type = $('lgType').value; lgState.status = $('lgStatus').value; lgState.page = 1;
+  renderLG(); toast('已检索（1 万条内响应<2s）；精确命中但不回显完整证件号，显示掩码','ok'); }
+function lgReset(){ lgState = { page:1, pageSize:8, kw:'', status:'', type:'', host:'' }; ['lgKw','lgHost'].forEach(id => $(id).value=''); $('lgType').value=''; $('lgStatus').value=''; renderLG(); }
+function lgPage(delta){ const np = lgState.page + delta; if(np < 1) return; lgState.page = np; renderLG(); }
+function lgExport(kind){
+  api('GET','/appointments?page=1&pageSize=100').then(r => {
+    const head = ['预约编号','姓名','访客类型','手机号','证件号','被访人','到访时段','进校时刻','离校时刻','状态','事由'];
+    const rows = r.items.map(a => [a.appoint_no, a.visitor_name, a.visitor_type, a.visitor_phone, maskId(a.visitor_id_no),
+      a.host_name, a.visit_start+' ~ '+a.visit_end, a.checkin_at||'', a.checkout_at||'', statusLabel(a.status), a.reason]);
+    const csv = '\ufeff' + [head, ...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const d = new Date(); const name = '访客台账_' + d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds()) + (kind === 'xlsx' ? '.csv' : '.csv');
+    downloadText(name.replace('.xlsx','.csv'), csv, 'text/csv;charset=utf-8');
+    toast('✅ 已导出 '+name+'（BOM UTF-8，证件号掩码）', 'ok');
+  });
+}
+
+/* AN */
+function renderAN(){
+  api('GET','/stats/visits').then(v => api('GET','/stats/anomalies').then(an => {
+    setHtml('anKpi', [
+      [v.total,'有效来访（人次）'],
+      [v.byType['家长']||0,'家长来访'],
+      [an.total,'异常事件'],
+      ['96%','按时离校率']
+    ].map((k,i) => '<div class="kpi'+(i===2?' warn':'')+'"><div class="n">'+k[0]+'</div><div class="l">'+esc(k[1])+'</div></div>').join(''));
+    const max = Math.max(1, ...Object.values(v.byType));
+    setHtml('anChart', Object.entries(v.byType).map(([k,n]) => '<div class="b"><div class="v">'+n+'</div><i style="height:'+Math.round(n/max*120)+'px"></i><div class="k">'+esc(k)+'</div></div>').join(''));
+    const tot = Math.max(1, an.total);
+    setHtml('anAnom', Object.entries(an.byType).map(([k,n]) => '<tr><td>'+esc(k)+'</td><td>'+n+'</td><td>'+Math.round(n/tot*100)+'%</td></tr>').join('')
+      || '<tr><td colspan="3" class="muted">暂无异常记录。</td></tr>');
+  }));
+}
+
+/* OR */
+function renderOR(){
+  const scope = { admin:'全校', guard:'校门当日 / 现场', host:'仅本人', visitor:'仅本人' };
+  setHtml('orUsers', S.users.map(u => '<tr><td>'+esc(u.account)+'</td><td>'+esc(u.name)+'</td><td>'+esc({admin:'管理员',guard:'门卫 / 保安',host:'被访教职工'}[u.role]||u.role)+'</td>'
+    +'<td>'+esc(scope[u.role]||'—')+'</td><td>'+(u.status==='active'?'<span class="tag pass">在用</span>':'<span class="tag off">已停用</span>')+'</td>'
+    +'<td><div class="op"><button class="mini" onclick="toast(\'编辑账号（原型演示）\',\'ok\')">编辑</button>'
+    +'<button class="mini '+(u.status==='active'?'':'primary')+'" onclick="orToggleUser('+u.id+')">'+(u.status==='active'?'停用':'启用')+'</button></div></td></tr>').join(''));
+}
+function orToggleUser(id){ api('POST','/users/'+id+'/toggle').then(r => { toast('已'+(r.status==='active'?'启用':'停用')+'账号（软状态，历史留痕保留）','ok'); refresh(); }); }
+function orAddUser(){ askModal('新增账号', [
+  { name:'account', label:'账号' }, { name:'name', label:'姓名' },
+  { name:'role', label:'角色', type:'select', options:['被访教职工','门卫 / 保安','管理员'] },
+  { name:'dept', label:'部门' }, { name:'password', label:'初始密码（≥6 位）', value:'123456' }
+], v => { if(!v.account || !v.name){ toast('账号/姓名必填','warn'); return false; }
+  const role = { '被访教职工':'host','门卫 / 保安':'guard','管理员':'admin' }[v.role];
+  api('POST','/users', { account:v.account, name:v.name, role, dept:v.dept, password:v.password })
+    .then(() => { toast('已新增账号 '+v.account,'ok'); refresh(); }); }); }
+
+/* BD */
+function renderBD(){
+  setHtml('bdTypes', S.visitor_types.map(t => '<tr><td>'+esc(t.name)+'</td><td>'+(t.status==='active'?'<span class="tag pass">在用</span>':'<span class="tag off">停用</span>')+'</td>'
+    +'<td><button class="mini" onclick="bdToggleType('+t.id+')">'+(t.status==='active'?'停用':'启用')+'</button></td></tr>').join(''));
+  setHtml('bdBlack', S.blacklist.map(b => '<tr><td>'+esc(b.name)+'（'+esc(maskId(b.id_no))+'）</td><td>'+esc(b.reason)+'</td>'
+    +'<td><button class="mini danger" onclick="bdDelBlack('+b.id+')">删除</button></td></tr>').join('') || '<tr><td colspan="3" class="muted">黑名单为空。</td></tr>');
+  setHtml('bdRules', S.time_rules.map(r => '<tr><td>'+(r.kind==='open'?'可预约时段':'禁入时段')+'</td><td>'+esc(r.weekday)+' '+esc(r.start)+'–'+esc(r.end)+(r.remark?'（'+esc(r.remark)+'）':'')+'</td>'
+    +'<td><button class="mini danger" onclick="bdDelRule('+r.id+')">删除</button></td></tr>').join(''));
+  setHtml('bdGates', S.gates.map(g => '<tr><td>'+esc(g.name)+'</td><td>'+(g.status==='active'?'<span class="tag pass">启用</span>':'<span class="tag off">停用</span>')+'</td>'
+    +'<td><button class="mini" onclick="bdToggleGate('+g.id+')">'+(g.status==='active'?'停用':'启用')+'</button></td></tr>').join(''));
+  setHtml('bdStaff', S.staff.map(s => '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.dept)+'</td>'
+    +'<td>'+(s.status==='active'?'<span class="tag pass">在用</span>':'<span class="tag off">停用</span>')+'</td>'
+    +'<td><div class="op"><button class="mini" onclick="toast(\'编辑教职工（原型演示）\',\'ok\')">编辑</button>'
+    +'<button class="mini '+(s.status==='active'?'':'primary')+'" onclick="bdToggleStaff('+s.id+')">'+(s.status==='active'?'停用':'启用')+'</button></div></td></tr>').join(''));
+}
+function bdToggleType(id){ api('PATCH','/master/visitor-types/'+id).then(() => { toast('已切换类型状态（停用项退出下拉）','ok'); refresh(); }); }
+function bdAddType(){ askModal('新增访客类型', [{ name:'name', label:'类型名称' }], v => { if(!v.name){ toast('请填写名称','warn'); return false; } api('POST','/master/visitor-types',{name:v.name}).then(()=>{toast('已新增','ok');refresh();}); }); }
+function bdDelBlack(id){ api('DELETE','/master/blacklist/'+id).then(() => { toast('已从黑名单删除（留痕）','ok'); refresh(); }); }
+function bdAddBlack(){ askModal('拉黑 · 新增黑名单', [{ name:'name', label:'姓名' },{ name:'id_no', label:'证件号' },{ name:'reason', label:'原因' }], v => {
+  if(!v.id_no){ toast('证件号必填','warn'); return false; } api('POST','/master/blacklist',v).then(()=>{toast('已加入黑名单','ok');refresh();}); }); }
+function bdDelRule(id){ api('DELETE','/master/time-rules/'+id).then(() => { toast('已删除时段规则','ok'); refresh(); }); }
+function bdAddRule(){ askModal('新增时段规则', [
+  { name:'kind', label:'类型', type:'select', options:['禁入时段','可预约时段'] },
+  { name:'weekday', label:'星期', value:'周一' }, { name:'start', label:'开始', value:'12:00' },
+  { name:'end', label:'结束', value:'13:00' }, { name:'remark', label:'说明' }
+], v => { api('POST','/master/time-rules', { kind:v.kind==='禁入时段'?'deny':'open', weekday:v.weekday, start:v.start, end:v.end, remark:v.remark }).then(()=>{toast('已新增时段规则','ok');refresh();}); }); }
+function bdToggleGate(id){ api('PATCH','/master/gates/'+id).then(() => { toast('已切换校门状态','ok'); refresh(); }); }
+function bdAddGate(){ askModal('新增校门 / 通行点', [{ name:'name', label:'名称' }], v => { if(!v.name){ toast('请填写名称','warn'); return false; } api('POST','/master/gates',{name:v.name}).then(()=>{toast('已新增','ok');refresh();}); }); }
+function bdToggleStaff(id){ api('PATCH','/master/staff/'+id).then(() => { toast('已切换教职工状态（停用项退出被访人下拉）','ok'); refresh(); }); }
+function bdAddStaff(){ askModal('新增教职工', [{ name:'name', label:'姓名' },{ name:'teacher_id', label:'工号' },{ name:'dept', label:'部门' }], v => {
+  if(!v.name){ toast('姓名必填','warn'); return false; } api('POST','/master/staff',v).then(()=>{toast('已新增教职工','ok');refresh();}); }); }
+
+/* NT */
+function renderNT(){
+  const role = SESSION.user.role;
+  const mine = S.notifications.filter(n => n.to_role === role || role === 'admin');
+  setHtml('ntList', mine.length ? mine.map(n => '<tr><td>'+esc(n.at.slice(5,16))+'</td><td>'+esc(n.title)+esc(n.body)+'</td><td>'+esc(n.ref||'—')+'</td>'
+    +'<td>'+(n.read?'<span class="tag cancel">已读</span>':'<span class="tag ing">未读</span>')+'</td>'
+    +'<td>'+(n.read?'<span class="muted">—</span>':'<button class="mini" onclick="ntRead('+n.id+')">标记已读</button>')+'</td></tr>').join('')
+    : '<tr><td colspan="5" class="muted">暂无消息。</td></tr>');
+}
+function ntRead(id){ api('POST','/notifications/'+id+'/read').then(() => { refresh(); }); }
+function ntReadAll(){ api('POST','/notifications/read-all').then(() => { toast('全部标记已读','ok'); refresh(); }); }
+function ntSaveChannels(){ const sms = $('ntSms').value === 'true'; const wecom = $('ntWecom').value === 'true';
+  const p = S.params.find(x => x.key === 'notify_channels'); if(p) p.value = '{in_site:true,sms:'+sms+',wecom:'+wecom+'}';
+  toast('已保存通知渠道配置（'+((sms||wecom)?'已启用扩展渠道':'短信/企微仍关闭')+'）','ok'); renderSM(); }
+
+/* SM */
+let smFilter = '';
+function renderSM(){
+  const who = $('smWho') ? $('smWho').value.trim() : '';
+  const act = $('smAction') ? $('smAction').value : '';
+  let logs = S.audit_logs.slice();
+  if(who) logs = logs.filter(l => (l.who||'').includes(who));
+  if(act) logs = logs.filter(l => l.action === act);
+  setHtml('smLogs', logs.length ? logs.map(l => '<tr><td>'+esc(l.at)+'</td><td>'+esc(l.who)+'</td><td>'+esc(l.object)+'</td><td>'+esc(l.action)+'</td>'
+    +'<td>'+(/成功/.test(l.result)?'<span class="tag pass">'+esc(l.result)+'</span>':'<span class="tag rej">'+esc(l.result)+'</span>')+'</td><td>'+esc(l.before)+'</td></tr>').join('')
+    : '<tr><td colspan="6" class="muted">无匹配日志。</td></tr>');
+  setHtml('smParams', S.params.map(p => '<tr><td>'+esc(p.key)+'</td><td>'+esc(p.value)+'</td></tr>').join(''));
+  setHtml('smDict', [['访客类型', activeTypes().join(' / ')],['来访状态','8 态枚举'],['异常类型','黑名单命中 / 信息不符 / 强行闯入 / 超时未离'],['校门', activeGates().join(' / ')],['随行关系', S.dict.companion_relation.map(r=>r.label).join(' / ')]]
+    .map(r => '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>').join(''));
+}
+function smSearch(){ renderSM(); toast('已按条件查询操作日志','ok'); }
+function smPurge(kind){
+  const doIt = () => { pushAudit(SESSION.user.account, '个人信息', kind==='purge'?'人工清除':'到期脱敏', '成功', '→ '+(kind==='purge'?'物理删除':'展示层脱敏'));
+    toast(kind==='purge' ? '已人工清除：物理删除（删除后不可检索、留痕）' : '已到期自动脱敏：保留统计、隐去证件号/人像（发生在展示层）', kind==='purge'?'err':'ok'); refresh(); };
+  if(kind === 'purge') showModal('确认人工清除', '<p>将<b>物理删除</b>到期个人信息（删除后不可检索，留痕）。确认？</p>', doIt); else doIt();
+}
+
+/* ---------- 11. §3.11 需求验证侧栏（抽屉） ---------- */
+const REQS = [
+  ['PT','平台门户',[['REQ-PT-001','登录与身份识别'],['REQ-PT-002','角色工作台路由'],['REQ-PT-003','待办聚合'],['REQ-PT-004','站内消息入口红点'],['REQ-PT-005','申请入口二维码']]],
+  ['AP','访客预约',[['REQ-AP-001','预约基本信息采集'],['REQ-AP-002','随行人员逐人明细'],['REQ-AP-003','提交四项校验'],['REQ-AP-004','我的预约状态跟踪'],['REQ-AP-005','改期 / 取消']]],
+  ['AT','被访人审核',[['REQ-AT-001','待审核列表（仅本人）'],['REQ-AT-002','审核决定 同意/拒绝/改期'],['REQ-AT-003','审核人可配置'],['REQ-AT-004','审核留痕']]],
+  ['GV','门卫核验放行',[['REQ-GV-001','现场核验（人工）'],['REQ-GV-002','放行与现场登记'],['REQ-GV-003','凭证核销防重'],['REQ-GV-004','多次进出 / 离校'],['REQ-GV-005','异常上报'],['REQ-GV-006','门口当日视图']]],
+  ['VS','访客端 H5',[['REQ-VS-001','我要申请'],['REQ-VS-002','我的申请（查看）'],['REQ-VS-003','安全 / 授权告知每次确认'],['REQ-VS-004','扫码进入与适配']]],
+  ['LG','访客台账',[['REQ-LG-001','访客台账（分页）'],['REQ-LG-002','在校实时清单'],['REQ-LG-003','多条件检索（脱敏）'],['REQ-LG-004','导出 / 打印（脱敏）']]],
+  ['AN','统计分析',[['REQ-AN-001','来访量统计'],['REQ-AN-002','异常统计']]],
+  ['OR','组织与权限',[['REQ-OR-001','用户 / 账号管理（软停用）'],['REQ-OR-002','角色 × 资源边界'],['REQ-OR-003','对象级数据范围']]],
+  ['BD','主数据',[['REQ-BD-001','访客类型'],['REQ-BD-002','黑名单'],['REQ-BD-003','时段规则'],['REQ-BD-004','校门 / 通行点'],['REQ-BD-005','被访人名册']]],
+  ['NT','通知',[['REQ-NT-001','站内消息'],['REQ-NT-002','异常 / 流转通知'],['REQ-NT-003','通知渠道可配']]],
+  ['SM','系统管理',[['REQ-SM-001','操作日志 / 留痕'],['REQ-SM-002','个人信息保护'],['REQ-SM-003','系统参数'],['REQ-SM-004','数据字典']]]
+];
+const PAGE_OF_REQ = { PT:'pt', AP:'ap', AT:'at', GV:'gv', VS:'vs', LG:'lg', AN:'an', OR:'or', BD:'bd', NT:'nt', SM:'sm' };
+let _drawerOpen = false, CUR_PAGE = 'pt';
+const VERIFY_KEY = 'vs_v1_verify';
+function loadVerify(){ try { return JSON.parse(localStorage.getItem(VERIFY_KEY) || '{}'); } catch { return {}; } }
+function saveVerify(o){ try { localStorage.setItem(VERIFY_KEY, JSON.stringify(o)); } catch {} }
+let VERIFY = loadVerify();
+function toggleDrawer(){ _drawerOpen = !_drawerOpen; $('drawer').classList.toggle('show', _drawerOpen); if(_drawerOpen) renderDrawer(); }
+function renderDrawer(){
+  let total = 0, done = 0; const parts = [];
+  REQS.forEach(([code, name, items]) => {
+    const isCur = PAGE_OF_REQ[code] === CUR_PAGE;
+    parts.push('<div class="vgroup">'+code+' · '+esc(name)+(isCur?' <span class="cur-dot">● 当前页</span>':'')+'</div>');
+    items.forEach(([id, t]) => { total++; if(VERIFY[id]) done++;
+      parts.push('<label class="vitem'+(isCur?' cur':'')+'"><input type="checkbox" '+(VERIFY[id]?'checked':'')+' onchange="vToggle(\''+id+'\',this.checked)" />'
+        +'<span class="vt" onclick="go(\''+PAGE_OF_REQ[code]+'\',null)"><b>'+esc(id)+'</b> '+esc(t)+'<div class="vp">关联页面 P-'+code+'（点击跳转）</div></span></label>'); });
+  });
+  setHtml('drawerBody', parts.join(''));
+  $('vpText').textContent = '已验证 ' + done + ' / ' + total;
+  $('vpBar').style.width = Math.round(done / total * 100) + '%';
+}
+function vToggle(id, checked){ VERIFY[id] = checked; saveVerify(VERIFY); renderDrawer(); }
+
+/* ---------- 12. 初始化 ---------- */
+$('realBaseTxt').textContent = REAL_BASE;
+switchRole();
+renderDrawer();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AT-004",
+  "title": "审核留痕",
+  "acceptanceCriteria": [
+    "每次审核写一条日志，含 操作人/时间/决定/原因。",
+    "可按**预约**维度筛选日志。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "每次审核都写操作日志（谁/何时/决定/原因）",
+  "value": "事后可查可追溯",
+  "priority": "P1",
+  "traceability": "REQ-AT-004（SM）",
+  "page": "原型 #page-at / #page-sm"
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "term": "核验",
+    "definition": "门卫人工比对身份、预约凭证和有效时段是否合法。",
+    "bcId": "BC-VISIT"
+  },
+  {
+    "term": "核销",
+    "definition": "将未使用访客凭证置为已用，重复使用必须拒绝。",
+    "bcId": "BC-VISIT"
+  },
+  {
+    "term": "放行",
+    "definition": "核验通过后允许进入并记录进校事实。",
+    "bcId": "BC-VISIT"
+  },
+  {
+    "term": "未终结预约",
+    "definition": "防重复口径中的待审核、已通过、已到访(在校中)。",
+    "bcId": "BC-VISIT"
+  },
+  {
+    "term": "已离校",
+    "definition": "最后一次进出为离校；同一自然日可再次进校，因此不是绝对终态。",
+    "bcId": "BC-VISIT"
+  },
+  {
+    "term": "对象级隔离",
+    "definition": "以绑定实体ID在服务端限制访客或被访人仅访问本人对象。",
+    "bcId": "BC-ACCESS"
+  },
+  {
+    "term": "软停用",
+    "definition": "退出后续登录或候选取数但保留历史引用，可按规则恢复。",
+    "bcId": "BC-MASTER"
+  },
+  {
+    "term": "展示层脱敏",
+    "definition": "底层数据保留，查询、导出和打印不回显完整敏感字段。",
+    "bcId": "BC-COMPLIANCE"
+  }
+]

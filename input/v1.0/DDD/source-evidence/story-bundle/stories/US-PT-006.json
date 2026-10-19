@@ -1,0 +1,15 @@
+{
+  "storyId": "US-PT-006",
+  "title": "访客申请入口二维码",
+  "acceptanceCriteria": [
+    "二维码指向 H5「我要申请」；可查看、下载 PNG、打印。",
+    "**入口 URL＝系统参数可配**（默认＝部署域名 + `/h5/apply`，D13）；改参数后新生成二维码随之生效。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "管理员",
+  "capability": "后台能生成/查看/下载（PNG）/打印指向 H5「我要申请」的入口二维码",
+  "value": "供访客扫码发起预约",
+  "priority": "P1",
+  "traceability": "REQ-PT-005（D13）",
+  "page": "原型 #page-pt"
+}

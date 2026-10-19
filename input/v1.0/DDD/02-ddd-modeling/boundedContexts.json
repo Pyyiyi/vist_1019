@@ -1,0 +1,150 @@
+[
+  {
+    "bcId": "BC-ACCESS",
+    "nameZh": "身份与权限",
+    "nameEn": "IdentityAccess",
+    "responsibility": "管理后台身份、账号生命周期、授权与对象级数据范围。",
+    "subdomainType": "Generic",
+    "stories": [
+      "US-OR-001",
+      "US-OR-002",
+      "US-OR-003",
+      "US-PT-001",
+      "US-PT-002",
+      "US-PT-003",
+      "US-PT-004",
+      "US-PT-005",
+      "US-PT-006"
+    ],
+    "aggregates": [
+      "UserAccount",
+      "AuthorizationPolicy"
+    ],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "bcId": "BC-VISIT",
+    "nameZh": "来访闭环",
+    "nameEn": "VisitLifecycle",
+    "responsibility": "管理预约、审核、凭证、核验、进出与现场异常的核心业务闭环。",
+    "subdomainType": "Core",
+    "stories": [
+      "US-AP-001",
+      "US-AP-002",
+      "US-AP-003",
+      "US-AP-004",
+      "US-AP-005",
+      "US-AP-006",
+      "US-AT-001",
+      "US-AT-002",
+      "US-AT-003",
+      "US-AT-004",
+      "US-GV-001",
+      "US-GV-002",
+      "US-GV-003",
+      "US-GV-004",
+      "US-GV-005",
+      "US-GV-006",
+      "US-GV-007",
+      "US-VS-001",
+      "US-VS-002",
+      "US-VS-003",
+      "US-VS-004"
+    ],
+    "aggregates": [
+      "VisitAppointment",
+      "IncidentRegistry"
+    ],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "bcId": "BC-MASTER",
+    "nameZh": "业务策略与主数据",
+    "nameEn": "BusinessPolicy",
+    "responsibility": "维护访客类型、校门、教职工、黑名单、时段和系统参数。",
+    "subdomainType": "Supporting",
+    "stories": [
+      "US-BD-001",
+      "US-BD-002",
+      "US-BD-003",
+      "US-BD-004",
+      "US-BD-005"
+    ],
+    "aggregates": [
+      "MasterDataCatalog",
+      "BlacklistRegistry",
+      "SystemConfiguration"
+    ],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "bcId": "BC-NOTIFY",
+    "nameZh": "通知中心",
+    "nameEn": "Notification",
+    "responsibility": "生成、投递、展示并维护站内通知读取状态。",
+    "subdomainType": "Supporting",
+    "stories": [
+      "US-NT-001",
+      "US-NT-002",
+      "US-NT-003"
+    ],
+    "aggregates": [
+      "NotificationBox"
+    ],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "bcId": "BC-REPORT",
+    "nameZh": "台账与分析",
+    "nameEn": "LedgerAnalytics",
+    "responsibility": "提供同源台账、在校清单、统计、导出与打印读模型。",
+    "subdomainType": "Supporting",
+    "stories": [
+      "US-AN-001",
+      "US-AN-002",
+      "US-LG-001",
+      "US-LG-002",
+      "US-LG-003",
+      "US-LG-004",
+      "US-LG-005"
+    ],
+    "aggregates": [],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  },
+  {
+    "bcId": "BC-COMPLIANCE",
+    "nameZh": "审计与隐私",
+    "nameEn": "AuditPrivacy",
+    "responsibility": "记录敏感操作并执行个人信息留存、脱敏、清除和主体请求。",
+    "subdomainType": "Generic",
+    "stories": [
+      "US-SM-001",
+      "US-SM-002",
+      "US-SM-003",
+      "US-SM-004"
+    ],
+    "aggregates": [
+      "AuditTrail",
+      "PrivacyCase"
+    ],
+    "ubiquitousLanguage": [],
+    "dependencies": [],
+    "assumptions": [],
+    "sourceFile": "../source-evidence/story-bundle/index.json"
+  }
+]

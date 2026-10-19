@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>访客系统 · 功能模块地图（分层 1 + N + M）</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; background:#F0F7FF; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }
+  .wrap { max-width:min(1800px, 100%); margin:0 auto; padding:20px; }
+  h1 { text-align:center; color:#333333; margin-bottom:4px; }
+  p.sub { text-align:center; color:#666666; margin-top:0; }
+  .toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:10px 0 8px; }
+  .toolbar .spacer { flex:1; }
+  .toolbar button {
+    border:1px solid #D0D8E0; background:#fff; color:#333333;
+    border-radius:6px; padding:5px 12px; font-size:13px; cursor:pointer;
+    font-family:inherit; transition:background 0.15s,border-color 0.15s;
+  }
+  .toolbar button:hover { background:#EAF3FF; border-color:#2E5C8A; }
+  .toolbar button.active { background:#4A90D9; border-color:#4A90D9; color:#fff; }
+  .zoom-label { font-size:13px; color:#666666; min-width:52px; text-align:center; }
+  .hint { font-size:12px; color:#666666; }
+  .fit-note { display:flex; flex-direction:column; gap:4px; margin:0 0 8px; font-size:12px; color:#2E5C8A; }
+  .diagram {
+    position:relative; border:1px solid #D0D8E0; border-radius:8px; background:#fff;
+    overflow:auto; max-height:82vh; -webkit-overflow-scrolling:touch;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05); cursor:grab;
+  }
+  .diagram.dragging { cursor:grabbing; }
+  .diagram.panning .module-rect { pointer-events:none; }
+  .diagram svg { display:block; max-width:none; height:auto; }
+  .module-rect { cursor:pointer; transition:opacity 0.15s; }
+  .module-rect:hover { opacity:0.92; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+  .tooltip { position:fixed; background:rgba(30,58,95,0.95); color:#fff; padding:6px 10px; border-radius:6px; font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.15s; z-index:1000; white-space:nowrap; }
+  footer { text-align:center; margin-top:12px; font-size:12px; color:#666666; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>访客系统 · 功能模块地图（分层 1 + N + M）</h1>
+  <p class="sub">School Visitor Management System - Function Module Map</p>
+  <div class="toolbar">
+    <button id="zoom-out" title="缩小">−</button>
+    <span class="zoom-label" id="zoom-label">100%</span>
+    <button id="zoom-in" title="放大">＋</button>
+    <button id="zoom-fit" title="缩放到适合宽度">适合宽度</button>
+    <button id="zoom-reset" title="恢复 100%">100%</button>
+    <span class="spacer"></span>
+    <span class="hint">↔ 内容超出时可直接滚动 / 按住拖动查看</span>
+  </div>
+  
+  <div class="diagram" id="diagram">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1150">
+  <rect width="1800" height="1150" fill="#F0F7FF"/>
+  <defs>
+    <marker id="arrowhead-5B9BD5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#5B9BD5"/>
+    </marker>
+    <marker id="arrowhead-A0B4C8" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#A0B4C8"/>
+    </marker>
+  </defs>
+  <text x="900" y="40" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="22" fill="#333333" text-anchor="middle" font-weight="bold" dominant-baseline="middle">访客系统 · 功能模块地图（分层 1 + N + M）</text>
+
+  <text x="900" y="66" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#666666" text-anchor="middle" font-weight="normal" dominant-baseline="middle">School Visitor Management System - Function Module Map</text>
+
+  <rect x="36" y="118" width="1468" height="298" rx="12" ry="12" fill="#E8F1FA" stroke="#A0B4C8" stroke-width="1"/>
+
+  <rect x="46" y="107" width="40" height="22" rx="10" ry="10" fill="#4A90D9" stroke="#357ABD" stroke-width="1"/>
+
+  <text x="66" y="118" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">L1</text>
+
+  <text x="94" y="118" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="12" fill="#2E5C8A" text-anchor="start" font-weight="bold" dominant-baseline="middle">统一入口（1）</text>
+
+  <rect x="36" y="434" width="1468" height="298" rx="12" ry="12" fill="#E8F1FA" stroke="#A0B4C8" stroke-width="1"/>
+
+  <rect x="46" y="423" width="40" height="22" rx="10" ry="10" fill="#5B9BD5" stroke="#4A90D9" stroke-width="1"/>
+
+  <text x="66" y="434" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">L2</text>
+
+  <text x="94" y="434" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="12" fill="#2E5C8A" text-anchor="start" font-weight="bold" dominant-baseline="middle">业务模块（N）· 核心闭环</text>
+
+  <rect x="36" y="750" width="1468" height="298" rx="12" ry="12" fill="#E8F1FA" stroke="#A0B4C8" stroke-width="1"/>
+
+  <rect x="46" y="739" width="40" height="22" rx="10" ry="10" fill="#6AAFEA" stroke="#5B9BD5" stroke-width="1"/>
+
+  <text x="66" y="750" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#FFFFFF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">L3</text>
+
+  <text x="94" y="750" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="12" fill="#2E5C8A" text-anchor="start" font-weight="bold" dominant-baseline="middle">基础模块（M）· 支撑底座</text>
+
+  <line x1="770" y1="372" x2="150" y2="532" stroke="#5B9BD5" stroke-width="2" marker-end="url(#arrowhead-5B9BD5)"/>
+  <rect x="430" y="444" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#5B9BD5" stroke-width="1"/>
+
+  <text x="460" y="452" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#5B9BD5" text-anchor="middle" font-weight="normal" dominant-baseline="middle">发起预约</text>
+
+  <line x1="264" y1="610" x2="284" y2="610" stroke="#5B9BD5" stroke-width="2" marker-end="url(#arrowhead-5B9BD5)"/>
+  <rect x="244" y="602" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#5B9BD5" stroke-width="1"/>
+
+  <text x="274" y="610" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#5B9BD5" text-anchor="middle" font-weight="normal" dominant-baseline="middle">提交审核</text>
+
+  <line x1="512" y1="610" x2="532" y2="610" stroke="#5B9BD5" stroke-width="2" marker-end="url(#arrowhead-5B9BD5)"/>
+  <rect x="492" y="602" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#5B9BD5" stroke-width="1"/>
+
+  <text x="522" y="610" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#5B9BD5" text-anchor="middle" font-weight="normal" dominant-baseline="middle">核验放行</text>
+
+  <line x1="1008" y1="610" x2="532" y2="610" stroke="#A0B4C8" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arrowhead-A0B4C8)"/>
+  <rect x="740" y="602" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#A0B4C8" stroke-width="1"/>
+
+  <text x="770" y="610" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#A0B4C8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">出示凭证</text>
+
+  <line x1="760" y1="610" x2="1028" y2="610" stroke="#5B9BD5" stroke-width="2" marker-end="url(#arrowhead-5B9BD5)"/>
+  <rect x="864" y="602" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#5B9BD5" stroke-width="1"/>
+
+  <text x="894" y="610" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#5B9BD5" text-anchor="middle" font-weight="normal" dominant-baseline="middle">留痕入库</text>
+
+  <line x1="1256" y1="610" x2="1276" y2="610" stroke="#A0B4C8" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arrowhead-A0B4C8)"/>
+  <rect x="1236" y="602" width="60" height="16" rx="8" ry="8" fill="#FFFFFF" stroke="#A0B4C8" stroke-width="1"/>
+
+  <text x="1266" y="610" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#A0B4C8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">汇总统计</text>
+
+  <rect x="612" y="218" width="320" height="156" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="610" y="216" width="320" height="156" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="611" y="217" width="318" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="626" cy="231" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="640" y="224" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">PT 统一门户 / 工作台</text>
+
+  <text x="624" y="258" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 统一登录与身份识别</text>
+
+  <text x="624" y="280" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 角色工作台路由</text>
+
+  <text x="624" y="302" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 我的待办聚合</text>
+
+  <text x="624" y="324" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 通知与消息入口</text>
+
+  <rect x="38" y="534" width="228" height="156" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="36" y="532" width="228" height="156" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="37" y="533" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="52" cy="547" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="66" y="540" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">AP 访客预约</text>
+
+  <text x="50" y="574" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 提交来访预约</text>
+
+  <text x="50" y="596" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 预约信息校验</text>
+
+  <text x="50" y="618" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 预约修改 / 取消</text>
+
+  <text x="50" y="640" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 预约状态跟踪</text>
+
+  <rect x="286" y="545" width="228" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="284" y="543" width="228" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="285" y="544" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="300" cy="558" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="314" y="551" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">AT 被访人审核</text>
+
+  <text x="298" y="585" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 待审核列表（仅本人）</text>
+
+  <text x="298" y="607" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 审核处理：同意/拒绝/改期</text>
+
+  <text x="298" y="629" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 批量与快捷处理</text>
+
+  <rect x="534" y="523" width="228" height="178" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="532" y="521" width="228" height="178" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="533" y="522" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="548" cy="536" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="562" y="529" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">GV 门卫核验放行</text>
+
+  <text x="546" y="563" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 现场核验</text>
+
+  <text x="546" y="585" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 放行 / 登记</text>
+
+  <text x="546" y="607" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 访客凭证核销</text>
+
+  <text x="546" y="629" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 进校 / 离校登记</text>
+
+  <text x="546" y="651" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 异常上报</text>
+
+  <rect x="782" y="545" width="228" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="780" y="543" width="228" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="781" y="544" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="796" cy="558" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="810" y="551" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">VS 访客门户·我的预约与凭证</text>
+
+  <text x="794" y="585" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 我的预约（仅本人）</text>
+
+  <text x="794" y="607" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 访客凭证展示</text>
+
+  <text x="794" y="629" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 安全告知确认</text>
+
+  <rect x="1030" y="545" width="228" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="1028" y="543" width="228" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="1029" y="544" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="1044" cy="558" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="1058" y="551" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">LG 访客台账与查询</text>
+
+  <text x="1042" y="585" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 访客台账（核心留痕）</text>
+
+  <text x="1042" y="607" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 多条件查询 / 检索</text>
+
+  <text x="1042" y="629" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 导出 / 打印</text>
+
+  <rect x="1278" y="545" width="228" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="1276" y="543" width="228" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="1277" y="544" width="226" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="1292" cy="558" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="1306" y="551" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">AN 统计分析</text>
+
+  <text x="1290" y="585" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 来访量统计</text>
+
+  <text x="1290" y="607" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 异常统计</text>
+
+  <text x="1290" y="629" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 看板概览</text>
+
+  <rect x="102" y="861" width="320" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="100" y="859" width="320" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="101" y="860" width="318" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="116" cy="874" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="130" y="867" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">OR 组织与用户·角色权限</text>
+
+  <text x="114" y="901" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 用户 / 账号管理</text>
+
+  <text x="114" y="923" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 角色与权限</text>
+
+  <text x="114" y="945" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 数据范围控制（对象级隔离）</text>
+
+  <rect x="442" y="839" width="320" height="178" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="440" y="837" width="320" height="178" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="441" y="838" width="318" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="456" cy="852" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="470" y="845" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">BD 主数据</text>
+
+  <text x="454" y="879" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 访客类型管理</text>
+
+  <text x="454" y="901" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 黑名单管理</text>
+
+  <text x="454" y="923" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 时段规则管理</text>
+
+  <text x="454" y="945" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 校门 / 通行点管理</text>
+
+  <text x="454" y="967" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 被访人 / 教职工名册</text>
+
+  <rect x="782" y="861" width="320" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="780" y="859" width="320" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="781" y="860" width="318" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="796" cy="874" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="810" y="867" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">NT 通知消息</text>
+
+  <text x="794" y="901" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 流转通知</text>
+
+  <text x="794" y="923" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 异常提醒</text>
+
+  <text x="794" y="945" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 通知渠道（站内/短信/企微）</text>
+
+  <rect x="1122" y="861" width="320" height="134" rx="8" ry="8" fill="#D0D8E0"/>
+
+  <rect x="1120" y="859" width="320" height="134" rx="8" ry="8" fill="#FFFFFF" stroke="#D0D8E0" stroke-width="1" class="module-rect"/>
+
+  <rect x="1121" y="860" width="318" height="32" rx="8" ry="8" fill="#4A90D9"/>
+
+  <circle cx="1136" cy="874" r="8" fill="#FFFFFF" opacity="0.9"/>
+
+  <text x="1150" y="867" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">SM 系统管理</text>
+
+  <text x="1134" y="901" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 操作日志 / 留痕</text>
+
+  <text x="1134" y="923" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 参数配置</text>
+
+  <text x="1134" y="945" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 数据字典</text>
+
+  <rect x="1504" y="118" width="260" height="948" rx="10" ry="10" fill="#2E5C8A"/>
+
+  <rect x="1504" y="118" width="260" height="40" rx="10" ry="10" fill="#1E3A5F"/>
+
+  <text x="1538" y="128" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="13" fill="#FFFFFF" text-anchor="start" font-weight="bold" dominant-baseline="hanging">横切能力</text>
+
+  <text x="1518" y="168" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#FCD34D" text-anchor="start" font-weight="bold" dominant-baseline="hanging">安全留痕</text>
+
+  <text x="1526" y="186" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 操作日志</text>
+
+  <text x="1526" y="202" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 异常上报</text>
+
+  <text x="1526" y="218" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 台账留痕</text>
+
+  <text x="1518" y="242" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#FCD34D" text-anchor="start" font-weight="bold" dominant-baseline="hanging">权限边界</text>
+
+  <text x="1526" y="260" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 对象级隔离</text>
+
+  <text x="1526" y="276" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 服务端强制</text>
+
+  <text x="1526" y="292" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="start" font-weight="normal" dominant-baseline="hanging">· 代登录只读</text>
+
+  <line x1="36" y1="1080" x2="56" y2="1080" stroke="#5B9BD5" stroke-width="2"/>
+  <text x="58" y="1074" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">核心闭环流</text>
+
+  <line x1="137" y1="1080" x2="157" y2="1080" stroke="#A0B4C8" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="159" y="1074" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="11" fill="#333333" text-anchor="start" font-weight="normal" dominant-baseline="hanging">辅助 / 查询流</text>
+
+</svg>
+  </div>
+  <footer>鼠标悬停模块可查看名称，按住拖动或滚动可平移查看，右键可保存 SVG/PNG。</footer>
+</div>
+<div class="tooltip" id="tip"></div>
+<script>
+(function() {
+  const NAT_W = 1800, NAT_H = 1150;
+  const diagram = document.getElementById('diagram');
+  const svg = diagram.querySelector('svg');
+  const label = document.getElementById('zoom-label');
+  const btnFit = document.getElementById('zoom-fit');
+  const btnReset = document.getElementById('zoom-reset');
+  let zoom = 1;
+
+  function apply() {
+    svg.setAttribute('width', Math.round(NAT_W * zoom));
+    svg.setAttribute('height', Math.round(NAT_H * zoom));
+    label.textContent = Math.round(zoom * 100) + '%';
+    btnFit.classList.toggle('active', Math.abs(zoom - fitZoom()) < 0.01);
+    btnReset.classList.toggle('active', Math.abs(zoom - 1) < 0.01);
+  }
+
+  function fitZoom() {
+    const avail = diagram.clientWidth - 2;
+    return Math.min(1, Math.max(0.1, avail / NAT_W));
+  }
+
+  function setZoom(z) { zoom = Math.min(4, Math.max(0.1, z)); apply(); }
+
+  document.getElementById('zoom-in').addEventListener('click', function() { setZoom(zoom * 1.2); });
+  document.getElementById('zoom-out').addEventListener('click', function() { setZoom(zoom / 1.2); });
+  btnReset.addEventListener('click', function() { setZoom(1); });
+  btnFit.addEventListener('click', function() { setZoom(fitZoom()); });
+
+  // Ctrl/⌘ + wheel zooms; plain wheel scrolls natively.
+  diagram.addEventListener('wheel', function(e) {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      setZoom(zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1));
+    }
+  }, { passive:false });
+
+  // Drag to pan
+  let dragging = false, startX = 0, startY = 0, startL = 0, startT = 0;
+  diagram.addEventListener('pointerdown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true; startX = e.clientX; startY = e.clientY;
+    startL = diagram.scrollLeft; startT = diagram.scrollTop;
+    diagram.classList.add('dragging', 'panning');
+    diagram.setPointerCapture(e.pointerId);
+  });
+  diagram.addEventListener('pointermove', function(e) {
+    if (!dragging) return;
+    diagram.scrollLeft = startL - (e.clientX - startX);
+    diagram.scrollTop = startT - (e.clientY - startY);
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    diagram.classList.remove('dragging', 'panning');
+    try { diagram.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+  diagram.addEventListener('pointerup', endDrag);
+  diagram.addEventListener('pointercancel', endDrag);
+
+  window.addEventListener('resize', function() {
+    if (btnFit.classList.contains('active')) setZoom(fitZoom());
+  });
+
+  apply();
+
+  // Hover tooltips
+  const tip = document.getElementById('tip');
+  const rects = document.querySelectorAll('rect.module-rect');
+  rects.forEach(function(rect) {
+    let sibling = rect.nextElementSibling;
+    let title = '';
+    while (sibling) {
+      if (sibling.tagName === 'text' && sibling.getAttribute('font-weight') === 'bold') {
+        title = sibling.textContent; break;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    rect.addEventListener('mouseenter', function() {
+      tip.textContent = title || '模块';
+      tip.style.opacity = '1';
+    });
+    rect.addEventListener('mousemove', function(e) {
+      tip.style.left = (e.clientX + 12) + 'px';
+      tip.style.top = (e.clientY + 12) + 'px';
+    });
+    rect.addEventListener('mouseleave', function() { tip.style.opacity = '0'; });
+  });
+})();
+</script>
+</body>
+</html>

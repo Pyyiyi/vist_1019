@@ -1,0 +1,15 @@
+{
+  "storyId": "US-AT-001",
+  "title": "待审核列表（对象级隔离）",
+  "acceptanceCriteria": [
+    "host **仅见本人**相关预约；admin **见全校**（兜底）。",
+    "越权读他人预约返回 **403** 并**写「越权拦截」审计**。"
+  ],
+  "sourceDocument": "访客系统 V1.0 用户故事（DDD证据快照）",
+  "actor": "被访教职工",
+  "capability": "只看到与我相关的待审核预约；作为 管理员，我希望 看到全校兜底",
+  "value": "完成审核",
+  "priority": "P0",
+  "traceability": "REQ-AT-001（§3.22）",
+  "page": "原型 #page-at"
+}
