@@ -16,6 +16,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "compression": "^1.7.5",
     "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
@@ -31,6 +32,7 @@
     "tsx": "^4.23.15"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.7.5",
     "@types/connect-pg-simple": "^7.0.3",
     "@types/cookie-parser": "^1.4.8",

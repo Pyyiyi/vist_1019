@@ -8,11 +8,13 @@ import '@/styles/reset.css';
 import '@/styles/tokens.css';
 import '@/styles/print.css';
 import App from './App.vue';
+import router from '@/router';
 
 dayjs.locale('zh-cn');
 
 const app = createApp(App);
 
 app.use(createPinia());
+app.use(router);
 app.use(Antd);
 app.mount('#app');
