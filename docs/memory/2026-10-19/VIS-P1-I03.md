@@ -27,8 +27,8 @@
 ```text
 backend report tests: 12 passed
 mask + report tests:  20 passed
-backend full:         81 passed
-frontend full:        37 passed
+backend full:         93 passed (post-merge)
+frontend full:        45 passed (post-merge)
 backend typecheck:    passed
 backend build:        passed
 frontend build:       passed

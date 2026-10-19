@@ -24,13 +24,13 @@ passed
 $ cd frontend && npm run build
 vue-tsc --noEmit && vite build passed
 
-$ cd backend && npx vitest run   # fresh visitor_system_test database
-Test Files  14 passed (14)
-Tests       81 passed (81)
+$ cd backend && npx vitest run   # fresh visitor_system_test database, post-merge
+Test Files  16 passed (16)
+Tests       93 passed (93)
 
-$ cd frontend && npm test
-Test Files  6 passed (6)
-Tests       37 passed (37)
+$ cd frontend && npm test           # post-merge
+Test Files  7 passed (7)
+Tests       45 passed (45)
 ```
 
 ## 环境说明
