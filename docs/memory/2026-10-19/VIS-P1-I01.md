@@ -24,7 +24,7 @@
 ```text
 backend typecheck/build: passed
 backend master tests:    8 passed
-backend full tests:      77 passed
+backend full tests:      89 passed
 frontend typecheck/build: passed
 browser: five sections rendered; status confirm + COPY-009; settings save loading; both pages offline retry; one-section empty; 1024px no document overflow
 ```

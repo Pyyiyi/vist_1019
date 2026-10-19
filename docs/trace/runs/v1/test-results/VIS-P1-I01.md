@@ -34,8 +34,8 @@ $ cd frontend && npm run build
 全部通过
 
 全量后端回归（临时将 vitest 测试库指向隔离端口，执行后已还原）：
-Test Files  13 passed (13)
-Tests       77 passed (77)
+Test Files  15 passed (15)
+Tests       89 passed (89)
 ```
 
 前端浏览器自动化通过 Playwright 执行，覆盖登录、五分区渲染、停用/启用确认、COPY-009、参数保存 loading、两页离线态、单分区空态、aria-label 与 1024px 宽度检查。
