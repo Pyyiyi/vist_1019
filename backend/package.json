@@ -12,6 +12,7 @@
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
     "migrate": "tsx src/shared/db/migrate.ts",
+    "seed": "tsx src/shared/db/seed.ts",
     "test": "vitest run"
   },
   "dependencies": {
@@ -26,7 +27,8 @@
     "node-cron": "^3.0.3",
     "pg": "^8.13.1",
     "qrcode": "^1.5.4",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",
@@ -42,7 +44,6 @@
     "@types/supertest": "^6.0.3",
     "socket.io-client": "^4.8.4",
     "supertest": "^7.0.0",
-    "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"
   }
