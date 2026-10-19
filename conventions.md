@@ -900,3 +900,44 @@ host 的“本人相关”指 `host_id = 当前用户 host_id` 或 `reviewer_id 
 - 每个配置项给出唯一确定值；不出现两可表述。
 - 不配置开发/生产分支；环境差异只由 `.env` 变量表达。
 - 新增字段、端点、文案时，先回写本文件与 `spac.md`，再实现。
+
+---
+
+## 约定 16 · 状态刷新涌现约定（VIS-P2-I03）
+
+### 16.1 契约以实际代码为事实
+
+- 端点以 `backend/src/modules/*/api/*.routes.ts` 为事实，DDL 以 `backend/db/migrations/*.sql` 为事实，事件以通知生产/消费代码为事实，路由以 `frontend/src/views/*/routes.ts` 与 `frontend/src/nav/navigation.ts` 为事实，导出以实际 `index.ts`/源码为事实。
+- 代码与早期设计不一致时，先刷新 `contracts/` 并在 `docs/trace/runs/v1/state-refresh-report.md` 登记差异，不修改业务代码来迎合旧契约。
+- `contracts/schema.sql` 必须按文件名顺序逐字拼接全部迁移文件；新增迁移后同时更新本契约与 `contracts/naming.yaml` 的来源。
+
+### 16.2 权限点三层事实
+
+- 种子权限 `backend/db/seeds/00-anchors.sql`、运行时白名单 `backend/src/shared/auth/permissions.ts`、路由检查 `*.routes.ts` 必须分层核对；任一新增路由权限点都必须同时登记到运行时白名单与种子。
+- `requireAdmin` 只校验 admin 角色，不声明 `x-required-permission`；`requirePermission(code)` 必须在 OpenAPI 中登记实际 code。
+- 现有 `system:audit:read`、`system:privacy:read`、`system:privacy:update` 只出现在路由检查中，属于待收敛差异，不得复制为新增接口的默认写法。
+
+### 16.3 HTTP 与事件命名边界
+
+- 后端 HTTP DTO 与契约 JSON 键使用 snake_case；前端 `api/client.ts` 在请求前统一转 snake_case、响应读取时统一转 camelCase。
+- Socket.IO `notification:new` 的运行时载荷键为 `id`、`title`、`templateType`、`createdAt`；契约登记规范化键 `id`、`title`、`template_type`、`created_at`，并在 `events.yaml` 保留运行时键清单。
+
+### 16.4 前端路由与导航
+
+- 视图路由通过 `import.meta.glob('@/views/*/routes.ts', { eager: true })` 自动发现；同一路径只允许一个有效定义。
+- H5 路由使用 `layout: h5` 并在认证守卫中直接放行；H5 页面不依赖后台角色，访客数据接口使用令牌中间件。
+- 一级导航仅由 `frontend/src/nav/navigation.ts` 写入；路由标题、角色与导航标题必须分别取自路由 `meta` 与导航对象。
+- 当前 `/h5/privacy` 在 compliance 与 visit 两处重复定义，后续必须收敛为单一文件；在该债务消除前，`routes.yaml` 必须保留重复定义记录。
+
+### 16.5 实时通知与幂等
+
+- Socket.IO 服务路径是 `/ws`，使用默认命名空间 `/`，客户端通过后台会话 Cookie 握手；未认证连接断开。
+- `notification:new` 只对 `recipient_type=user` 且实际插入成功的通知发送；重复插入被 `ON CONFLICT DO NOTHING` 或超时任务检查抑制时不发送事件。
+- H5 不建立 WebSocket，也没有定时轮询；页面加载与用户动作按需请求 HTTP 接口。
+- 超时未离通知受 `uq_notifications_overdue_daily` 约束：同一 `business_id`、`recipient_id` 与上海本地日期最多一条。
+
+### 16.6 跨上下文调用
+
+- 门面写入只允许 `visit → notify`、`visit → master`、`compliance → visit` 的已登记方法。
+- 现存 `access → master.hosts`、`notify → visit.appointments`、`compliance → master.system_config` 直接 SQL 写入属于债务；新代码不得扩展，新增读取必须保持 `SELECT` 且使用绑定实体 id。
+- 新增跨上下文门面方法或直接只读 SQL 时，必须同步更新 `contracts/cross-context-writes.md` 与实际 `index.ts`。

@@ -1,40 +1,64 @@
-version: 1
+version: 2
 canonical_event:
-  source: producers[0].event
+  name: notification:new
+  source: backend/src/realtime/io.ts#emitNotification
   transport: socket.io
-  namespace: /ws
+  path: /ws
+  namespace: /
   room_template: "user:<recipient_id>"
-  handshake: 后台会话 Cookie；未认证连接断开
-  h5_policy: H5 不建立 WebSocket；页面加载与 30 秒轮询兜底
+  handshake: 后台会话 Cookie；未认证连接在握手阶段被拒绝
+  recipient_policy: 仅 recipient_type=user 且实际插入成功的通知发送事件；访客通知只落库，不建立实时连接
+  h5_policy: H5 不建立 WebSocket；页面加载和用户动作按需发起 HTTP 请求，无定时轮询
 
 delivery:
-  ordering: 通知写入事务提交后发送
+  ordering: notifications 直接写入返回后发送；超时未离任务在事务提交后发送
   failure_mode: 实时发送失败不回滚已提交的通知记录
+  deduplication: ON CONFLICT DO NOTHING；未实际插入的重复通知不发送事件
   reconnect: 客户端重连后通过 GET /api/v1/notifications/unread-count 与列表接口校准
 
 producers:
   - event: notification:new
     context: notify
-    point: publishNotification 或 publishSecurityNotification 写入 notifications 成功后调用 emitNotification
+    point: publishNotification 或 publishSecurityNotification 实际插入 notifications 后调用 emitNotification
     symbols:
       - backend/src/modules/notify/index.ts#publishNotification
       - backend/src/modules/notify/index.ts#publishSecurityNotification
       - backend/src/realtime/io.ts#emitNotification
     room: "user:<recipient_id>"
-    trigger: 任意后台用户通知写入成功；安全类通知同样发送
+    trigger: recipient_type=user 的通知插入成功；安全类通知同样发送
+  - event: notification:new
+    context: notify
+    point: runOverdueJob 在同一事务插入每位接收人的通知后逐条调用 emitNotification
+    symbols:
+      - backend/src/modules/notify/index.ts#runOverdueJob
+      - backend/src/realtime/io.ts#emitNotification
+    room: "user:<recipient_id>"
+    trigger: 超时未离每日每接收人唯一通知实际插入成功
 
 consumers:
   - event: notification:new
     context: frontend
-    point: AppLayout 未读徽标与通知中心列表
+    point: AppLayout 建立连接并显示未读徽标；通知 store 接收事件后插入列表并更新未读数
     symbols:
       - frontend/src/layouts/AppLayout.vue
       - frontend/src/stores/notification.ts#useNotificationStore
       - frontend/src/realtime/socket.ts#connectRealtime
-    behavior: 收到事件后未读数加一；通知中心打开时刷新列表
+    behavior: 收到事件后按 id 去重；新通知插入列表并加一，已读记录被新事件重新置为未读
+  - event: notification:new
+    context: frontend
+    point: 通知中心页面挂载时读取列表与未读数，并消费同一通知 store 的实时更新
+    symbols:
+      - frontend/src/views/notify/NotificationsPage.vue
+      - frontend/src/stores/notification.ts#useNotificationStore
+    behavior: 页面加载调用 GET /notifications 与 GET /notifications/unread-count；事件更新由共享 store 反映
 
 payload:
-  required:
+  contract_keys:
+    - id
+    - title
+    - template_type
+    - created_at
+  runtime_wire_keys:
     - id
     - title
     - templateType
@@ -45,7 +69,7 @@ payload:
       format: uuid
     title:
       type: string
-    templateType:
+    template_type:
       type: string
       enum:
         - 提交通知
@@ -55,6 +79,7 @@ payload:
         - 到访提醒
         - 黑名单命中
         - 超时未离
-    createdAt:
+    created_at:
       type: string
       format: date-time
+  note: 运行时 Socket.IO 载荷沿用 templateType/createdAt；契约 JSON 键统一登记为 snake_case，差异记录于状态刷新报告。

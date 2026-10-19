@@ -1,7 +1,7 @@
-version: 1
+version: 2
 sources:
-  tables: backend/db/migrations/*.sql
-  permissions: roles.md
+  tables: backend/db/migrations/001-shared.sql ... 006-notify-idempotency.sql
+  permissions: backend/db/seeds/00-anchors.sql、backend/src/shared/auth/permissions.ts、backend/src/modules/*/api/*.routes.ts
   copy: conventions.md §12.2
   rules: conventions.md §6
 rules:
@@ -345,237 +345,1007 @@ soft_references:
   notifications.recipient_id: users.id 或 appointments.id
   privacy_cases.appointment_id: appointments.id
 permissions:
-- code: pt:workbench:read
-  name: 查看工作台
-  grants:
-    admin: true
-    guard: true
-    host: true
-    visitor: false
-- code: pt:qr:manage
-  name: 管理入口二维码
-  grants:
-    admin: true
-    guard: false
-    host: false
-    visitor: false
-- code: visit:appointment:create
-  name: 代提预约
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:appointment:read
-  name: 查看预约
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:appointment:update
-  name: 改期预约
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:appointment:cancel
-  name: 取消预约
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:review:read
-  name: 查看审核
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:review:decide
-  name: 审核决定
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:review:reschedule
-  name: 提议改期
-  grants:
-    admin: true
-    guard: false
-    host: true
-    visitor: false
-- code: visit:gate:today:read
-  name: 查看当日门口
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:verify
-  name: 现场核验
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:admit
-  name: 放行登记
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:depart
-  name: 离校登记
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:walkin
-  name: 现场登记
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:incident:report
-  name: 上报异常
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: visit:gate:incident:dispose
-  name: 处置异常
-  grants:
-    admin: true
-    guard: false
-    host: false
-    visitor: false
-- code: report:ledger:read
-  name: 查看台账
-  grants:
-    admin: true
-    guard: true
-    host: false
-    visitor: false
-- code: report:ledger:export
-  name: 导出台账
-  grants:
-    admin: true
-    guard: false
-    host: false
-    visitor: false
-- code: report:stats:read
-  name: 查看统计
-  grants:
-    admin: true
-    guard: false
-    host: false
-    visitor: false
-- code: access:user:manage
-  name: 管理账号
-  grants:
-    admin: true
-    guard: false
-    host: false
-    visitor: false
 - code: access:role:read
   name: 查看角色权限
-  grants:
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
-- code: master:visitor-type:manage
-  name: 管理访客类型
-  grants:
+  runtime_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  used_by:
+  - GET /roles
+  - GET /roles/:code/permissions
+- code: access:user:manage
+  name: 管理账号
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /users/:id
+  - GET /users
+  - POST /users
+  - PUT /users/:id
+  - PUT /users/:id/password
+  - PUT /users/:id/status
+- code: compliance:audit:read
+  name: 查看操作日志
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: compliance:privacy:manage
+  name: 管理个人信息
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:blacklist:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /master/blacklist
+- code: master:blacklist:delete
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /master/blacklist/:id
 - code: master:blacklist:manage
   name: 管理黑名单
-  grants:
+  sources:
+  - seed
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
-- code: master:time-rule:manage
-  name: 管理时段规则
-  grants:
+  runtime_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  used_by: []
+- code: master:blacklist:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /master/blacklist
+- code: master:gate:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /master/gates
 - code: master:gate:manage
   name: 管理校门
-  grants:
+  sources:
+  - seed
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:gate:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /master/gates
+- code: master:gate:status
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /master/gates/:id
+  - PUT /master/gates/:id/status
+- code: master:gate:update
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - PUT /master/gates/:id
+- code: master:host:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /master/hosts
 - code: master:host:manage
   name: 管理教职工名册
-  grants:
+  sources:
+  - seed
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:host:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /master/hosts
+- code: master:host:status
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /master/hosts/:id
+  - PUT /master/hosts/:id/status
+- code: master:host:update
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - PUT /master/hosts/:id
 - code: master:reviewer-rule:manage
   name: 管理审核人配置
-  grants:
+  sources:
+  - seed
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:time-rule:manage
+  name: 管理时段规则
+  sources:
+  - seed
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:time_rule:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /master/time-rules
+- code: master:time_rule:delete
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /master/time-rules/:id
+- code: master:time_rule:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /master/time-rules
+- code: master:visitor-type:manage
+  name: 管理访客类型
+  sources:
+  - seed
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: master:visitor_type:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /master/visitor-types
+- code: master:visitor_type:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /master/visitor-types
+- code: master:visitor_type:status
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - DELETE /master/visitor-types/:id
+  - PUT /master/visitor-types/:id/status
+- code: master:visitor_type:update
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - PUT /master/visitor-types/:id
+- code: notify:channel:manage
+  name: 配置通知渠道
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /system/notification-channels
+  - PUT /system/notification-channels
 - code: notify:notification:read
   name: 查看站内消息
-  grants:
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
     admin: true
     guard: true
     host: true
     visitor: false
-- code: notify:channel:manage
-  name: 配置通知渠道
-  grants:
+  runtime_grants:
+    admin: true
+    guard: true
+    host: true
+    visitor: false
+  used_by:
+  - GET /notifications
+  - GET /notifications/unread-count
+  - PUT /notifications/:id/read
+  - PUT /notifications/read-all
+- code: pt:qr:manage
+  name: 管理入口二维码
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
-- code: system:param:manage
-  name: 管理系统参数
-  grants:
+  runtime_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  used_by: []
+- code: pt:workbench:read
+  name: 查看工作台
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: true
+    visitor: false
+  used_by:
+  - GET /workbench/summary
+- code: report:ledger:export
+  name: 导出台账
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /logs/export
+- code: report:ledger:read
+  name: 查看台账
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - GET /logs
+  - GET /logs/on-campus
+- code: report:stats:read
+  name: 查看统计
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /stats/incidents
+  - GET /stats/visits
+- code: system:audit:read
+  sources:
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /audit-logs
+- code: system:dictionary:create
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /system/dictionary
 - code: system:dictionary:manage
   name: 管理数据字典
-  grants:
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
     admin: true
     guard: false
     host: false
     visitor: false
-- code: compliance:audit:read
-  name: 查看操作日志
-  grants:
+  runtime_grants:
     admin: true
     guard: false
     host: false
     visitor: false
-- code: compliance:privacy:manage
-  name: 管理个人信息
-  grants:
+  used_by: []
+- code: system:dictionary:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
     admin: true
     guard: false
     host: false
     visitor: false
+  used_by:
+  - GET /system/dictionary
+- code: system:dictionary:status
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - PUT /system/dictionary/:id/status
+- code: system:param:manage
+  name: 管理系统参数
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: system:param:read
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /system/params
+- code: system:param:update
+  sources:
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - PUT /system/params/:key
+- code: system:privacy:read
+  sources:
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - GET /privacy/cases
+  - GET /privacy/retention
+- code: system:privacy:update
+  sources:
+  - route
+  seed_grants:
+    admin: false
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by:
+  - POST /privacy/appointments/:id/erase
+  - PUT /privacy/retention
+- code: visit:appointment:cancel
+  name: 取消预约
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - PUT /appointments/:id/cancel
+- code: visit:appointment:create
+  name: 代提预约
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - POST /appointments
+- code: visit:appointment:read
+  name: 查看预约
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - GET /appointments
+  - GET /appointments/:id
+  - GET /appointments/form-options
+- code: visit:appointment:update
+  name: 改期预约
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - PUT /appointments/:id/reschedule
+- code: visit:gate:admit
+  name: 放行登记
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - POST /gate/admit
+- code: visit:gate:depart
+  name: 离校登记
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - POST /gate/depart
+- code: visit:gate:incident:dispose
+  name: 处置异常
+  sources:
+  - seed
+  - runtime_whitelist
+  seed_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: false
+    visitor: false
+  used_by: []
+- code: visit:gate:incident:report
+  name: 上报异常
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - GET /gate/incidents
+  - POST /gate/incidents
+- code: visit:gate:today:read
+  name: 查看当日门口
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - GET /gate/today
+- code: visit:gate:verify
+  name: 现场核验
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - GET /gate/form-options
+  - POST /gate/verify
+- code: visit:gate:walkin
+  name: 现场登记
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: true
+    host: false
+    visitor: false
+  used_by:
+  - POST /gate/walk-in
+- code: visit:review:decide
+  name: 审核决定
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - POST /reviews/:id/approve
+  - POST /reviews/:id/reject
+- code: visit:review:read
+  name: 查看审核
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - GET /reviews
+  - GET /reviews/:id
+  - GET /reviews/:id/logs
+- code: visit:review:reschedule
+  name: 提议改期
+  sources:
+  - seed
+  - runtime_whitelist
+  - route
+  seed_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  runtime_grants:
+    admin: true
+    guard: false
+    host: true
+    visitor: false
+  used_by:
+  - POST /reviews/:id/reschedule
 copy_registry:
 - id: COPY-001
   scenario: 未登录访问受保护接口
@@ -1798,3 +2568,69 @@ copy_registry:
 - id: COPY-407
   scenario: 导航 · 系统管理
   text: 系统管理
+permission_drift:
+  route_codes_not_in_runtime_whitelist:
+  - system:audit:read
+  - system:privacy:read
+  - system:privacy:update
+  route_codes_not_in_seed:
+  - master:blacklist:create
+  - master:blacklist:delete
+  - master:blacklist:read
+  - master:gate:create
+  - master:gate:read
+  - master:gate:status
+  - master:gate:update
+  - master:host:create
+  - master:host:read
+  - master:host:status
+  - master:host:update
+  - master:time_rule:create
+  - master:time_rule:delete
+  - master:time_rule:read
+  - master:visitor_type:create
+  - master:visitor_type:read
+  - master:visitor_type:status
+  - master:visitor_type:update
+  - system:audit:read
+  - system:dictionary:create
+  - system:dictionary:read
+  - system:dictionary:status
+  - system:param:read
+  - system:param:update
+  - system:privacy:read
+  - system:privacy:update
+  seed_codes_not_used_by_routes:
+  - compliance:audit:read
+  - compliance:privacy:manage
+  - master:blacklist:manage
+  - master:gate:manage
+  - master:host:manage
+  - master:reviewer-rule:manage
+  - master:time-rule:manage
+  - master:visitor-type:manage
+  - pt:qr:manage
+  - system:dictionary:manage
+  - system:param:manage
+  - visit:gate:incident:dispose
+  runtime_whitelist_codes_not_used_by_routes:
+  - compliance:audit:read
+  - compliance:privacy:manage
+  - pt:qr:manage
+  - system:dictionary:manage
+  - system:param:manage
+  - visit:gate:incident:dispose
+unique_indexes:
+- name: uq_notifications_overdue_daily
+  table: notifications
+  columns:
+  - business_id
+  - recipient_id
+  - local_created_date
+  predicate: template_type = '超时未离'
+  source: backend/db/migrations/006-notify-idempotency.sql
+permission_inventory:
+  seed: 33
+  runtime_whitelist: 50
+  route_checks: 47
+  union: 59
