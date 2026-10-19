@@ -41,7 +41,12 @@ export async function getConfigNumber(key: string): Promise<number> {
   return parsed;
 }
 
-export async function setConfig(key: string, value: string, actorId: string): Promise<void> {
+export async function setConfig(
+  key: string,
+  value: string,
+  actorId: string,
+  audit: { userName?: string; ip?: string | null } = {},
+): Promise<void> {
   await withTransaction(async (client: PoolClient) => {
     const previousResult = await client.query<ConfigRow>(
       'SELECT config_value FROM system_config WHERE config_key = $1 FOR UPDATE',
@@ -59,13 +64,14 @@ export async function setConfig(key: string, value: string, actorId: string): Pr
 
     await writeAudit(client, {
       userId: actorId,
-      userName: actorId,
+      userName: audit.userName ?? actorId,
       objectType: 'system_config',
       objectId: key,
       action: '修改参数',
       result: '成功',
       before: { config_value: previous },
       after: { config_value: value },
+      ip: audit.ip ?? null,
     });
   });
 

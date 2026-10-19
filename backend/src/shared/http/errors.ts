@@ -29,8 +29,8 @@ export function notFound(message = MESSAGES.NOT_FOUND): AppError {
   return new AppError(404, 40401, message);
 }
 
-export function conflict(message = MESSAGES.CONFLICT): AppError {
-  return new AppError(409, 40901, message);
+export function conflict(message = MESSAGES.CONFLICT, field?: string): AppError {
+  return new AppError(409, 40901, message, field);
 }
 
 export function methodNotAllowed(message = MESSAGES.METHOD_NOT_ALLOWED): AppError {
