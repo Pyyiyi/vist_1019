@@ -1,0 +1,60 @@
+version: 1
+canonical_event:
+  source: producers[0].event
+  transport: socket.io
+  namespace: /ws
+  room_template: "user:<recipient_id>"
+  handshake: 后台会话 Cookie；未认证连接断开
+  h5_policy: H5 不建立 WebSocket；页面加载与 30 秒轮询兜底
+
+delivery:
+  ordering: 通知写入事务提交后发送
+  failure_mode: 实时发送失败不回滚已提交的通知记录
+  reconnect: 客户端重连后通过 GET /api/v1/notifications/unread-count 与列表接口校准
+
+producers:
+  - event: notification:new
+    context: notify
+    point: publishNotification 或 publishSecurityNotification 写入 notifications 成功后调用 emitNotification
+    symbols:
+      - backend/src/modules/notify/index.ts#publishNotification
+      - backend/src/modules/notify/index.ts#publishSecurityNotification
+      - backend/src/realtime/io.ts#emitNotification
+    room: "user:<recipient_id>"
+    trigger: 任意后台用户通知写入成功；安全类通知同样发送
+
+consumers:
+  - event: notification:new
+    context: frontend
+    point: AppLayout 未读徽标与通知中心列表
+    symbols:
+      - frontend/src/layouts/AppLayout.vue
+      - frontend/src/stores/notification.ts#useNotificationStore
+      - frontend/src/realtime/socket.ts#connectRealtime
+    behavior: 收到事件后未读数加一；通知中心打开时刷新列表
+
+payload:
+  required:
+    - id
+    - title
+    - templateType
+    - createdAt
+  properties:
+    id:
+      type: string
+      format: uuid
+    title:
+      type: string
+    templateType:
+      type: string
+      enum:
+        - 提交通知
+        - 审核结果
+        - 改期提议
+        - 改期确认结果
+        - 到访提醒
+        - 黑名单命中
+        - 超时未离
+    createdAt:
+      type: string
+      format: date-time
