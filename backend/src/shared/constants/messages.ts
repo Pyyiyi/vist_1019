@@ -30,6 +30,7 @@ export const MESSAGES: Record<string, string> = {
   TOO_MANY_REQUESTS: COPY_MESSAGES['COPY-012'],
   INTERNAL_ERROR: COPY_MESSAGES['COPY-013'],
   SERVER_ERROR: COPY_MESSAGES['COPY-013'],
+  CSRF_INVALID: '安全校验已失效，请刷新页面后重试',
 };
 
 for (const [copyId, message] of Object.entries(COPY_MESSAGES)) {
