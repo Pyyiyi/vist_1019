@@ -1,311 +1,451 @@
-version: 1
-source: docs/trace/runs/v1/spac.md §4.1
+version: 2
+source: frontend/src/router/index.ts、frontend/src/router/shared.routes.ts、frontend/src/views/*/routes.ts、frontend/src/nav/navigation.ts
 router:
-  auto_discovery: "import.meta.glob('@/views/*/routes.ts', { eager: true })"
+  auto_discovery: 'import.meta.glob(''@/views/*/routes.ts'', { eager: true })'
+  shared_routes: frontend/src/router/shared.routes.ts
+  auth_guard: frontend/src/router/index.ts#createAuthGuard
   navigation_writer: frontend/src/nav/navigation.ts
   default_authenticated: /workbench
   default_unauthenticated: /login
+  h5_auth_bypass: true
   h5_fallback: /h5/apply
-
 routes:
-  - path: /login
-    page: 登录页
-    layout: blank
-    roles: [anonymous]
-    phase: P1
-    endpoints: [GET /auth/csrf, POST /auth/login]
-    req: [PT-001]
-  - path: /workbench
-    page: 工作台
-    layout: app
-    roles: [admin, guard, host]
-    phase: P1
-    endpoints: [GET /workbench/summary, GET /system/entry-qr, GET /system/entry-qr.png]
-    req: [PT-002, PT-003, PT-004, PT-005]
-  - path: /appointments
-    page: 访客预约管理
-    layout: app
-    roles: [admin, host]
-    phase: P1
-    deep_link: "?appointmentId=<uuid> 直接打开详情抽屉"
-    endpoints:
-      - GET /appointments
-      - POST /appointments
-      - GET /appointments/:id
-      - PUT /appointments/:id/reschedule
-      - PUT /appointments/:id/cancel
-      - GET /appointments/form-options
-    req: [AP-001, AP-002, AP-003, AP-004, AP-005]
-  - path: /reviews
-    page: 被访人审核
-    layout: app
-    roles: [admin, host]
-    phase: P1
-    endpoints:
-      - GET /reviews
-      - GET /reviews/:id
-      - POST /reviews/:id/approve
-      - POST /reviews/:id/reject
-      - POST /reviews/:id/reschedule
-      - GET /reviews/:id/logs
-      - GET /reviews/assignment
-      - PUT /reviews/assignment
-    req: [AT-001, AT-002, AT-003, AT-004]
-  - path: /gate
-    page: 门卫核验放行
-    layout: app
-    roles: [admin, guard]
-    phase: P1
-    role_differences: 异常处置仅 admin 渲染
-    endpoints:
-      - GET /gate/today
-      - POST /gate/verify
-      - POST /gate/admit
-      - POST /gate/depart
-      - POST /gate/walk-in
-      - POST /gate/incidents
-      - GET /gate/incidents
-      - PUT /gate/incidents/:id/disposition
-      - GET /gate/form-options
-    req: [GV-001, GV-002, GV-003, GV-004, GV-005, GV-006]
-  - path: /h5/apply
-    page: 我要申请
-    layout: h5
-    roles: [visitor]
-    phase: P1
-    endpoints: [GET /visitor/form-options, POST /visitor/appointments]
-    req: [VS-001, VS-003, VS-004]
-  - path: /h5/my
-    page: 我的申请
-    layout: h5
-    roles: [visitor]
-    phase: P1
-    endpoints:
-      - GET /visitor/appointments
-      - GET /visitor/appointments/:id
-      - POST /visitor/appointments/:id/confirm-reschedule
-      - PUT /visitor/appointments/:id/reschedule
-      - PUT /visitor/appointments/:id/cancel
-    req: [VS-002]
-  - path: /ledger
-    page: 访客台账
-    layout: app
-    roles: [admin, guard]
-    phase: P1
-    role_differences: 导出菜单仅 admin 渲染；guard 的到访日期固定为当日且控件禁用
-    endpoints: [GET /logs, GET /logs/export]
-    req: [LG-001, LG-003, LG-004]
-  - path: /on-campus
-    page: 在校清单
-    layout: app
-    roles: [admin, guard]
-    phase: P1
-    endpoints: [GET /logs/on-campus]
-    req: [LG-002]
-  - path: /statistics
-    page: 统计分析
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints: [GET /stats/visits, GET /stats/incidents]
-    req: [AN-001, AN-002]
-  - path: /users
-    page: 用户与角色
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints:
-      - GET /users
-      - POST /users
-      - PUT /users/:id
-      - PUT /users/:id/status
-      - PUT /users/:id/password
-      - DELETE /users/:id
-      - GET /roles
-      - GET /roles/:code/permissions
-    req: [OR-001, OR-002, OR-003]
-  - path: /master
-    page: 主数据
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints:
-      - GET /master/visitor-types
-      - POST /master/visitor-types
-      - PUT /master/visitor-types/:id
-      - PUT /master/visitor-types/:id/status
-      - DELETE /master/visitor-types/:id
-      - GET /master/blacklist
-      - POST /master/blacklist
-      - DELETE /master/blacklist/:id
-      - GET /master/time-rules
-      - POST /master/time-rules
-      - DELETE /master/time-rules/:id
-      - GET /master/gates
-      - POST /master/gates
-      - PUT /master/gates/:id
-      - PUT /master/gates/:id/status
-      - DELETE /master/gates/:id
-      - GET /master/hosts
-      - POST /master/hosts
-      - PUT /master/hosts/:id
-      - PUT /master/hosts/:id/status
-      - DELETE /master/hosts/:id
-    req: [BD-001, BD-002, BD-003, BD-004, BD-005]
-  - path: /notifications
-    page: 通知中心
-    layout: app
-    roles: [admin, guard, host]
-    phase: P1
-    role_differences: 渠道配置区仅 admin 渲染
-    jump_targets:
-      admin_host: "/appointments?appointmentId=<business_id>"
-      guard: /gate
-      security_notification: /gate
-    realtime_event: notification:new
-    polling_fallback_seconds: 30
-    endpoints:
-      - GET /notifications
-      - GET /notifications/unread-count
-      - PUT /notifications/:id/read
-      - PUT /notifications/read-all
-      - GET /system/notification-channels
-      - PUT /system/notification-channels
-    req: [NT-001, NT-002, NT-003, PT-004]
-  - path: /system/settings
-    page: 参数与字典
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints:
-      - GET /system/params
-      - PUT /system/params/:key
-      - GET /system/dictionary
-      - POST /system/dictionary
-      - PUT /system/dictionary/:id/status
-    req: [SM-003, SM-004]
-  - path: /system/audit
-    page: 操作日志
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints: [GET /audit-logs]
-    req: [SM-001]
-  - path: /system/privacy
-    page: 信息保护
-    layout: app
-    roles: [admin]
-    phase: P1
-    endpoints:
-      - GET /privacy/retention
-      - PUT /privacy/retention
-      - POST /privacy/appointments/:id/erase
-      - GET /privacy/cases
-    req: [SM-002]
-  - path: /h5/privacy
-    page: 信息副本
-    layout: h5
-    roles: [visitor]
-    phase: P1
-    endpoints: [GET /visitor/privacy/copy]
-    req: [SM-002]
-  - path: /403
-    page: 无权访问
-    layout: app
-    roles: [admin, guard, host, visitor]
-    phase: P1
-    endpoints: []
-    req: [OR-002]
-
+- path: /login
+  page: 登录
+  layout: blank
+  roles: []
+  phase: P1
+  endpoints:
+  - GET /auth/csrf
+  - POST /auth/login
+  req:
+  - PT-001
+  name: login
+  access: public
+- path: /workbench
+  page: 工作台
+  layout: app
+  roles:
+  - admin
+  - guard
+  - host
+  phase: P1
+  endpoints:
+  - GET /workbench/summary
+  - GET /system/entry-qr
+  - GET /system/entry-qr.png
+  req:
+  - PT-002
+  - PT-003
+  - PT-004
+  - PT-005
+  name: workbench
+- path: /appointments
+  page: 访客预约
+  layout: app
+  roles:
+  - admin
+  - host
+  phase: P1
+  deep_link: ?appointmentId=<uuid> 直接打开详情抽屉
+  endpoints:
+  - GET /appointments
+  - POST /appointments
+  - GET /appointments/:id
+  - PUT /appointments/:id/reschedule
+  - PUT /appointments/:id/cancel
+  - GET /appointments/form-options
+  req:
+  - AP-001
+  - AP-002
+  - AP-003
+  - AP-004
+  - AP-005
+  name: appointments
+- path: /reviews
+  page: 被访人审核
+  layout: app
+  roles:
+  - admin
+  - host
+  phase: P1
+  endpoints:
+  - GET /reviews
+  - GET /reviews/:id
+  - POST /reviews/:id/approve
+  - POST /reviews/:id/reject
+  - POST /reviews/:id/reschedule
+  - GET /reviews/:id/logs
+  - GET /reviews/assignment
+  - PUT /reviews/assignment
+  req:
+  - AT-001
+  - AT-002
+  - AT-003
+  - AT-004
+  name: reviews
+- path: /gate
+  page: 门卫核验放行
+  layout: app
+  roles:
+  - admin
+  - guard
+  phase: P1
+  role_differences: 异常处置仅 admin 渲染
+  endpoints:
+  - GET /gate/today
+  - POST /gate/verify
+  - POST /gate/admit
+  - POST /gate/depart
+  - POST /gate/walk-in
+  - POST /gate/incidents
+  - GET /gate/incidents
+  - PUT /gate/incidents/:id/disposition
+  - GET /gate/form-options
+  req:
+  - GV-001
+  - GV-002
+  - GV-003
+  - GV-004
+  - GV-005
+  - GV-006
+  name: gate
+- path: /h5/apply
+  page: 来访申请
+  layout: h5
+  roles: []
+  phase: P1
+  endpoints:
+  - GET /visitor/form-options
+  - POST /visitor/appointments
+  req:
+  - VS-001
+  - VS-003
+  - VS-004
+  name: h5-apply
+  access: public
+- path: /h5/my
+  page: 我的申请
+  layout: h5
+  roles: []
+  phase: P1
+  endpoints:
+  - GET /visitor/appointments
+  - GET /visitor/appointments/:id
+  - POST /visitor/appointments/:id/confirm-reschedule
+  - PUT /visitor/appointments/:id/reschedule
+  - PUT /visitor/appointments/:id/cancel
+  req:
+  - VS-002
+  name: h5-my
+  access: visitor_token
+- path: /ledger
+  page: 访客台账
+  layout: app
+  roles:
+  - admin
+  - guard
+  phase: P1
+  role_differences: 导出菜单仅 admin 渲染；guard 的到访日期固定为当日且控件禁用
+  endpoints:
+  - GET /logs
+  - GET /logs/export
+  req:
+  - LG-001
+  - LG-003
+  - LG-004
+  name: ledger
+- path: /on-campus
+  page: 在校清单
+  layout: app
+  roles:
+  - admin
+  - guard
+  phase: P1
+  endpoints:
+  - GET /logs/on-campus
+  req:
+  - LG-002
+  name: on-campus
+- path: /statistics
+  page: 统计分析
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /stats/visits
+  - GET /stats/incidents
+  req:
+  - AN-001
+  - AN-002
+  name: statistics
+- path: /users
+  page: 用户与角色
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /users
+  - POST /users
+  - PUT /users/:id
+  - PUT /users/:id/status
+  - PUT /users/:id/password
+  - DELETE /users/:id
+  - GET /roles
+  - GET /roles/:code/permissions
+  req:
+  - OR-001
+  - OR-002
+  - OR-003
+  name: users
+- path: /master
+  page: 主数据
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /master/visitor-types
+  - POST /master/visitor-types
+  - PUT /master/visitor-types/:id
+  - PUT /master/visitor-types/:id/status
+  - DELETE /master/visitor-types/:id
+  - GET /master/blacklist
+  - POST /master/blacklist
+  - DELETE /master/blacklist/:id
+  - GET /master/time-rules
+  - POST /master/time-rules
+  - DELETE /master/time-rules/:id
+  - GET /master/gates
+  - POST /master/gates
+  - PUT /master/gates/:id
+  - PUT /master/gates/:id/status
+  - DELETE /master/gates/:id
+  - GET /master/hosts
+  - POST /master/hosts
+  - PUT /master/hosts/:id
+  - PUT /master/hosts/:id/status
+  - DELETE /master/hosts/:id
+  req:
+  - BD-001
+  - BD-002
+  - BD-003
+  - BD-004
+  - BD-005
+  name: master-data
+- path: /notifications
+  page: 通知中心
+  layout: app
+  roles:
+  - admin
+  - guard
+  - host
+  phase: P1
+  role_differences: 渠道配置区仅 admin 渲染
+  jump_targets:
+    admin_host: /appointments?appointmentId=<business_id>
+    guard: /gate
+    security_notification: /gate
+  realtime_event: notification:new
+  endpoints:
+  - GET /notifications
+  - GET /notifications/unread-count
+  - PUT /notifications/:id/read
+  - PUT /notifications/read-all
+  - GET /system/notification-channels
+  - PUT /system/notification-channels
+  req:
+  - NT-001
+  - NT-002
+  - NT-003
+  - PT-004
+  name: notifications
+- path: /system/settings
+  page: 参数与字典
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /system/params
+  - PUT /system/params/:key
+  - GET /system/dictionary
+  - POST /system/dictionary
+  - PUT /system/dictionary/:id/status
+  req:
+  - SM-003
+  - SM-004
+  name: system-settings
+- path: /system/audit
+  page: 操作日志
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /audit-logs
+  req:
+  - SM-001
+  name: system-audit
+- path: /system/privacy
+  page: 信息保护
+  layout: app
+  roles:
+  - admin
+  phase: P1
+  endpoints:
+  - GET /privacy/retention
+  - PUT /privacy/retention
+  - POST /privacy/appointments/:id/erase
+  - GET /privacy/cases
+  req:
+  - SM-002
+  name: system-privacy
+- path: /h5/privacy
+  page: 个人信息说明
+  layout: h5
+  roles: []
+  phase: P1
+  endpoints:
+  - GET /visitor/privacy/copy
+  req:
+  - SM-002
+  name: compliance-h5-privacy
+  access: public
+  duplicate_definitions:
+  - file: frontend/src/views/compliance/routes.ts
+    name: compliance-h5-privacy
+    title: 个人信息说明
+  - file: frontend/src/views/visit/routes.ts
+    name: h5-privacy
+    title: 个人信息说明
+- path: /403
+  page: 无权访问
+  layout: blank
+  roles: []
+  phase: P1
+  endpoints: []
+  req:
+  - OR-002
+  name: forbidden
+  access: public
 fallbacks:
-  - path: /:pathMatch(.*)*
-    behavior: 已登录重定向 /workbench；未登录重定向 /login
-  - path: /h5/:pathMatch(.*)*
-    behavior: 重定向 /h5/apply
-
+- path: /:pathMatch(.*)*
+  behavior: 已登录重定向 /workbench；未登录重定向 /login
+- path: /h5/:pathMatch(.*)*
+  behavior: 重定向 /h5/apply
 navigation:
+- order: 1
+  key: workbench
+  title: 工作台
+  path: /workbench
+  roles:
+  - admin
+  - guard
+  - host
+  icon: DashboardOutlined
+- order: 2
+  key: appointments
+  title: 访客预约
+  path: /appointments
+  roles:
+  - admin
+  - host
+  icon: FormOutlined
+- order: 3
+  key: reviews
+  title: 被访人审核
+  path: /reviews
+  roles:
+  - admin
+  - host
+  icon: AuditOutlined
+- order: 4
+  key: gate
+  title: 门卫核验
+  path: /gate
+  roles:
+  - admin
+  - guard
+  icon: SafetyOutlined
+- order: 5
+  key: ledger
+  title: 访客台账
+  path: /ledger
+  roles:
+  - admin
+  - guard
+  icon: TableOutlined
+- order: 6
+  key: on-campus
+  title: 在校清单
+  path: /on-campus
+  roles:
+  - admin
+  - guard
+  icon: TeamOutlined
+- order: 7
+  key: statistics
+  title: 统计分析
+  path: /statistics
+  roles:
+  - admin
+  icon: BarChartOutlined
+- order: 8
+  key: users
+  title: 用户与角色
+  path: /users
+  roles:
+  - admin
+  icon: UserOutlined
+- order: 9
+  key: master
+  title: 主数据
+  path: /master
+  roles:
+  - admin
+  icon: DatabaseOutlined
+- order: 10
+  key: notifications
+  title: 通知中心
+  path: /notifications
+  roles:
+  - admin
+  - guard
+  - host
+  icon: BellOutlined
+- order: 11
+  key: system
+  title: 系统管理
+  path: /system
+  roles:
+  - admin
+  icon: SettingOutlined
+  children:
   - order: 1
-    key: workbench
-    title: 工作台
-    path: /workbench
-    roles: [admin, guard, host]
-    icon: DashboardOutlined
+    key: system-settings
+    title: 参数与字典
+    path: /system/settings
+    roles:
+    - admin
+    icon: SlidersOutlined
   - order: 2
-    key: appointments
-    title: 访客预约
-    path: /appointments
-    roles: [admin, host]
-    icon: FormOutlined
+    key: system-audit
+    title: 操作日志
+    path: /system/audit
+    roles:
+    - admin
+    icon: FileSearchOutlined
   - order: 3
-    key: reviews
-    title: 被访人审核
-    path: /reviews
-    roles: [admin, host]
-    icon: AuditOutlined
-  - order: 4
-    key: gate
-    title: 门卫核验
-    path: /gate
-    roles: [admin, guard]
-    icon: SafetyOutlined
-  - order: 5
-    key: ledger
-    title: 访客台账
-    path: /ledger
-    roles: [admin, guard]
-    icon: TableOutlined
-  - order: 6
-    key: on-campus
-    title: 在校清单
-    path: /on-campus
-    roles: [admin, guard]
-    icon: TeamOutlined
-  - order: 7
-    key: statistics
-    title: 统计分析
-    path: /statistics
-    roles: [admin]
-    icon: BarChartOutlined
-  - order: 8
-    key: users
-    title: 用户与角色
-    path: /users
-    roles: [admin]
-    icon: UserOutlined
-  - order: 9
-    key: master
-    title: 主数据
-    path: /master
-    roles: [admin]
-    icon: DatabaseOutlined
-  - order: 10
-    key: notifications
-    title: 通知中心
-    path: /notifications
-    roles: [admin, guard, host]
-    icon: BellOutlined
-  - order: 11
-    key: system
-    title: 系统管理
-    path: /system
-    roles: [admin]
-    icon: SettingOutlined
-    children:
-      - order: 1
-        key: system-settings
-        title: 参数与字典
-        path: /system/settings
-        roles: [admin]
-        icon: SlidersOutlined
-      - order: 2
-        key: system-audit
-        title: 操作日志
-        path: /system/audit
-        roles: [admin]
-        icon: FileSearchOutlined
-      - order: 3
-        key: system-privacy
-        title: 信息保护
-        path: /system/privacy
-        roles: [admin]
-        icon: SafetyCertificateOutlined
+    key: system-privacy
+    title: 信息保护
+    path: /system/privacy
+    roles:
+    - admin
+    icon: SafetyCertificateOutlined
+duplicate_paths:
+  /h5/privacy:
+  - frontend/src/views/compliance/routes.ts
+  - frontend/src/views/visit/routes.ts

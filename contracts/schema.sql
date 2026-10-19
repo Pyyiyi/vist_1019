@@ -1,8 +1,3 @@
--- 校园访客系统 V1.0 · 契约冻结 DDL 汇总
--- 来源: backend/db/migrations/001-shared.sql ... 005-compliance.sql
--- 本文件与五个迁移文件逐字等价；仅按文件名顺序拼接。
-
--- ===== 001-shared.sql =====
 -- 校园访客系统 V1.0 · 共享基础设施表 DDL
 -- 执行入口：backend/src/shared/db/migrate.ts 扫描 backend/db/migrations/*.sql
 -- 本文件是共享表的权威 DDL，编号 001-shared.sql 逐字引用本文件内容。
@@ -121,8 +116,6 @@ CREATE TABLE IF NOT EXISTS system_config (
 );
 
 COMMIT;
-
--- ===== 002-master.sql =====
 BEGIN;
 
 -- 主数据上下文：被访人、访客类型、校门、黑名单、时段规则、审核规则、数据字典
@@ -233,8 +226,6 @@ CREATE TABLE IF NOT EXISTS data_dictionary (
 CREATE INDEX IF NOT EXISTS idx_data_dictionary_type_status_sort_order ON data_dictionary (dict_type, status, sort_order);
 
 COMMIT;
-
--- ===== 003-visit.sql =====
 BEGIN;
 
 -- 来访上下文：预约、随行、凭证、通行、告知、异常、状态历史、访客令牌
@@ -387,8 +378,6 @@ CREATE TABLE IF NOT EXISTS visitor_tokens (
 CREATE INDEX IF NOT EXISTS idx_visitor_tokens_appointment_id ON visitor_tokens (appointment_id);
 
 COMMIT;
-
--- ===== 004-notify.sql =====
 BEGIN;
 
 -- 通知上下文：站内消息与渠道开关
@@ -423,8 +412,6 @@ CREATE TABLE IF NOT EXISTS notification_channels (
 );
 
 COMMIT;
-
--- ===== 005-compliance.sql =====
 BEGIN;
 
 -- 合规上下文：个人信息副本与人工清除案件
@@ -443,5 +430,17 @@ CREATE TABLE IF NOT EXISTS privacy_cases (
 );
 
 CREATE INDEX IF NOT EXISTS idx_privacy_cases_created_at ON privacy_cases (created_at DESC);
+
+COMMIT;
+BEGIN;
+
+-- 超时未离每日每接收人最多一条，保证定时任务幂等
+CREATE UNIQUE INDEX IF NOT EXISTS uq_notifications_overdue_daily
+  ON notifications (
+    business_id,
+    recipient_id,
+    ((created_at AT TIME ZONE 'Asia/Shanghai')::date)
+  )
+  WHERE template_type = '超时未离';
 
 COMMIT;
