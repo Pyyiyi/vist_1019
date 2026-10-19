@@ -26,6 +26,12 @@ describe('appointment rules', () => {
     expect(() => validateVisitWindow(at('2026-10-20T10:00:00+08:00'), at('2026-10-20T14:01:00+08:00'), now)).toThrow('到访时段不能超过 240 分钟');
   });
 
+  it('allows an end-of-day walk-in visit to cross midnight only when explicitly enabled', () => {
+    const now = at('2026-10-20T23:55:00+08:00');
+    expect(() => validateVisitWindow(at('2026-10-20T23:55:00+08:00'), at('2026-10-21T00:55:00+08:00'), now, 15, 240, true, true)).not.toThrow();
+    expect(() => validateVisitWindow(at('2026-10-20T23:55:00+08:00'), at('2026-10-21T00:55:00+08:00'), now, 15, 240, true, false)).toThrow('预约必须在同一天内完成');
+  });
+
   it('limits companions to ten and validates every companion id', () => {
     const rows = Array.from({ length: 10 }, (_, index) => ({ name: `家属${index}`, relation: '家属', id_no: '110101199003071233' }));
     expect(normalizeCompanions(rows)).toHaveLength(10);

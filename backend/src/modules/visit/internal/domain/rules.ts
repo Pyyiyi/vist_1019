@@ -107,9 +107,10 @@ export function validateVisitWindow(
   minMinutes = 15,
   maxMinutes = 240,
   allowPast = false,
+  allowCrossDay = false,
 ): void {
   if (start >= end) throw unprocessable(COPY.END_BEFORE_START, 'visit_end');
-  if (shanghaiDateKey(start) !== shanghaiDateKey(end)) {
+  if (!allowCrossDay && shanghaiDateKey(start) !== shanghaiDateKey(end)) {
     throw unprocessable(COPY.CROSS_DAY, 'visit_end');
   }
   const minutes = (end.getTime() - start.getTime()) / 60_000;

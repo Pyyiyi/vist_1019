@@ -58,10 +58,10 @@ const columns = [
 ];
 const incidentColumns = [
   { title: '异常类型', dataIndex: 'incidentType', key: 'incidentType', width: 130 },
-  { title: '异常说明', dataIndex: 'description', key: 'description' },
+  { title: '异常说明', dataIndex: 'description', key: 'description', ellipsis: true },
   { title: '状态', dataIndex: 'status', key: 'status', width: 110 },
   { title: '上报时间', key: 'createdAt', width: 160 },
-  { title: '操作', key: 'actions', width: 100 },
+  { title: '操作', key: 'actions', width: 100, fixed: 'right' as const },
 ];
 
 async function loadToday(): Promise<void> {
@@ -277,7 +277,8 @@ onMounted(async () => { await Promise.all([loadToday(), loadIncidents(), loadOpt
       <EmptyState v-else-if="incidents.length === 0" description="暂无异常记录" />
       <a-table v-else row-key="id" :columns="incidentColumns" :data-source="incidents" :pagination="false" :scroll="{ x: 780 }">
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'status'"><StatusTag :status="record.status" kind="incident" /></template>
+          <template v-if="column.key === 'description'"><a-tooltip :title="record.description"><span class="single-line">{{ record.description }}</span></a-tooltip></template>
+          <template v-else-if="column.key === 'status'"><StatusTag :status="record.status" kind="incident" /></template>
           <template v-else-if="column.key === 'createdAt'">{{ formatMinute(record.createdAt) }}</template>
           <template v-else-if="column.key === 'actions'">
             <a-button v-if="isAdmin && record.status === '待处理'" type="link" size="small" @click="openDisposition(record)">处置</a-button>
@@ -336,6 +337,7 @@ onMounted(async () => { await Promise.all([loadToday(), loadIncidents(), loadOpt
 </template>
 
 <style scoped>
+.single-line { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); margin-bottom: var(--space-4); }
 .kpi-card { display: flex; align-items: center; justify-content: space-between; min-height: 82px; padding: var(--space-4); border: 0; text-align: left; cursor: pointer; }
 .kpi-card span { color: var(--color-text-secondary); }

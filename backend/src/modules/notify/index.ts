@@ -13,6 +13,7 @@ export type { NotificationTemplateType, RenderedTemplate } from './internal/doma
 export {
   listNotificationChannels,
   listNotificationsForUser,
+  listNotificationsForVisitor,
   markAllReadForUser,
   markReadForUser,
   publishNotification,

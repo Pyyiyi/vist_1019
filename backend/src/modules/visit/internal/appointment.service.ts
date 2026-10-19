@@ -37,7 +37,7 @@ import type { Actor, AppointmentRow } from './types.js';
 import { iso, toAppointmentDto, toCompanionDto, toCredentialDto, toHistoryDto } from './types.js';
 
 type AppointmentPayload = Record<string, unknown>;
-type ValidationOptions = { allowPast?: boolean; skipSchedule?: boolean; now?: Date };
+type ValidationOptions = { allowPast?: boolean; allowCrossDay?: boolean; skipSchedule?: boolean; now?: Date };
 type Enrichment = {
   hostNames: Map<string, string>;
   visitorTypeNames: Map<string, string>;
@@ -137,7 +137,7 @@ export async function validateAppointmentPayload(
   if (!end) throw unprocessable(COPY.END_REQUIRED, 'visit_end');
   const minMinutes = await configNumber('min_stay_minutes', 15);
   const maxMinutes = await configNumber('max_stay_minutes', 240);
-  validateVisitWindow(start, end, now, minMinutes, maxMinutes, options.allowPast ?? false);
+  validateVisitWindow(start, end, now, minMinutes, maxMinutes, options.allowPast ?? false, options.allowCrossDay ?? false);
   if (!options.skipSchedule) await validateSchedule(start, end, now);
   const reason = validateReason(input.reason);
   const plateNo = typeof input.plate_no === 'string' && input.plate_no.trim() ? input.plate_no.trim() : null;

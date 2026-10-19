@@ -32,6 +32,15 @@ function dto(row: AppointmentRow, map: Enrichment) {
   });
 }
 
+async function notifyVisitorOfDecision(
+  row: AppointmentRow,
+  input: { result: '通过' | '拒绝'; reason?: string },
+): Promise<void> {
+  const hosts = await getActiveHosts();
+  const hostName = hosts.find((host) => host.id === row.host_id)?.name;
+  await notifyVisitor(row, '审核结果', { ...input, hostName });
+}
+
 export async function listReviews(queryParams: Record<string, unknown>, actor: Actor) {
   const pagination = parsePagination(queryParams, 20, 100);
   const result = await repo.listPendingReviews({ pageSize: pagination.pageSize, offset: pagination.offset, actor });
@@ -61,7 +70,7 @@ export async function approveReview(id: string, actor: Actor, ip: string | null,
     await writeAudit(client, { userId: actor.id, userName: actor.displayName, objectType: 'appointment', objectId: id, action: '审核同意', result: '成功', before: { status: current.status }, after: { status: '已通过' }, ip });
     return updated.rows[0];
   });
-  await safeNotify(() => notifyVisitor(row, '审核结果', { result: '通过' }));
+  await safeNotify(() => notifyVisitorOfDecision(row, { result: '通过' }));
   return { status: row.status };
 }
 
@@ -80,7 +89,7 @@ export async function rejectReview(id: string, input: Record<string, unknown>, a
     await writeAudit(client, { userId: actor.id, userName: actor.displayName, objectType: 'appointment', objectId: id, action: '审核拒绝', result: '成功', before: { status: current.status }, after: { status: '已拒绝', reason }, ip });
     return updated.rows[0];
   });
-  await safeNotify(() => notifyVisitor(row, '审核结果', { result: '拒绝', reason }));
+  await safeNotify(() => notifyVisitorOfDecision(row, { result: '拒绝', reason }));
   return { status: row.status, reject_reason: reason };
 }
 
