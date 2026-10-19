@@ -106,10 +106,11 @@ stderr: 种子执行失败：99-failure-proof.sql
 - `diff seed-anchors.sql backend/db/seeds/00-anchors.sql`：退出码 0，无差异。
 - `npm run typecheck`：退出码 0。
 - `npx vitest run src/shared/__tests__/seed.test.ts`：5 条测试通过。
-- `npm test`：7 个文件、35 条测试全部通过。
+- `npm test`：8 个文件、52 条测试全部通过（合并最新 origin/main 后复跑）。
 - `npm run build`：退出码 0。
 - `GET /api/v1/health`：HTTP 200，`{"code":0,"message":"操作成功","data":{"status":"ok"}}`。
-- 前端 `npm run build`：通过；前端 `npm test`：3 个文件、19 条测试通过。
+- 前端 `npm run build`：通过；前端 `npm test`：5 个文件、35 条测试通过。
+- `origin/main` 合并结果 clean；合并后再次构建生产镜像、执行两次 seed 并确认计数，最终 `users=4`、`appointments=11`、`statuses=8`、`short_codes=11`、`consents=22`。
 - 验证结束后已删除临时 Compose 容器、网络、卷与临时数据库容器。
 
 ## 环境约束
