@@ -11,6 +11,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
+    "migrate": "tsx src/shared/db/migrate.ts",
     "test": "vitest run"
   },
   "dependencies": {
